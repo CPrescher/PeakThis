@@ -16,3 +16,29 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'Clemens Prescher'
+
+
+import lmfit
+import numpy as np
+import matplotlib.pyplot as plt
+
+# creating random data
+x = np.linspace(-10, 10, 1000)
+y = np.sin(2*x)
+
+y += np.random.random(np.size(y))*1.5
+plt.plot(x,y )
+
+def func(x, a, b):
+    return b+np.sin(a*x)
+
+model = lmfit.Model(func, independent_vars=['x'])
+result = model.fit(y,a=1.6, b=0, x=x)
+
+print result.params['a']
+print result.params['b']
+
+plt.plot(x,func(x, result.params['a'].value, result.params['b'].value), 'r-', lw=3)
+plt.show()
+
+
