@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from view.MainView import MainView
+from view.MainWidget import MainView
 
 __author__ = 'Clemens Prescher'
 
@@ -26,4 +26,4 @@ class MainController(object):
         self.main_view.control_widget.model_widget.add_btn.clicked.connect(self.add_model)
 
     def add_model(self, *args, **kwargs):
-        print 'hm'
+        self.main_view.control_widget.model_widget.show_model_selector_dialog()

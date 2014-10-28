@@ -21,5 +21,10 @@ class MainControllerTest(unittest.TestCase):
         pass
 
     def test_adding_models(self):
-
         QTest.mouseClick(self.model_widget.add_btn, QtCore.Qt.LeftButton)
+        self.assertTrue(self.model_widget.model_selector_dialog.isVisible())
+
+        self.model_widget.model_selector_dialog.model_list.setCurrentRow(1)
+        QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
+
+        self.assertFalse(self.model_widget.model_selector_dialog.isVisible())

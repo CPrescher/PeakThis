@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+
 __author__ = 'Clemens Prescher'
 __version__ = 0.1
 
@@ -7,13 +8,14 @@ import sys
 from PyQt4 import QtCore, QtGui
 
 from SpectrumWidget import SpectrumWidget
+from view.ModelWidget import ModelWidget
 
 
 class MainView(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MainView, self).__init__(parent)
         self.horizontal_layout = QtGui.QHBoxLayout(self)
-        self.horizontal_layout.setContentsMargins(0,0,0,0)
+        self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
 
         self.spectrum_widget = SpectrumWidget()
         self.control_widget = ControlWidget()
@@ -31,6 +33,7 @@ class MainView(QtGui.QWidget):
         self.activateWindow()
         self.raise_()
 
+
 class ControlWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ControlWidget, self).__init__(parent)
@@ -40,15 +43,15 @@ class ControlWidget(QtGui.QWidget):
         self.background_widget = BackgroundWidget()
         self.model_widget = ModelWidget()
 
-
         self.main_vertical_layout.addWidget(self.file_widget)
         self.main_vertical_layout.addWidget(self.background_widget)
         self.main_vertical_layout.addWidget(self.model_widget)
 
-        self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20,20, QtGui.QSizePolicy.Fixed,
+        self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed,
                                                                   QtGui.QSizePolicy.Expanding))
 
         self.setLayout(self.main_vertical_layout)
+
 
 class FileWidget(QtGui.QGroupBox):
     def __init__(self, parent=None):
@@ -68,6 +71,7 @@ class FileWidget(QtGui.QGroupBox):
         self.grid_layout.addWidget(self.save_models_btn, 2, 1)
 
         self.setLayout(self.grid_layout)
+
 
 class BackgroundWidget(QtGui.QGroupBox):
     def __init__(self, parent=None):
@@ -91,27 +95,6 @@ class BackgroundWidget(QtGui.QGroupBox):
         self.grid_layout.addWidget(self.subtract_btn, 1, 1)
 
         self.setLayout(self.grid_layout)
-
-class ModelWidget(QtGui.QGroupBox):
-    def __init__(self, parent=None):
-        super(ModelWidget, self).__init__("Models", parent)
-
-        self.grid_layout = QtGui.QGridLayout()
-
-        self.add_btn = QtGui.QPushButton("Add")
-        self.delete_btn = QtGui.QPushButton("Delete")
-
-        self.model_list = QtGui.QListView()
-
-        self.parameter_table = QtGui.QTableWidget()
-
-        self.grid_layout.addWidget(self.add_btn, 0, 0)
-        self.grid_layout.addWidget(self.delete_btn, 0, 1)
-        self.grid_layout.addWidget(self.model_list, 1, 0, 1, 2)
-        self.grid_layout.addWidget(self.parameter_table, 2, 0, 1, 2)
-
-        self.setLayout(self.grid_layout)
-
 
 
 if __name__ == '__main__':
