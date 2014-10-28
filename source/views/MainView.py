@@ -1,23 +1,24 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
+__version__ = 0.1
 
 import sys
 
 from PyQt4 import QtCore, QtGui
 
-from GuiElements import HorizontalLine
+from SpectrumWidget import SpectrumWidget
 
-__version__ = 0.1
 class MainView(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MainView, self).__init__(parent)
         self.horizontal_layout = QtGui.QHBoxLayout(self)
+        self.horizontal_layout.setContentsMargins(0,0,0,0)
 
-        self.spectrum_frame = QtGui.QFrame()
-        self.control_frame = ControlWidget()
+        self.spectrum_widget = SpectrumWidget()
+        self.control_widget = ControlWidget()
 
-        self.horizontal_layout.addWidget(self.spectrum_frame)
-        self.horizontal_layout.addWidget(self.control_frame)
+        self.horizontal_layout.addWidget(self.spectrum_widget)
+        self.horizontal_layout.addWidget(self.control_widget)
 
         self.setLayout(self.horizontal_layout)
 
