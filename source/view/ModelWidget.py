@@ -44,7 +44,7 @@ class ModelSelectorDialog(QtGui.QDialog):
         self.cancel_btn = QtGui.QPushButton("Cancel")
 
         self._ok_cancel_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
-                                                              QtGui.QSizePolicy.Fixed))
+                                                               QtGui.QSizePolicy.Fixed))
         self._ok_cancel_layout.addWidget(self.ok_btn)
         self._ok_cancel_layout.addWidget(self.cancel_btn)
 
