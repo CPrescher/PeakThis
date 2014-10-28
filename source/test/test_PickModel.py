@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-from models.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
+from model.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
 
 
 class PickModelTest(unittest.TestCase):

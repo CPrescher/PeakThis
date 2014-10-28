@@ -79,7 +79,9 @@ class SpectrumWidget(QtGui.QWidget):
         self.y_lbl.setText('y: {:02.4f}'.format(y))
 
     def create_plot_data_items(self):
-        self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
+        self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
+                                                 brush=pg.mkBrush('g'),
+                                                 size=3)
         self.background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
 
         self.spectrum_plot.addItem(self.data_plot_item)

@@ -8,6 +8,7 @@ from PyQt4 import QtCore, QtGui
 
 from SpectrumWidget import SpectrumWidget
 
+
 class MainView(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MainView, self).__init__(parent)
