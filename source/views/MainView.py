@@ -5,7 +5,9 @@ import sys
 
 from PyQt4 import QtCore, QtGui
 
+from GuiElements import HorizontalLine
 
+__version__ = 0.1
 class MainView(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MainView, self).__init__(parent)
@@ -19,7 +21,7 @@ class MainView(QtGui.QWidget):
 
         self.setLayout(self.horizontal_layout)
 
-        self.setWindowTitle("Testing the universe")
+        self.setWindowTitle("PeakThis v{}".format(__version__))
 
     def show(self):
         QtGui.QWidget.show(self)
@@ -34,15 +36,19 @@ class ControlWidget(QtGui.QWidget):
 
         self.file_widget = FileWidget()
         self.background_widget = BackgroundWidget()
+        self.model_widget = ModelWidget()
 
 
         self.main_vertical_layout.addWidget(self.file_widget)
-        self.main_vertical_layout.addWidget(HorizontalLine())
         self.main_vertical_layout.addWidget(self.background_widget)
+        self.main_vertical_layout.addWidget(self.model_widget)
+
+        self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20,20, QtGui.QSizePolicy.Fixed,
+                                                                  QtGui.QSizePolicy.Expanding))
 
         self.setLayout(self.main_vertical_layout)
 
-class FileWidget(QtGui.QWidget):
+class FileWidget(QtGui.QGroupBox):
     def __init__(self, parent=None):
         super(FileWidget, self).__init__(parent)
 
@@ -84,11 +90,26 @@ class BackgroundWidget(QtGui.QGroupBox):
 
         self.setLayout(self.grid_layout)
 
-class HorizontalLine(QtGui.QFrame):
+class ModelWidget(QtGui.QGroupBox):
     def __init__(self, parent=None):
-        super(HorizontalLine, self).__init__(parent)
-        self.setFrameShape(QtGui.QFrame.HLine)
-        self.setFrameShadow(QtGui.QFrame.Sunken)
+        super(ModelWidget, self).__init__("Models", parent)
+
+        self.grid_layout = QtGui.QGridLayout()
+
+        self.add_btn = QtGui.QPushButton("Add")
+        self.delete_btn = QtGui.QPushButton("Delete")
+
+        self.model_list = QtGui.QListView()
+
+        self.parameter_table = QtGui.QTableWidget()
+
+        self.grid_layout.addWidget(self.add_btn, 0, 0)
+        self.grid_layout.addWidget(self.delete_btn, 0, 1)
+        self.grid_layout.addWidget(self.model_list, 1, 0, 1, 2)
+        self.grid_layout.addWidget(self.parameter_table, 2, 0, 1, 2)
+
+        self.setLayout(self.grid_layout)
+
 
 
 if __name__ == '__main__':
