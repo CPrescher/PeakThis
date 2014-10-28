@@ -1,10 +1,9 @@
 # -*- coding: utf8 -*-
+from models import PickModel
+
 __author__ = 'Clemens Prescher'
 
-import numpy as np
-
 from lmfit.models import *
-from PickModel import PickModel
 
 
 class PickConstantModel(ConstantModel, PickModel):

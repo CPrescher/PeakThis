@@ -2,9 +2,11 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
+
 import numpy as np
 
-from PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
+from models.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
+
 
 class PickModelTest(unittest.TestCase):
     def setUp(self):
