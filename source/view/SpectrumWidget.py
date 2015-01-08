@@ -93,11 +93,23 @@ class SpectrumWidget(QtGui.QWidget):
     def plot_data(self, x, y):
         self.data_plot_item.setData(x, y)
 
+    def plot_data_spectrum(self, spectrum):
+        x, y = spectrum.data
+        self.plot_data(x, y)
+
     def plot_background(self, x, y):
         self.background_plot_item.setData(x, y)
 
+    def plot_background_spectrum(self, spectrum):
+        x, y = spectrum.data
+        self.plot_background(x, y)
+
     def plot_residual(self, x, y):
         self.residual_plot_item.setData(x, y)
+
+    def plot_residual_spectrum(self, spectrum):
+        x, y = spectrum.data
+        self.plot_residual(x, y)
 
     def add_model(self):
         self.model_plot_items.append(pg.PlotDataItem(pen=pg.mkPen('g', width=1)))

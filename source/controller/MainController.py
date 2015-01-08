@@ -27,6 +27,11 @@ class MainController(object):
 
     def create_subscriptions(self):
         self.connect_click_function(self.main_widget.load_file_btn, self.load_data)
+
+        self.data.spectrum_changed.connect(self.main_widget.spectrum_widget.plot_data_spectrum)
+
+
+
         self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model)
 
     def connect_click_function(self, emitter, function):
@@ -37,7 +42,7 @@ class MainController(object):
 
     def load_data(self, filename = None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileNAme(self.main_widget, "Load Data File",
+            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
                                                              '', ('Data (*.txt)')))
         if filename is not '':
             self.data.load_data(filename)
