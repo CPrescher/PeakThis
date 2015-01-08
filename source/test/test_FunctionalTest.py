@@ -55,6 +55,9 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.assertTrue(np.array_equal(y, self.y))
 
 
-        #chooses the right
+        #then she sees that she can define a background for her Data
+
+
+        # then she adds 2 gaussian peaks because they seem to be
 
         self.fail("Finish the Test!")

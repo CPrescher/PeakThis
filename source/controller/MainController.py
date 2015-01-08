@@ -4,6 +4,7 @@ import numpy as np
 from PyQt4 import QtCore, QtGui
 
 from view.MainWidget import MainWidget
+from model.DataModel import DataModel
 
 __author__ = 'Clemens Prescher'
 
@@ -11,6 +12,7 @@ __author__ = 'Clemens Prescher'
 class MainController(object):
     def __init__(self):
         self.main_widget = MainWidget()
+        self.data = DataModel()
         self.plot_some_data()
         self.create_subscriptions()
 
@@ -38,4 +40,4 @@ class MainController(object):
             filename = str(QtGui.QFileDialog.getOpenFileNAme(self.main_widget, "Load Data File",
                                                              '', ('Data (*.txt)')))
         if filename is not '':
-            print filename
+            self.data.load_data(filename)
