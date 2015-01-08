@@ -14,8 +14,8 @@ class MainControllerTest(unittest.TestCase):
     def setUp(self):
         self.app = QtGui.QApplication([])
         self.controller = MainController()
-        self.main_view = self.controller.main_view
-        self.model_widget = self.controller.main_view.control_widget.model_widget
+        self.main_view = self.controller.main_widget
+        self.model_widget = self.controller.main_widget.control_widget.model_widget
 
     def tearDown(self):
         pass
