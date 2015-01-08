@@ -1,15 +1,16 @@
 # -*- coding: utf8 -*-
 
 import numpy as np
+from PyQt4 import QtCore, QtGui
 
-from view.MainWidget import MainView
+from view.MainWidget import MainWidget
 
 __author__ = 'Clemens Prescher'
 
 
 class MainController(object):
     def __init__(self):
-        self.main_widget = MainView()
+        self.main_widget = MainWidget()
         self.plot_some_data()
         self.create_subscriptions()
 
@@ -20,10 +21,21 @@ class MainController(object):
         x = np.linspace(0, 30, 1000)
         y = np.sin(x)
         self.main_widget.spectrum_widget.plot_data(x, y)
-        self.main_widget.spectrum_widget.plot_background(x,-0.5+0.03*x)
+        self.main_widget.spectrum_widget.plot_background(x, -0.5 + 0.03 * x)
 
     def create_subscriptions(self):
+        self.connect_click_function(self.main_widget.load_file_btn, self.load_data)
         self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model)
+
+    def connect_click_function(self, emitter, function):
+        self.main_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
 
     def add_model(self, *args, **kwargs):
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
+
+    def load_data(self, filename = None):
+        if filename is None:
+            filename = str(QtGui.QFileDialog.getOpenFileNAme(self.main_widget, "Load Data File",
+                                                             '', ('Data (*.txt)')))
+        if filename is not '':
+            print filename

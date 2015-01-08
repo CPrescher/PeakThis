@@ -62,5 +62,3 @@ class PickModelTest(unittest.TestCase):
         model.pick_parameter(3, 5)
         self.assertAlmostEqual(self.get_model_value(model, 1), 10, places=2)
         self.assertAlmostEqual(self.get_model_value(model, 3), 5, places=2)
-
-

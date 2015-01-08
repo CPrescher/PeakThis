@@ -11,9 +11,9 @@ from SpectrumWidget import SpectrumWidget
 from view.ModelWidget import ModelWidget
 
 
-class MainView(QtGui.QWidget):
+class MainWidget(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(MainView, self).__init__(parent)
+        super(MainWidget, self).__init__(parent)
         self.horizontal_layout = QtGui.QHBoxLayout(self)
         self.horizontal_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -26,6 +26,10 @@ class MainView(QtGui.QWidget):
         self.setLayout(self.horizontal_layout)
 
         self.setWindowTitle("PeakThis v{}".format(__version__))
+        self.set_shortcuts()
+
+    def set_shortcuts(self):
+        self.load_file_btn = self.control_widget.file_widget.load_file_btn
 
     def show(self):
         QtGui.QWidget.show(self)
@@ -99,6 +103,6 @@ class BackgroundWidget(QtGui.QGroupBox):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    main_view = MainView()
+    main_view = MainWidget()
     main_view.show()
     app.exec_()

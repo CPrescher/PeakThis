@@ -36,6 +36,8 @@ class PickModel(object):
     def make_params(self, *args, **kwargs):
         raise NotImplementedError
 
+
+
 class Point():
     def __init__(self, x=0., y=0.):
         self.x = x
