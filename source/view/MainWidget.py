@@ -30,6 +30,7 @@ class MainWidget(QtGui.QWidget):
 
     def set_shortcuts(self):
         self.load_file_btn = self.control_widget.file_widget.load_file_btn
+        self.background_define_btn = self.control_widget.background_widget.define_btn
 
     def show(self):
         QtGui.QWidget.show(self)
@@ -87,6 +88,8 @@ class BackgroundWidget(QtGui.QGroupBox):
         self.type_lbl = QtGui.QLabel("Type:")
         self.type_lbl.setAlignment(QtCore.Qt.AlignRight)
         self.type_cb = QtGui.QComboBox()
+        self.type_cb.addItem("pchip")
+        self.type_cb.addItem("spline")
         self.define_btn = QtGui.QPushButton('Define')
         self.subtract_btn = QtGui.QPushButton('Subtract')
 

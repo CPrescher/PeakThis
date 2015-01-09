@@ -35,6 +35,8 @@ class SpectrumWidget(QtGui.QWidget):
         self.spectrum_plot.mouse_moved.connect(self.update_mouse_position_widget)
         self.residual_plot.mouse_moved.connect(self.update_mouse_position_widget)
 
+        self.spectrum_plot.mouse_left_clicked.connect(self.mouse_left_clicked.emit)
+
         self.create_plot_data_items()
         self.model_plot_items = []
 

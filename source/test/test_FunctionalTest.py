@@ -30,9 +30,12 @@ class PeakThisFunctionalTest(unittest.TestCase):
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
 
+    def array_not_almost_equal(self, array1, array2):
+        self.assertNotAlmostEqual(np.sum(array1-array2), 0)
+
 
     def create_spectrum(self):
-        self.x = np.linspace(0, 10, 100)
+        self.x = np.linspace(0, 10, 145)
         self.y = np.zeros(self.x.shape)
         gauss_curve = PickGaussianModel()
         gauss_curve.parameters['center'].value = 6
@@ -60,9 +63,24 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.array_almost_equal(y, self.y)
 
         # then she sees that she can define a background for her Data
-        # she chooses a spline interpolation background
+        # she chooses that the standard pchip should be fine to model her data
+        # and clicks define and sees that she can miracoulsy change the background by adding points in the spectrum
 
-        self.main_widget.background_cb.s
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(2, 3)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(4, 4)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5, 5)
+        x, bkg_y = self.main_widget.spectrum_widget.background_plot_item.getData()
+
+        self.array_almost_equal(self.x, x)
+        # everytime she clicks somewhere in the spectrum graph she sees that the background changes
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5.4, 2.4)
+
+        x, bkg_y2 = self.main_widget.spectrum_widget.background_plot_item.getData()
+
+        self.array_not_almost_equal(bkg_y, bkg_y2)
+
 
         # then she starts the background selection process
 
