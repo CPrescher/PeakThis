@@ -29,6 +29,8 @@ class SpectrumWidget(QtGui.QWidget):
 
         self.setLayout(self.layout)
 
+        self.create_plot_data_items()
+
         self.spectrum_plot.connect_mouse_move_event()
         self.residual_plot.connect_mouse_move_event()
 
@@ -36,8 +38,8 @@ class SpectrumWidget(QtGui.QWidget):
         self.residual_plot.mouse_moved.connect(self.update_mouse_position_widget)
 
         self.spectrum_plot.mouse_left_clicked.connect(self.mouse_left_clicked.emit)
+        self.data_plot_item.sigClicked.connect(self.data_plot_item_clicked)
 
-        self.create_plot_data_items()
         self.model_plot_items = []
 
     def create_spectrum(self):
@@ -75,6 +77,16 @@ class SpectrumWidget(QtGui.QWidget):
         self.pos_layout.addWidget(self.y_lbl)
 
         self.layout.addLayout(self.pos_layout)
+
+
+    def data_plot_item_clicked(self):
+        """
+        this function is called when the data plot item is clicked and just emits the mouse_left_clicked signal
+        x, y values to
+        mouse_left_clicked. Otherwise the Data plot item blocks the signal...
+        """
+        x, y = self.spectrum_plot.get_mouse_position()
+        self.mouse_left_clicked.emit(x,y)
 
     def update_mouse_position_widget(self, x, y):
         self.x_lbl.setText('x: {:02.4f}'.format(x))
@@ -173,6 +185,11 @@ class ModifiedPlotItem(pg.PlotItem):
         self.range_changed_timer = QtCore.QTimer()
         self.range_changed_timer.timeout.connect(self.emit_sig_range_changed)
         self.range_changed_timer.setInterval(30)
+
+        self.cur_mouse_position_x = 0
+        self.cur_mouse_position_y = 0
+
+        self.mouse_moved.connect(self.update_cur_mouse_position)
         self.last_view_range = np.array(self.vb.viewRange())
 
     def connect_mouse_move_event(self):
@@ -195,6 +212,13 @@ class ModifiedPlotItem(pg.PlotItem):
                 x = pos.x()
                 y = pos.y()
                 self.mouse_left_clicked.emit(x, y)
+
+    def update_cur_mouse_position(self, x, y):
+        self.cur_mouse_position_x = x
+        self.cur_mouse_position_y = y
+
+    def get_mouse_position(self):
+        return self.cur_mouse_position_x, self.cur_mouse_position_y
 
     def mouse_double_click_event(self, ev):
         if (ev.button() == QtCore.Qt.RightButton) or (ev.button() == QtCore.Qt.LeftButton and
