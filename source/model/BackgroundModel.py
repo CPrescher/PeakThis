@@ -24,7 +24,6 @@ class BackgroundModel(QtCore.QObject):
         self.method = method
 
     def add_point(self, x, y):
-        print x, y
         self.x = np.append(self.x, x)
         self.y = np.append(self.y, y)
 
@@ -34,8 +33,8 @@ class BackgroundModel(QtCore.QObject):
         distances = np.sqrt((np.array(self.x)-x)**2+(np.array(self.y)-y)**2)
         ind = np.argsort(distances)
         if distances[ind[0]]<max_distance:
-            self.x.remove(self.x[ind[0]])
-            self.y.remove(self.y[ind[0]])
+            np.delete(self.x,[ind[0]])
+            np.delete(self.y,[ind[0]])
 
         self.background_model_changed.emit()
 
@@ -48,7 +47,6 @@ class BackgroundModel(QtCore.QObject):
             if self.method == 'pchip':
                 #first everything needs to be sorted
                 ind = np.argsort(self.x)
-                print ind
                 self.x = self.x[ind]
                 self.y = self.y[ind]
                 pchip_interpolator = PchipInterpolator(self.x, self.y, extrapolate=True)

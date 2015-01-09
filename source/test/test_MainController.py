@@ -35,7 +35,6 @@ class MainControllerTest(unittest.TestCase):
 
     def test_loading_data(self):
         spectrum_filename = os.path.join(test_directory, 'TestData', 'spectrum1.txt')
-        print spectrum_filename
         self.controller.load_data(spectrum_filename)
         self.assertEqual(self.data.spectrum.name,'spectrum1')
         spec_x, spec_y = self.data.spectrum.data
