@@ -10,6 +10,7 @@ class HorizontalLine(QtGui.QFrame):
         self.setFrameShape(QtGui.QFrame.HLine)
         self.setFrameShadow(QtGui.QFrame.Sunken)
 
+
 class VerticalLine(QtGui.QFrame):
     def __init__(self, parent=None):
         super(VerticalLine, self).__init__(parent)

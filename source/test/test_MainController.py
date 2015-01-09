@@ -8,10 +8,10 @@ import numpy as np
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
 
-
 from controller.MainController import MainController
 
 test_directory = os.path.dirname(os.path.realpath(__file__))
+
 
 class MainControllerTest(unittest.TestCase):
     def setUp(self):
@@ -36,11 +36,11 @@ class MainControllerTest(unittest.TestCase):
     def test_loading_data(self):
         spectrum_filename = os.path.join(test_directory, 'TestData', 'spectrum1.txt')
         self.controller.load_data(spectrum_filename)
-        self.assertEqual(self.data.spectrum.name,'spectrum1')
+        self.assertEqual(self.data.spectrum.name, 'spectrum1')
         spec_x, spec_y = self.data.spectrum.data
 
         file_data = np.loadtxt(spectrum_filename)
-        self.assertTrue(np.array_equal(spec_x, file_data[:,0]))
-        self.assertTrue(np.array_equal(spec_y, file_data[:,1]))
+        self.assertTrue(np.array_equal(spec_x, file_data[:, 0]))
+        self.assertTrue(np.array_equal(spec_y, file_data[:, 1]))
 
 

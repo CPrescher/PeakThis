@@ -16,24 +16,24 @@ class BackgroundModelTest(unittest.TestCase):
         pass
 
     def add_points(self):
-        self.x = np.array([2,3,4,5,6,7])
-        self.y = np.array([4,5,6,10,3, 5])
+        self.x = np.array([2, 3, 4, 5, 6, 7])
+        self.y = np.array([4, 5, 6, 10, 3, 5])
 
         for ind in range(len(self.x)):
-            self.bkg_model.add_point(self.x[ind],self.y[ind])
+            self.bkg_model.add_point(self.x[ind], self.y[ind])
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
 
     def array_not_almost_equal(self, array1, array2):
-        self.assertNotAlmostEqual(np.sum(array1-array2), 0)
+        self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
     def test_adding_points_to_the_model(self):
         self.array_almost_equal(self.bkg_model.x, self.x)
         self.array_almost_equal(self.bkg_model.y, self.y)
 
     def test_deleting_points_from_the_model(self):
-        #test a close point
+        # test a close point
         self.bkg_model.delete_point_close_to(3.2, 5.1)
         np.delete(self.x, 1)
         np.delete(self.y, 1)
@@ -45,14 +45,14 @@ class BackgroundModelTest(unittest.TestCase):
         self.array_almost_equal(self.bkg_model.y, self.y)
 
     def test_getting_interpolated_values(self):
-        x = np.linspace(0,10)
+        x = np.linspace(0, 10)
         bkg_y = self.bkg_model.data(x)
         self.assertEqual(bkg_y.shape, x.shape)
 
         # changing the model will change to a different function
         self.bkg_model.method = 'spline'
         bkg_y2 = self.bkg_model.data(x)
-        self.assertNotAlmostEqual(np.sum(bkg_y-bkg_y2), 0)
+        self.assertNotAlmostEqual(np.sum(bkg_y - bkg_y2), 0)
 
 
 

@@ -4,7 +4,6 @@ __author__ = 'Clemens Prescher'
 __version__ = 0.1
 
 import sys
-
 from PyQt4 import QtCore, QtGui
 
 from SpectrumWidget import SpectrumWidget

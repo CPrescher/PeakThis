@@ -5,15 +5,11 @@ import numpy as np
 from scipy.interpolate import UnivariateSpline, PchipInterpolator
 from PyQt4 import QtCore
 
-from model.Spectrum import Spectrum
-
-
-
 
 class BackgroundModel(QtCore.QObject):
     background_model_changed = QtCore.pyqtSignal()
 
-    def __init__(self, method = 'pchip'):
+    def __init__(self, method='pchip'):
         """
         :param method: possible values are 'pchip' and 'spline'
         :return:
@@ -30,22 +26,22 @@ class BackgroundModel(QtCore.QObject):
         self.background_model_changed.emit()
 
     def delete_point_close_to(self, x, y, max_distance=2):
-        distances = np.sqrt((np.array(self.x)-x)**2+(np.array(self.y)-y)**2)
+        distances = np.sqrt((np.array(self.x) - x) ** 2 + (np.array(self.y) - y) ** 2)
         ind = np.argsort(distances)
-        if distances[ind[0]]<max_distance:
-            np.delete(self.x,[ind[0]])
-            np.delete(self.y,[ind[0]])
+        if distances[ind[0]] < max_distance:
+            np.delete(self.x, [ind[0]])
+            np.delete(self.y, [ind[0]])
 
         self.background_model_changed.emit()
 
     def data(self, x):
-        if len(self.x)==0:
+        if len(self.x) == 0:
             return np.zeros(x.shape)
-        elif len(self.x)==1:
-            return np.ones(x.shape)*self.y[0]
-        elif len(self.x)>=3:
+        elif len(self.x) == 1:
+            return np.ones(x.shape) * self.y[0]
+        elif len(self.x) >= 3:
             if self.method == 'pchip':
-                #first everything needs to be sorted
+                # first everything needs to be sorted
                 ind = np.argsort(self.x)
                 self.x = self.x[ind]
                 self.y = self.y[ind]
@@ -53,7 +49,7 @@ class BackgroundModel(QtCore.QObject):
                 y = pchip_interpolator(x)
             else:
                 spline_interpolator = UnivariateSpline(self.x, self.y)
-                y= spline_interpolator(x)
+                y = spline_interpolator(x)
             return y
 
 

@@ -1,7 +1,6 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-import numpy as np
 
 class PickModel(object):
     def __init__(self, number_picks):
@@ -21,10 +20,10 @@ class PickModel(object):
         self.pick_points[self.current_pick].y = y
 
         self.current_pick += 1
-        if self.current_pick<self.number_picks:
+        if self.current_pick < self.number_picks:
             return True
         else:
-            self.current_pick=0
+            self.current_pick = 0
             return False
 
     def quick_eval(self, x):
@@ -35,7 +34,6 @@ class PickModel(object):
 
     def make_params(self, *args, **kwargs):
         raise NotImplementedError
-
 
 
 class Point():

@@ -56,11 +56,10 @@ class MainController(object):
         self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.data.background_model.add_point)
 
 
-
     def add_model(self, *args, **kwargs):
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
 
-    def load_data(self, filename = None):
+    def load_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
                                                              '', ('Data (*.txt)')))

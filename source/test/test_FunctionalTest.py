@@ -31,7 +31,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
 
     def array_not_almost_equal(self, array1, array2):
-        self.assertNotAlmostEqual(np.sum(array1-array2), 0)
+        self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
 
     def create_spectrum(self):

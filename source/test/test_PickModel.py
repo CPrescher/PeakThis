@@ -2,7 +2,6 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-
 import numpy as np
 
 from model.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
@@ -20,42 +19,42 @@ class PickModelTest(unittest.TestCase):
 
     def test_constant_model(self):
         model = PickConstantModel()
-        model.pick_parameter(2,3)
+        model.pick_parameter(2, 3)
 
-        model_y = model.quick_eval(np.linspace(0,10,100))
+        model_y = model.quick_eval(np.linspace(0, 10, 100))
 
         self.assertEqual(model_y[3], 3)
-        self.assertTrue(np.array_equal(model_y, np.ones(100)*3))
+        self.assertTrue(np.array_equal(model_y, np.ones(100) * 3))
 
     def test_linear_model(self):
         model = PickLinearModel()
-        model.pick_parameter(1.,2.)
+        model.pick_parameter(1., 2.)
 
-        model_y = model.quick_eval(np.linspace(0,10,100))
+        model_y = model.quick_eval(np.linspace(0, 10, 100))
         self.assertEqual(model_y[3], 2)
-        self.assertTrue(np.array_equal(model_y, np.ones(100)*2))
+        self.assertTrue(np.array_equal(model_y, np.ones(100) * 2))
 
         model.pick_parameter(-1., 1.)
         self.assertEqual(self.get_model_value(model, 0), 1.5)
 
     def test_quadratic_model(self):
         model = PickQuadraticModel()
-        model.pick_parameter(1.,2.)
+        model.pick_parameter(1., 2.)
 
-        model_y = model.quick_eval(np.linspace(0,10,100))
+        model_y = model.quick_eval(np.linspace(0, 10, 100))
         self.assertEqual(model_y[3], 2)
-        self.assertTrue(np.array_equal(model_y, np.ones(100)*2))
+        self.assertTrue(np.array_equal(model_y, np.ones(100) * 2))
 
         model.pick_parameter(-1., 1.)
         self.assertEqual(self.get_model_value(model, 0), 1.5)
 
         model.pick_parameter(-3, 2)
         self.assertAlmostEqual(self.get_model_value(model, 0),
-                            self.get_model_value(model, -2))
+                               self.get_model_value(model, -2))
 
     def test_gaussian_model(self):
         model = PickGaussianModel()
-        model.pick_parameter(1,10)
+        model.pick_parameter(1, 10)
 
         self.assertAlmostEqual(self.get_model_value(model, 1), 10, places=2)
 

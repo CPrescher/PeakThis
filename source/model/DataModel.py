@@ -1,10 +1,9 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
-import numpy as np
 from model.Spectrum import Spectrum
 from model.BackgroundModel import BackgroundModel
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore
 
 class DataModel(QtCore.QObject):
     spectrum_changed = QtCore.pyqtSignal(Spectrum)

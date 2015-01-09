@@ -2,10 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-import numpy as np
-from PyQt4.QtTest import QTest
-from PyQt4 import QtCore, QtGui
-
+from PyQt4 import QtGui
 
 from controller.MainController import MainController
 
