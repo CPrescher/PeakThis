@@ -85,15 +85,36 @@ class SpectrumWidget(QtGui.QWidget):
                                                  brush=pg.mkBrush('g'),
                                                  size=3)
         self.background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
+        self.background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
+                                                          brush=pg.mkBrush('k'),
+                                                          size=6,
+                                                          symbol='d')
 
         self.spectrum_plot.addItem(self.data_plot_item)
         self.spectrum_plot.addItem(self.background_plot_item)
+        self.spectrum_plot.addItem(self.background_scatter_item)
 
         self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
         self.residual_plot.addItem(self.residual_plot_item)
 
     def plot_data(self, x, y):
         self.data_plot_item.setData(x, y)
+        self.set_limits(x, y)
+
+    def set_limits(self, x, y, spacing=0.25):
+        x_min = np.min(x)
+        x_max = np.max(x)
+        y_min = np.min(y)
+        y_max = np.max(y)
+        x_range = x_max - x_min
+        x_space = spacing * x_range
+        y_range = y_max - y_min
+        y_space = spacing * y_range
+        self.spectrum_plot.setLimits(xMin=x_min - x_space,
+                                     xMax=x_max + x_space,
+                                     yMin=y_min - y_space,
+                                     yMax=y_max + y_space)
+
 
     def plot_data_spectrum(self, spectrum):
         x, y = spectrum.data
@@ -105,6 +126,13 @@ class SpectrumWidget(QtGui.QWidget):
     def plot_background_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_background(x, y)
+
+    def plot_background_points(self, x, y):
+        self.background_scatter_item.setData(x, y)
+
+    def plot_background_points_spectrum(self, spectrum):
+        x, y = spectrum.data
+        self.plot_background_points(x, y)
 
     def plot_residual(self, x, y):
         self.residual_plot_item.setData(x, y)

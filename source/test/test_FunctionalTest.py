@@ -64,22 +64,32 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         # then she sees that she can define a background for her Data
         # she chooses that the standard pchip should be fine to model her data
-        # and clicks define and sees that she can miracoulsy change the background by adding points in the spectrum
+        # and clicks define and sees that she can add points by clicking into the spectrum
 
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(2, 3)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(4, 4)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5, 5)
-        x, bkg_y = self.main_widget.spectrum_widget.background_plot_item.getData()
+        click_points_x = [2, 4, 5]
+        click_points_y = [3, 4, 5]
 
-        self.array_almost_equal(self.x, x)
-        # everytime she clicks somewhere in the spectrum graph she sees that the background changes
+        for ind in range(len(click_points_x)):
+            self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click_points_x[ind],
+                                                                                   click_points_y[ind])
+
+        bkg_points_x, bkg_points_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+
+        self.array_almost_equal(bkg_points_x, click_points_x)
+        self.array_almost_equal(bkg_points_y, click_points_y)
+
+        # everytime she clicks in the spectrum after the first three clicks she sees that the background changes
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5.4, 2.4)
 
+        x, bkg_y1 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.array_almost_equal(self.x, x)
+
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(6.3, 2.5)
         x, bkg_y2 = self.main_widget.spectrum_widget.background_plot_item.getData()
 
-        self.array_not_almost_equal(bkg_y, bkg_y2)
+        self.array_not_almost_equal(bkg_y1, bkg_y2)
 
 
         # then she starts the background selection process

@@ -23,6 +23,8 @@ class MainController(object):
     def plot_some_data(self):
         x = np.linspace(0, 30, 1000)
         y = np.sin(x)
+        self.data.spectrum._x=x
+        self.data.spectrum._y=y
         self.main_widget.spectrum_widget.plot_data(x, y)
 
     def create_subscriptions(self):
@@ -30,6 +32,7 @@ class MainController(object):
 
         self.data.spectrum_changed.connect(self.main_widget.spectrum_widget.plot_data_spectrum)
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
+        self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
 

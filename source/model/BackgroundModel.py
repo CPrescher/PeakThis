@@ -34,6 +34,9 @@ class BackgroundModel(QtCore.QObject):
 
         self.background_model_changed.emit()
 
+    def get_points(self):
+        return self.x, self.y
+
     def data(self, x):
         if len(self.x) == 0:
             return np.zeros(x.shape)
