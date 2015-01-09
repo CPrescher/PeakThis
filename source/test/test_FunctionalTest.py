@@ -104,9 +104,45 @@ class PeakThisFunctionalTest(unittest.TestCase):
         x, bkg_y4 = self.main_widget.spectrum_widget.background_plot_item.getData()
         self.array_almost_equal(bkg_y4, bkg_y2)
 
+        # Edith decides that she is finished with the background and clicks the button to finish it
+
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # she notices that clicking into the spectrum now does not effect background any more...
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10,10)
+        x, bkg_y5 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.array_almost_equal(bkg_y5, bkg_y4)
+
+        # while playing and being happy that everything works she realizes that there is one point which might be
+        # better a little bit lower
+        # She clicks the define button again and moves to the point and tries to delete by pressing x
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
 
+        class DummyKeyPressEvent():
+            def __init__(self, text):
+                self._text = text
+            def text(self):
+                return self._text
 
+
+        self.main_widget.spectrum_widget.spectrum_plot.update_cur_mouse_position(6.2, 2.6)
+        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
+
+        x_click, y_click = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        self.array_almost_equal(x_click, [2, 4, 5, 5.4])
+        self.array_almost_equal(y_click, [3, 4, 5, 2.4])
+
+        # Now she is satisfied with the result and finishes the background determination process
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # she notices that pressing x does not delete points anymore
+        self.assertRaises(TypeError,
+                          self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent,
+                          DummyKeyPressEvent('x'))
+        x_click, y_click = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        self.array_almost_equal(x_click, [2, 4, 5, 5.4])
+        self.array_almost_equal(y_click, [3, 4, 5, 2.4])
 
         # then she starts the background selection process
 

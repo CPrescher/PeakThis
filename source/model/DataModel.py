@@ -1,9 +1,12 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
+
+import numpy as np
+from PyQt4 import QtCore
+
 from model.Spectrum import Spectrum
 from model.BackgroundModel import BackgroundModel
 
-from PyQt4 import QtCore
 
 class DataModel(QtCore.QObject):
     spectrum_changed = QtCore.pyqtSignal(Spectrum)
@@ -33,7 +36,10 @@ class DataModel(QtCore.QObject):
         #emit background model
         x, y = self.spectrum.data
         bkg_y = self.background_model.data(x)
-        self.background_spectrum = Spectrum(x, bkg_y)
+        if bkg_y is not None:
+            self.background_spectrum = Spectrum(x, bkg_y)
+        else:
+            self.background_spectrum = Spectrum(np.array([]),np.array([]))
         self.background_changed.emit(self.background_spectrum)
         #emit the points:
         x, y = self.background_model.get_points()

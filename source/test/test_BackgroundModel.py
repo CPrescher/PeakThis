@@ -35,8 +35,8 @@ class BackgroundModelTest(unittest.TestCase):
     def test_deleting_points_from_the_model(self):
         # test a close point
         self.bkg_model.delete_point_close_to(3.2, 5.1)
-        np.delete(self.x, 1)
-        np.delete(self.y, 1)
+        self.x = np.delete(self.x, 1)
+        self.y = np.delete(self.y, 1)
         self.array_almost_equal(self.bkg_model.x, self.x)
         self.array_almost_equal(self.bkg_model.y, self.y)
 

@@ -29,8 +29,8 @@ class BackgroundModel(QtCore.QObject):
         distances = np.sqrt((np.array(self.x) - x) ** 2 + (np.array(self.y) - y) ** 2)
         ind = np.argsort(distances)
         if distances[ind[0]] < max_distance:
-            np.delete(self.x, [ind[0]])
-            np.delete(self.y, [ind[0]])
+            self.x = np.delete(self.x, [ind[0]])
+            self.y = np.delete(self.y, [ind[0]])
 
         self.background_model_changed.emit()
 
@@ -43,19 +43,23 @@ class BackgroundModel(QtCore.QObject):
 
     def data(self, x):
         if len(self.x) == 0:
-            return np.zeros(x.shape)
+            return None
         elif len(self.x) == 1:
             return np.ones(x.shape) * self.y[0]
-        elif len(self.x) >= 3:
+        elif len(self.x) == 2:
+            m = (self.y[1]-self.y[0])/(self.x[1]-self.x[0])
+            n = self.y[1] - self.x[1]*m
+            return m*x+n
+        elif len(self.x) >= 2:
+            ind = np.argsort(self.x)
+            self.x = self.x[ind]
+            self.y = self.y[ind]
             if self.method == 'pchip':
                 # first everything needs to be sorted
-                ind = np.argsort(self.x)
-                self.x = self.x[ind]
-                self.y = self.y[ind]
                 pchip_interpolator = PchipInterpolator(self.x, self.y, extrapolate=True)
                 y = pchip_interpolator(x)
             elif self.method == 'spline':
-                spline_interpolator = UnivariateSpline(self.x, self.y)
+                spline_interpolator = UnivariateSpline(self.x, self.y, k = 3, s=0)
                 y = spline_interpolator(x)
             else:
                 y = None

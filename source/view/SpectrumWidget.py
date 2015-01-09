@@ -166,6 +166,9 @@ class SpectrumWidget(QtGui.QWidget):
     def set_model(self, x, y, index):
         self.model_plot_items[index].setData(x, y)
 
+    def get_mouse_position(self):
+        return self.spectrum_plot.get_mouse_position()
+
 
 class ModifiedPlotItem(pg.PlotItem):
     mouse_moved = QtCore.pyqtSignal(float, float)
