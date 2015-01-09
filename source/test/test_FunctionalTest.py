@@ -80,7 +80,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.array_almost_equal(bkg_points_x, click_points_x)
         self.array_almost_equal(bkg_points_y, click_points_y)
 
-        # everytime she clicks in the spectrum after the first three clicks she sees that the background changes
+        # every time she clicks in the spectrum after the first three clicks she sees that the background changes
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5.4, 2.4)
 
         x, bkg_y1 = self.main_widget.spectrum_widget.background_plot_item.getData()
@@ -90,6 +90,22 @@ class PeakThisFunctionalTest(unittest.TestCase):
         x, bkg_y2 = self.main_widget.spectrum_widget.background_plot_item.getData()
 
         self.array_not_almost_equal(bkg_y1, bkg_y2)
+
+        # after inspecting her data and background model she thinks that 'pchip' is maybe not the best way to
+        # approximate the background so she tries the spline model, and she notices how the background is change
+
+        self.main_widget.background_method_cb.setCurrentIndex(1)
+
+        x, bkg_y3 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.array_not_almost_equal(bkg_y2, bkg_y3)
+
+        # then she sees that spline is actually worse and goes back to pchip
+        self.main_widget.background_method_cb.setCurrentIndex(0)
+        x, bkg_y4 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.array_almost_equal(bkg_y4, bkg_y2)
+
+
+
 
 
         # then she starts the background selection process

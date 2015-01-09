@@ -34,7 +34,11 @@ class MainController(object):
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
         self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
+
+
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
+
+        self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
 
         self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model)
 
@@ -58,6 +62,8 @@ class MainController(object):
 
         self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.data.background_model.add_point)
 
+    def background_model_changed(self):
+        self.data.background_model.set_method(str(self.main_widget.background_method_cb.currentText()))
 
     def add_model(self, *args, **kwargs):
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()

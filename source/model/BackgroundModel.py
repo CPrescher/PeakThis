@@ -37,6 +37,10 @@ class BackgroundModel(QtCore.QObject):
     def get_points(self):
         return self.x, self.y
 
+    def set_method(self, method):
+        self.method = method
+        self.background_model_changed.emit()
+
     def data(self, x):
         if len(self.x) == 0:
             return np.zeros(x.shape)
@@ -50,9 +54,11 @@ class BackgroundModel(QtCore.QObject):
                 self.y = self.y[ind]
                 pchip_interpolator = PchipInterpolator(self.x, self.y, extrapolate=True)
                 y = pchip_interpolator(x)
-            else:
+            elif self.method == 'spline':
                 spline_interpolator = UnivariateSpline(self.x, self.y)
                 y = spline_interpolator(x)
+            else:
+                y = None
             return y
 
 

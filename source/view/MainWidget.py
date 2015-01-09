@@ -30,6 +30,7 @@ class MainWidget(QtGui.QWidget):
     def set_shortcuts(self):
         self.load_file_btn = self.control_widget.file_widget.load_file_btn
         self.background_define_btn = self.control_widget.background_widget.define_btn
+        self.background_method_cb = self.control_widget.background_widget.type_cb
 
     def show(self):
         QtGui.QWidget.show(self)
