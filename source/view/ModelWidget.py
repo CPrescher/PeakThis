@@ -13,9 +13,11 @@ class ModelWidget(QtGui.QGroupBox):
         self.add_btn = QtGui.QPushButton("Add")
         self.delete_btn = QtGui.QPushButton("Delete")
 
-        self.model_list = QtGui.QListView()
+        self.model_list = QtGui.QListWidget()
 
         self.parameter_table = QtGui.QTableWidget()
+        self.parameter_table.verticalHeader().setVisible(False)
+        self.parameter_table.setColumnCount(5)
 
         self.grid_layout.addWidget(self.add_btn, 0, 0)
         self.grid_layout.addWidget(self.delete_btn, 0, 1)
@@ -28,6 +30,22 @@ class ModelWidget(QtGui.QGroupBox):
 
     def show_model_selector_dialog(self):
         self.model_selector_dialog.show()
+
+    def update_parameters(self, parameters):
+        self.parameter_table.clear()
+        self.parameter_table.setRowCount(len(parameters))
+
+        ind = 0
+        for name in parameters:
+            self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(name))
+            self.parameter_table.setItem(ind, 1, QtGui.QTableWidgetItem(str(parameters[name].value)))
+            self.parameter_table.setItem(ind, 2, QtGui.QTableWidgetItem(str(parameters[name].vary)))
+            self.parameter_table.setItem(ind, 3, QtGui.QTableWidgetItem(str(parameters[name].min)))
+            self.parameter_table.setItem(ind, 4, QtGui.QTableWidgetItem(str(parameters[name].max)))
+
+            ind += 1
+
+        self.parameter_table.resizeColumnsToContents()
 
 
 class ModelSelectorDialog(QtGui.QDialog):
@@ -55,6 +73,17 @@ class ModelSelectorDialog(QtGui.QDialog):
 
         self.ok_btn.clicked.connect(self.accept)
         self.cancel_btn.clicked.connect(self.reject)
+
+    def populate_models(self, model_dict):
+        self.model_list.clear()
+        for model_key in model_dict:
+            self.model_list.addItem(model_key)
+
+    def get_selected_index(self):
+        return self.model_list.currentRow()
+
+    def get_selected_item_string(self):
+        return str(self.model_list.currentItem().text())
 
     def show(self):
         QtGui.QWidget.show(self)

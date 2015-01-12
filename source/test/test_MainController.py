@@ -24,15 +24,6 @@ class MainControllerTest(unittest.TestCase):
     def tearDown(self):
         del self.app
 
-    def test_adding_models(self):
-        QTest.mouseClick(self.model_widget.add_btn, QtCore.Qt.LeftButton)
-        self.assertTrue(self.model_widget.model_selector_dialog.isVisible())
-
-        self.model_widget.model_selector_dialog.model_list.setCurrentRow(1)
-        QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
-
-        self.assertFalse(self.model_widget.model_selector_dialog.isVisible())
-
     def test_loading_data(self):
         spectrum_filename = os.path.join(test_directory, 'TestData', 'spectrum1.txt')
         self.controller.load_data(spectrum_filename)
@@ -42,5 +33,23 @@ class MainControllerTest(unittest.TestCase):
         file_data = np.loadtxt(spectrum_filename)
         self.assertTrue(np.array_equal(spec_x, file_data[:, 0]))
         self.assertTrue(np.array_equal(spec_y, file_data[:, 1]))
+
+    def test_adding_models(self):
+        QTest.mouseClick(self.model_widget.add_btn, QtCore.Qt.LeftButton)
+        self.assertTrue(self.model_widget.model_selector_dialog.isVisible())
+
+        self.assertGreater(self.model_widget.model_selector_dialog.model_list.count(), 0)
+        self.model_widget.model_selector_dialog.model_list.setCurrentRow(0)
+
+        #closing the model dialog
+        QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
+        self.assertFalse(self.model_widget.model_selector_dialog.isVisible())
+
+        # now we impose that there is a new items list in on the right:
+        self.assertGreater(self.model_widget.model_list.count(), 0)
+
+        #
+
+        self.fail("Finish Test")
 
 

@@ -5,6 +5,7 @@ from lmfit.models import *
 from model.PickModel import PickModel
 
 
+
 class PickConstantModel(ConstantModel, PickModel):
     def __init__(self, *args, **kwargs):
         super(PickConstantModel, self).__init__(*args, **kwargs)
@@ -81,6 +82,12 @@ class PickGaussianModel(GaussianModel, PickModel):
 
 
 
+models_dict = {
+    "Gaussian Model": PickGaussianModel,
+    "Quadratic Model": PickQuadraticModel,
+    "Linear Model": PickLinearModel,
+    "Constant Model": PickConstantModel,
+}
 
 
         

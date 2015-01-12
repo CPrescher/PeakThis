@@ -5,6 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 from view.MainWidget import MainWidget
 from model.DataModel import DataModel
+from model.PickModels import models_dict
 
 
 __author__ = 'Clemens Prescher'
@@ -34,11 +35,18 @@ class MainController(object):
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
         self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
+        self.data.models_changed.connect(self.update_displayed_models)
+        self.main_widget.control_widget.model_widget.model_list.currentRowChanged.connect(
+            self.update_displayed_model_parameters
+        )
+
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
 
-        self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model)
-
+        self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model_btn_clicked)
+        self.main_widget.control_widget.model_widget.model_selector_dialog.accepted.connect(
+            self.add_model_dialog_accepted
+        )
 
     def connect_click_function(self, emitter, function):
         self.main_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -76,8 +84,23 @@ class MainController(object):
     def spectrum_key_press_event_empty(self, QKeyEvent):
         pass
 
-    def add_model(self, *args, **kwargs):
+    def add_model_btn_clicked(self, *args, **kwargs):
+        self.main_widget.model_selector_dialog.populate_models(models_dict)
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
+
+    def add_model_dialog_accepted(self):
+        selected_name = self.main_widget.model_selector_dialog.get_selected_item_string()
+        self.data.add_model(models_dict[selected_name]())
+        self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models)-1)
+
+    def update_displayed_models(self):
+        self.main_widget.control_widget.model_widget.model_list.clear()
+        for model in self.data.models:
+            self.main_widget.control_widget.model_widget.model_list.addItem(model.name)
+
+    def update_displayed_model_parameters(self, index):
+        self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
+
 
     def load_data(self, filename=None):
         if filename is None:

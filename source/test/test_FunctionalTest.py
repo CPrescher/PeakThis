@@ -137,17 +137,27 @@ class PeakThisFunctionalTest(unittest.TestCase):
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
         # she notices that pressing x does not delete points anymore
-        self.assertRaises(TypeError,
-                          self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent,
-                          DummyKeyPressEvent('x'))
+        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
         x_click, y_click = self.main_widget.spectrum_widget.background_scatter_item.getData()
         self.array_almost_equal(x_click, [2, 4, 5, 5.4])
         self.array_almost_equal(y_click, [3, 4, 5, 2.4])
 
-        # then she starts the background selection process
+        # As Edith is now happy with the background she decides to add a peak, because that's what she is here for,
+        # right?
+        # She sees that there is an add button an presses it
+        QTest.mouseClick(self.main_widget.add_model_btn, QtCore.Qt.LeftButton)
 
-        # and clicks on several points in the spectrum to add them to the background spectrum
+        # a small dialog appears where she can choose the model she wants to add. She Sees that there are several
+        # possible she thinks her peaks are
+        # Gaussian shape like she chooses the Gaussian entry
+        self.main_widget.model_selector_dialog.model_list.setCurrentRow(0)
+        QTest.mouseClick(self.main_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
 
-        # then she adds 2 gaussian peaks because they seem to be
+        # then she sees that a model appears in the list below the add button and that there is a table with
+        # parameters available for the model
+
+        self.assertGreater(self.main_widget.model_list.count(), 0)
+        self.assertGreater(self.main_widget.model_parameter_table.rowCount(), 0)
+
 
         self.fail("Finish the Test!")

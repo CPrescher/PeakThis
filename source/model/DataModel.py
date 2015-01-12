@@ -10,8 +10,11 @@ from model.BackgroundModel import BackgroundModel
 
 class DataModel(QtCore.QObject):
     spectrum_changed = QtCore.pyqtSignal(Spectrum)
+
     background_changed = QtCore.pyqtSignal(Spectrum)
     background_points_changed = QtCore.pyqtSignal(Spectrum)
+
+    models_changed = QtCore.pyqtSignal()
 
     def __init__(self):
         super(DataModel, self).__init__()
@@ -45,11 +48,13 @@ class DataModel(QtCore.QObject):
         x, y = self.background_model.get_points()
         self.background_points_changed.emit(Spectrum(x,y))
 
-    def add_model(self, model_name):
-        pass
+    def add_model(self, model):
+        self.models.append(model)
+        self.models_changed.emit()
 
     def del_model(self, index):
-        pass
+        del self.models[index]
+        self.models_changed.emit()
 
     def save_models(self, filename):
         pass
