@@ -25,6 +25,12 @@ class MainControllerTest(unittest.TestCase):
     def tearDown(self):
         del self.app
 
+    def array_almost_equal(self, array1, array2):
+        self.assertAlmostEqual(np.sum(array1 - array2), 0)
+
+    def array_not_almost_equal(self, array1, array2):
+        self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
+
     def test_loading_data(self):
         spectrum_filename = os.path.join(test_directory, 'TestData', 'spectrum1.txt')
         self.controller.load_data(spectrum_filename)
@@ -42,7 +48,7 @@ class MainControllerTest(unittest.TestCase):
         self.assertGreater(self.model_widget.model_selector_dialog.model_list.count(), 0)
         self.model_widget.model_selector_dialog.model_list.setCurrentRow(0)
 
-        #closing the model dialog
+        # closing the model dialog
         QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
         self.assertFalse(self.model_widget.model_selector_dialog.isVisible())
 
@@ -55,8 +61,17 @@ class MainControllerTest(unittest.TestCase):
         # and in the spectrum
         self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
 
+    def test_updating_model_parameters(self):
+        # adding a dummy model (tested in previous unittest)
+        QTest.mouseClick(self.model_widget.add_btn, QtCore.Qt.LeftButton)
+        self.model_widget.model_selector_dialog.model_list.setCurrentRow(0)
+        QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
 
-
-        self.fail("Finish Test")
+        start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
+        self.model_widget.parameter_table.item(0,1).setText('20')
+        self.model_widget.parameter_table.item(2,1).setText('19')
+        after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
+        self.array_almost_equal(start_x, after_x)
+        self.array_not_almost_equal(start_y, after_y)
 
 

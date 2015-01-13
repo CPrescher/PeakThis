@@ -42,7 +42,6 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.model_parameters_changed.connect(
             self.data.update_model
         )
-
         self.data.model_parameters_changed.connect(
             self.main_widget.spectrum_widget.update_model_spectrum
         )
