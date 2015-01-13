@@ -33,7 +33,9 @@ class MainWidget(QtGui.QWidget):
         self.background_define_btn = self.control_widget.background_widget.define_btn
         self.background_method_cb = self.control_widget.background_widget.type_cb
 
-        self.add_model_btn = self.control_widget.model_widget.add_btn
+        self.model_add_btn = self.control_widget.model_widget.add_btn
+        self.model_delete_btn = self.control_widget.model_widget.delete_btn
+        self.model_define_btn = self.control_widget.model_widget.define_btn
         self.model_selector_dialog = self.control_widget.model_widget.model_selector_dialog
         self.model_list = self.control_widget.model_widget.model_list
         self.model_parameter_table = self.control_widget.model_widget.parameter_table

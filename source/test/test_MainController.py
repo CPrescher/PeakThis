@@ -20,6 +20,7 @@ class MainControllerTest(unittest.TestCase):
         self.data = self.controller.data
         self.main_view = self.controller.main_widget
         self.model_widget = self.controller.main_widget.control_widget.model_widget
+        self.spectrum_widget = self.controller.main_widget.spectrum_widget
 
     def tearDown(self):
         del self.app
@@ -48,7 +49,13 @@ class MainControllerTest(unittest.TestCase):
         # now we impose that there is a new items list in on the right:
         self.assertGreater(self.model_widget.model_list.count(), 0)
 
-        #
+        # by doing this there should also be a new model in the DataModel
+        self.assertGreater(len(self.data.models), 0)
+
+        # and in the spectrum
+        self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
+
+
 
         self.fail("Finish Test")
 

@@ -2,9 +2,13 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui, QtCore
+from lmfit import Parameters, Parameter
 
 
 class ModelWidget(QtGui.QGroupBox):
+    model_parameters_changed = QtCore.pyqtSignal(int, Parameters)
+    model_selected_changed = QtCore.pyqtSignal(int)
+
     def __init__(self, parent=None):
         super(ModelWidget, self).__init__("Models", parent)
 
@@ -12,6 +16,7 @@ class ModelWidget(QtGui.QGroupBox):
 
         self.add_btn = QtGui.QPushButton("Add")
         self.delete_btn = QtGui.QPushButton("Delete")
+        self.define_btn = QtGui.QPushButton("Define")
 
         self.model_list = QtGui.QListWidget()
 
@@ -21,20 +26,24 @@ class ModelWidget(QtGui.QGroupBox):
 
         self.grid_layout.addWidget(self.add_btn, 0, 0)
         self.grid_layout.addWidget(self.delete_btn, 0, 1)
-        self.grid_layout.addWidget(self.model_list, 1, 0, 1, 2)
-        self.grid_layout.addWidget(self.parameter_table, 2, 0, 1, 2)
+        self.grid_layout.addWidget(self.define_btn, 0, 2)
+        self.grid_layout.addWidget(self.model_list, 1, 0, 1, 3)
+        self.grid_layout.addWidget(self.parameter_table, 2, 0, 1, 3)
 
         self.setLayout(self.grid_layout)
 
         self.model_selector_dialog = ModelSelectorDialog(self)
 
+        self.create_signals()
+
     def show_model_selector_dialog(self):
         self.model_selector_dialog.show()
 
+
     def update_parameters(self, parameters):
+        self.parameter_table.blockSignals(True)
         self.parameter_table.clear()
         self.parameter_table.setRowCount(len(parameters))
-
         ind = 0
         for name in parameters:
             self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(name))
@@ -44,9 +53,38 @@ class ModelWidget(QtGui.QGroupBox):
             self.parameter_table.setItem(ind, 4, QtGui.QTableWidgetItem(str(parameters[name].max)))
 
             ind += 1
-
         self.parameter_table.resizeColumnsToContents()
+        self.parameter_table.blockSignals(False)
 
+
+    def get_parameters(self):
+        parameters = Parameters()
+        for row_ind in range(self.parameter_table.rowCount()):
+            name = str(self.parameter_table.item(row_ind,0).text())
+            value = convert_qstring_to_float(self.parameter_table.item(row_ind, 1).text())
+            vary = convert_qstring_to_float(self.parameter_table.item(row_ind, 2).text())
+            min = convert_qstring_to_float(self.parameter_table.item(row_ind, 3).text())
+            max = convert_qstring_to_float(self.parameter_table.item(row_ind, 4).text())
+            parameters.add(name, value, vary=vary, min=min, max=max)
+        return self.model_list.currentRow(), parameters
+
+    def create_signals(self):
+        self.model_list.currentRowChanged.connect(self.model_selected_changed)
+        self.parameter_table.itemChanged.connect(self.item_changed)
+
+    def item_changed(self):
+        self.model_parameters_changed.emit(*self.get_parameters())
+
+def convert_qstring_to_float(text):
+    text = str(text)
+    if text=="None":
+        return None
+    elif text=="True":
+        return True
+    elif text=="False":
+        return False
+    else:
+        return float(text)
 
 class ModelSelectorDialog(QtGui.QDialog):
     def __init__(self, parent=None):

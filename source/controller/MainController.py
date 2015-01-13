@@ -35,10 +35,18 @@ class MainController(object):
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
         self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
-        self.data.models_changed.connect(self.update_displayed_models)
-        self.main_widget.control_widget.model_widget.model_list.currentRowChanged.connect(
+        self.data.model_added.connect(self.update_displayed_models)
+        self.main_widget.control_widget.model_widget.model_selected_changed.connect(
             self.update_displayed_model_parameters
         )
+        self.main_widget.control_widget.model_widget.model_parameters_changed.connect(
+            self.data.update_model
+        )
+
+        self.data.model_parameters_changed.connect(
+            self.main_widget.spectrum_widget.update_model_spectrum
+        )
+
 
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
@@ -91,6 +99,7 @@ class MainController(object):
     def add_model_dialog_accepted(self):
         selected_name = self.main_widget.model_selector_dialog.get_selected_item_string()
         self.data.add_model(models_dict[selected_name]())
+        self.main_widget.spectrum_widget.add_model(self.data.get_model_spectrum(-1))
         self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models)-1)
 
     def update_displayed_models(self):
@@ -100,7 +109,6 @@ class MainController(object):
 
     def update_displayed_model_parameters(self, index):
         self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
-
 
     def load_data(self, filename=None):
         if filename is None:

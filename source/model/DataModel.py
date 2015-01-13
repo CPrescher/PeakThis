@@ -14,7 +14,9 @@ class DataModel(QtCore.QObject):
     background_changed = QtCore.pyqtSignal(Spectrum)
     background_points_changed = QtCore.pyqtSignal(Spectrum)
 
-    models_changed = QtCore.pyqtSignal()
+    model_added = QtCore.pyqtSignal()
+    model_deleted = QtCore.pyqtSignal(int)
+    model_parameters_changed = QtCore.pyqtSignal(int, Spectrum)
 
     def __init__(self):
         super(DataModel, self).__init__()
@@ -50,11 +52,24 @@ class DataModel(QtCore.QObject):
 
     def add_model(self, model):
         self.models.append(model)
-        self.models_changed.emit()
+        self.model_added.emit()
 
-    def del_model(self, index):
+    def update_model(self, ind, parameters):
+        for key, val in parameters.iteritems():
+            self.models[ind].parameters[key].value = parameters[key].value
+            self.models[ind].parameters[key].vary = parameters[key].vary
+            self.models[ind].parameters[key].min = parameters[key].min
+            self.models[ind].parameters[key].max = parameters[key].max
+        self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+
+    def get_model_spectrum(self, ind):
+        x, _ = self.spectrum.data
+        y = self.models[ind].quick_eval(x)
+        return Spectrum(x, y)
+
+    def del_model(self, index=-1):
         del self.models[index]
-        self.models_changed.emit()
+        self.model_deleted.emit(index)
 
     def save_models(self, filename):
         pass

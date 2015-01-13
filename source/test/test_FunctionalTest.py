@@ -145,7 +145,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # As Edith is now happy with the background she decides to add a peak, because that's what she is here for,
         # right?
         # She sees that there is an add button an presses it
-        QTest.mouseClick(self.main_widget.add_model_btn, QtCore.Qt.LeftButton)
+        QTest.mouseClick(self.main_widget.model_add_btn, QtCore.Qt.LeftButton)
 
         # a small dialog appears where she can choose the model she wants to add. She Sees that there are several
         # possible she thinks her peaks are
@@ -158,6 +158,11 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         self.assertGreater(self.main_widget.model_list.count(), 0)
         self.assertGreater(self.main_widget.model_parameter_table.rowCount(), 0)
+
+        # then she sees the "Define" and wonders, if this also makes it possible to visually define the model, like
+        # she did before with the Background
+
+        QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
 
 
         self.fail("Finish the Test!")
