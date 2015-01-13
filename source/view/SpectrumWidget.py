@@ -153,18 +153,22 @@ class SpectrumWidget(QtGui.QWidget):
         x, y = spectrum.data
         self.plot_residual(x, y)
 
-    def add_model(self):
+    def add_model(self, spectrum=None):
         self.model_plot_items.append(pg.PlotDataItem(pen=pg.mkPen('g', width=1)))
         self.spectrum_plot.addItem(self.model_plot_items[-1])
+        if spectrum is not None:
+            self.update_model_spectrum(-1, spectrum)
 
-        return self.model_plot_items[-1]
+    def update_model(self, ind, x, y):
+        self.model_plot_items[ind].setData(x, y)
 
-    def del_model(self, index):
+    def update_model_spectrum(self, ind, spectrum):
+        x, y = spectrum.data
+        self.update_model(ind, x, y)
+
+    def del_model(self, index=-1):
         self.spectrum_plot.removeItem(self.model_plot_items[index])
         del self.model_plot_items[index]
-
-    def set_model(self, x, y, index):
-        self.model_plot_items[index].setData(x, y)
 
     def get_mouse_position(self):
         return self.spectrum_plot.get_mouse_position()
