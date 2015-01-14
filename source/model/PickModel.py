@@ -1,7 +1,6 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from lmfit import Parameters
 
 class PickModel(object):
     def __init__(self, number_picks):
@@ -10,7 +9,6 @@ class PickModel(object):
         self.pick_points = [Point()] * number_picks
 
         self.parameters = self.make_params()
-
 
     def update_current_parameter(self, x, y):
         raise NotImplementedError

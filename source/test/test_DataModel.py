@@ -45,18 +45,22 @@ class DataModelTest(unittest.TestCase):
         self.assertEqual(len(self.data.models), 0)
 
     def test_get_model_spectrum(self):
+        # get_model_spectrum should give a spectrum on top of the current background spectrum
+        # for a empty PickGaussianModel this results in the model spectrum being equal to the background spectrum
         self.data.add_model(PickGaussianModel())
-        spec = self.data.get_model_spectrum(0)
-        spec_x, spec_y = spec.data
+        model_spectrum = self.data.get_model_spectrum(0)
+        model_x, model_y = model_spectrum.data
         data_x, data_y = self.data.spectrum.data
-        self.assertEqual(np.sum(spec_y), 0)
-        self.array_almost_equal(spec_x, data_x)
+        bkg_x, bkg_y = self.data.background_spectrum.data
+        self.array_almost_equal(model_y, bkg_y)
+        self.array_almost_equal(model_x, data_x)
 
     def test_updating_models(self):
         self.data.add_model(PickGaussianModel())
         spec = self.data.get_model_spectrum(0)
         spec_x, spec_y = spec.data
-        self.assertEqual(np.sum(spec_y), 0)
+        bkg_x, bkg_y = self.data.get_model_spectrum(0).data
+        self.array_almost_equal(spec_y, bkg_y)
 
         new_parameters = copy(self.data.models[0].parameters)
         new_parameters['amplitude'].value = 10
@@ -65,8 +69,10 @@ class DataModelTest(unittest.TestCase):
         new_spec = self.data.get_model_spectrum(0)
         new_spec_x, new_spec_y = new_spec.data
 
+        pure_model_y = self.data.models[0].quick_eval(spec_x)
+
         self.array_almost_equal(new_spec_x, spec_x)
-        self.array_not_almost_equal(new_spec_y, spec_y)
+        self.array_almost_equal(new_spec_y, pure_model_y+bkg_y)
 
 
 
