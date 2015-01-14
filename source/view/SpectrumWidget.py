@@ -95,9 +95,12 @@ class SpectrumWidget(QtGui.QWidget):
         self.y_lbl.setText('y: {:02.4f}'.format(y))
 
     def create_plot_data_items(self):
-        self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
+        self.current_selected_model = 0
+        self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.3),
                                                  brush=pg.mkBrush('g'),
-                                                 size=3)
+                                                 size=5,
+                                                 symbol = 'x',
+                                                 pxMode=True)
 
         self.background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
         self.background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
@@ -106,8 +109,7 @@ class SpectrumWidget(QtGui.QWidget):
                                                           symbol='d')
 
         self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
-
-        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=2))
+        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3, style=QtCore.Qt.DashLine))
 
         self.spectrum_plot.addItem(self.data_plot_item)
         self.spectrum_plot.addItem(self.background_plot_item)
@@ -167,7 +169,8 @@ class SpectrumWidget(QtGui.QWidget):
         self.plot_model_sum(x, y)
 
     def add_model(self, spectrum=None):
-        self.model_plot_items.append(pg.PlotDataItem(pen=pg.mkPen((253,153,50), width=1)))
+        self.model_plot_items.append(pg.PlotDataItem())
+        # self.activate_model_spectrum(len(self.model_plot_items)-1)
         self.spectrum_plot.addItem(self.model_plot_items[-1])
         if spectrum is not None:
             self.update_model_spectrum(-1, spectrum)
@@ -178,6 +181,12 @@ class SpectrumWidget(QtGui.QWidget):
     def update_model_spectrum(self, ind, spectrum):
         x, y = spectrum.data
         self.update_model(ind, x, y)
+
+    def activate_model_spectrum(self, ind):
+        print self.current_selected_model, ind
+        self.model_plot_items[self.current_selected_model].setPen(pg.mkPen((253,153,50), width=1))
+        self.model_plot_items[ind].setPen(pg.mkPen((200,120,20), width=1))
+        self.current_selected_model=ind
 
     def del_model(self, index=-1):
         self.spectrum_plot.removeItem(self.model_plot_items[index])

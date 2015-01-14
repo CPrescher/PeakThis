@@ -39,6 +39,9 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.model_selected_changed.connect(
             self.update_displayed_model_parameters
         )
+        self.main_widget.control_widget.model_widget.model_selected_changed.connect(
+            self.main_widget.spectrum_widget.activate_model_spectrum
+        )
         self.main_widget.control_widget.model_widget.model_parameters_changed.connect(
             self.data.update_model
         )
@@ -110,9 +113,11 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models)-1)
 
     def update_displayed_models(self):
+        self.main_widget.model_list.blockSignals(True)
         self.main_widget.control_widget.model_widget.model_list.clear()
         for model in self.data.models:
             self.main_widget.control_widget.model_widget.model_list.addItem(model.name)
+        self.main_widget.model_list.blockSignals(False)
 
     def update_displayed_model_parameters(self, index):
         self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
