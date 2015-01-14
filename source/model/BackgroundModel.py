@@ -26,13 +26,14 @@ class BackgroundModel(QtCore.QObject):
         self.background_model_changed.emit()
 
     def delete_point_close_to(self, x, y, max_distance=2):
-        distances = np.sqrt((np.array(self.x) - x) ** 2 + (np.array(self.y) - y) ** 2)
-        ind = np.argsort(distances)
-        if distances[ind[0]] < max_distance:
+        if len(self.x)>0:
+            distances = np.sqrt((np.array(self.x) - x) ** 2 + (np.array(self.y) - y) ** 2)
+            ind = np.argsort(distances)
+
             self.x = np.delete(self.x, [ind[0]])
             self.y = np.delete(self.y, [ind[0]])
 
-        self.background_model_changed.emit()
+            self.background_model_changed.emit()
 
     def get_points(self):
         return self.x, self.y

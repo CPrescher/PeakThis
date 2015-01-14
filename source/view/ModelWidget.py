@@ -32,7 +32,7 @@ class ModelWidget(QtGui.QGroupBox):
 
         self.setLayout(self.grid_layout)
 
-        self.model_selector_dialog = ModelSelectorDialog(self)
+        self.model_selector_dialog = ModelSelectorDialog(self.add_btn)
 
         self.create_signals()
 
@@ -90,10 +90,15 @@ class ModelSelectorDialog(QtGui.QDialog):
     def __init__(self, parent=None):
         super(ModelSelectorDialog, self).__init__(parent)
 
-        self.setWindowTitle("Please select a Model:")
+        self.setMaximumSize(50,250)
+        self.setMinimumSize(50,250)
+
+        self.setWindowTitle("Model Selector")
 
         self._vertical_layout = QtGui.QVBoxLayout()
         self.model_list = QtGui.QListWidget()
+        self.model_list.setMaximumHeight(60)
+        self.model_list.setMaximumWidth(140)
 
         self._ok_cancel_layout = QtGui.QHBoxLayout()
         self.ok_btn = QtGui.QPushButton("OK")
@@ -110,7 +115,10 @@ class ModelSelectorDialog(QtGui.QDialog):
         self.setLayout(self._vertical_layout)
 
         self.ok_btn.clicked.connect(self.accept)
+        self.model_list.doubleClicked.connect(self.accept)
         self.cancel_btn.clicked.connect(self.reject)
+
+
 
     def populate_models(self, model_dict):
         self.model_list.clear()
@@ -126,6 +134,8 @@ class ModelSelectorDialog(QtGui.QDialog):
     def show(self):
         QtGui.QWidget.show(self)
         self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.layout().setSizeConstraint(QtGui.QLayout.SetFixedSize)
+
         self.activateWindow()
         self.raise_()
 

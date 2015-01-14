@@ -86,7 +86,7 @@ models_dict = {
     "Gaussian Model": PickGaussianModel,
     "Quadratic Model": PickQuadraticModel,
     "Linear Model": PickLinearModel,
-    "Constant Model": PickConstantModel,
+    # "Constant Model": PickConstantModel,
 }
 
 
