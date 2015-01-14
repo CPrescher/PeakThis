@@ -71,6 +71,7 @@ class MainController(object):
         self.disconnect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.connect_click_function(self.main_widget.background_define_btn, self.end_background_picking)
         self.main_widget.background_define_btn.setText('Finish')
+        self.main_widget.control_widget.disable(self.main_widget.background_define_btn)
 
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent = self.spectrum_key_press_event_background_picking
         self.main_widget.spectrum_widget.spectrum_plot.setFocus()
@@ -81,6 +82,7 @@ class MainController(object):
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.disconnect_click_function(self.main_widget.background_define_btn, self.end_background_picking)
         self.main_widget.background_define_btn.setText('Define')
+        self.main_widget.control_widget.enable()
 
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent = self.spectrum_key_press_event_empty
         self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.data.background_model.add_point)
@@ -119,9 +121,19 @@ class MainController(object):
         self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
         self.connect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
         self.main_widget.model_define_btn.setText("Finish")
+        self.main_widget.control_widget.disable(self.main_widget.model_define_btn)
 
         self.main_widget.spectrum_widget.mouse_moved.connect(self.update_model_parameters)
         self.main_widget.spectrum_widget.mouse_left_clicked.connect(self.pick_model_parameter)
+
+
+    def end_model_picking(self):
+        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
+        self.disconnect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
+        self.main_widget.model_define_btn.setText("Define")
+        self.main_widget.control_widget.enable()
+        self.main_widget.spectrum_widget.mouse_moved.disconnect(self.update_model_parameters)
+        self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.pick_model_parameter)
 
     def update_model_parameters(self, x, y):
         cur_model_ind = int(self.main_widget.model_list.currentRow())
@@ -133,12 +145,6 @@ class MainController(object):
         if not more_parameters_available:
             self.end_model_picking()
 
-    def end_model_picking(self):
-        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
-        self.disconnect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
-        self.main_widget.model_define_btn.setText("Define")
-        self.main_widget.spectrum_widget.mouse_moved.disconnect(self.update_model_parameters)
-        self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.pick_model_parameter)
 
     def load_data(self, filename=None):
         if filename is None:

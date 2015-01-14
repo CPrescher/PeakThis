@@ -65,6 +65,17 @@ class ControlWidget(QtGui.QWidget):
 
         self.setLayout(self.main_vertical_layout)
 
+    def disable(self, except_widget=None):
+        for child1 in self.children():
+            for child2 in child1.children():
+                child2.setEnabled(False)
+        except_widget.setEnabled(True)
+
+    def enable(self):
+        for child1 in self.children():
+            for child2 in child1.children():
+                child2.setEnabled(True)
+
 
 class FileWidget(QtGui.QGroupBox):
     def __init__(self, parent=None):
