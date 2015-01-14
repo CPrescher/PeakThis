@@ -40,6 +40,8 @@ class SpectrumWidget(QtGui.QWidget):
         self.spectrum_plot.mouse_left_clicked.connect(self.mouse_left_clicked.emit)
         self.data_plot_item.sigClicked.connect(self.data_plot_item_clicked)
 
+        self.spectrum_plot.mouse_moved.connect(self.mouse_moved.emit)
+
         self.model_plot_items = []
 
     def create_spectrum(self):
@@ -96,18 +98,22 @@ class SpectrumWidget(QtGui.QWidget):
         self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
                                                  brush=pg.mkBrush('g'),
                                                  size=3)
+
         self.background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
         self.background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
                                                           brush=pg.mkBrush('k'),
                                                           size=6,
                                                           symbol='d')
 
+        self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
+
+        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3))
+
         self.spectrum_plot.addItem(self.data_plot_item)
         self.spectrum_plot.addItem(self.background_plot_item)
         self.spectrum_plot.addItem(self.background_scatter_item)
-
-        self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
         self.residual_plot.addItem(self.residual_plot_item)
+        self.spectrum_plot.addItem(self.model_sum_plot_item)
 
     def plot_data(self, x, y):
         self.data_plot_item.setData(x, y)
@@ -153,8 +159,15 @@ class SpectrumWidget(QtGui.QWidget):
         x, y = spectrum.data
         self.plot_residual(x, y)
 
+    def plot_model_sum(self, x, y):
+        self.model_sum_plot_item.setData(x,y)
+
+    def plot_model_sum_spectrum(self, spectrum):
+        x, y = spectrum.data
+        self.plot_model_sum(x, y)
+
     def add_model(self, spectrum=None):
-        self.model_plot_items.append(pg.PlotDataItem(pen=pg.mkPen('g', width=1)))
+        self.model_plot_items.append(pg.PlotDataItem(pen=pg.mkPen((253,153,50), width=1)))
         self.spectrum_plot.addItem(self.model_plot_items[-1])
         if spectrum is not None:
             self.update_model_spectrum(-1, spectrum)

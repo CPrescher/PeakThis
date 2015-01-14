@@ -18,6 +18,8 @@ class DataModel(QtCore.QObject):
     model_deleted = QtCore.pyqtSignal(int)
     model_parameters_changed = QtCore.pyqtSignal(int, Spectrum)
 
+    model_sum_changed = QtCore.pyqtSignal(Spectrum)
+
     def __init__(self):
         super(DataModel, self).__init__()
         self.models = []
@@ -38,17 +40,19 @@ class DataModel(QtCore.QObject):
         pass
 
     def background_model_changed(self):
-        #emit background model
+        # emit background model
         x, y = self.spectrum.data
         bkg_y = self.background_model.data(x)
         if bkg_y is not None:
             self.background_spectrum = Spectrum(x, bkg_y)
         else:
-            self.background_spectrum = Spectrum(np.array([]),np.array([]))
+            self.background_spectrum = Spectrum(np.array([]), np.array([]))
         self.background_changed.emit(self.background_spectrum)
         #emit the points:
         x, y = self.background_model.get_points()
-        self.background_points_changed.emit(Spectrum(x,y))
+        self.background_points_changed.emit(Spectrum(x, y))
+
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
     def add_model(self, model):
         self.models.append(model)
@@ -62,14 +66,39 @@ class DataModel(QtCore.QObject):
             self.models[ind].parameters[key].max = parameters[key].max
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
 
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
+
     def get_model_spectrum(self, ind):
         x, _ = self.spectrum.data
         y = self.models[ind].quick_eval(x)
         return Spectrum(x, y)
 
+    def update_model_parameter(self, ind, x, y):
+        self.models[ind].update_current_parameter(x, y)
+        self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
+
+    def pick_model_parameters(self, ind, x, y):
+        more_parameters_available = self.models[ind].pick_parameter(x, y)
+        self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
+        return more_parameters_available
+
     def del_model(self, index=-1):
         del self.models[index]
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
         self.model_deleted.emit(index)
+
+    def get_model_sum_spectrum(self):
+        x, _ = self.spectrum.data
+        sum = np.zeros(x.shape)
+        _, y_bkg = self.background_spectrum.data
+        if x.shape == y_bkg.shape:
+            sum+=y_bkg
+
+        for model in self.models:
+            sum+= model.quick_eval(x)
+        return Spectrum(x, sum)
 
     def save_models(self, filename):
         pass

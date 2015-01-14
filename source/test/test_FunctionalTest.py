@@ -159,10 +159,24 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.assertGreater(self.main_widget.model_list.count(), 0)
         self.assertGreater(self.main_widget.model_parameter_table.rowCount(), 0)
 
+        # she wonders if it is possible to change the parameters in the text boxes of the parameter table, and sees
+        # that the spectrum is changing
+        start_x, start_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        self.model_widget.parameter_table.item(0,1).setText('20')
+        self.model_widget.parameter_table.item(2,1).setText('19')
+        after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        self.array_almost_equal(start_x, after_x)
+        self.array_not_almost_equal(start_y, after_y)
+
         # then she sees the "Define" and wonders, if this also makes it possible to visually define the model, like
         # she did before with the Background
 
         QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5, 3)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(4, 3.5)
+
+        after_define_x, after_define_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        self.array_not_almost_equal(after_define_y, after_y)
 
 
         self.fail("Finish the Test!")

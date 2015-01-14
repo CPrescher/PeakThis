@@ -23,7 +23,7 @@ class MainController(object):
 
     def plot_some_data(self):
         x = np.linspace(0, 30, 1000)
-        y = np.sin(x)
+        y = np.sin(x)+1
         self.data.spectrum._x = x
         self.data.spectrum._y = y
         self.main_widget.spectrum_widget.plot_data(x, y)
@@ -45,6 +45,12 @@ class MainController(object):
         self.data.model_parameters_changed.connect(
             self.main_widget.spectrum_widget.update_model_spectrum
         )
+        self.data.model_parameters_changed.connect(
+            self.update_displayed_model_parameters
+        )
+        self.data.model_sum_changed.connect(self.main_widget.spectrum_widget.plot_model_sum_spectrum)
+
+        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
 
 
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
@@ -108,6 +114,31 @@ class MainController(object):
 
     def update_displayed_model_parameters(self, index):
         self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
+
+    def start_model_picking(self):
+        self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
+        self.connect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
+        self.main_widget.model_define_btn.setText("Finish")
+
+        self.main_widget.spectrum_widget.mouse_moved.connect(self.update_model_parameters)
+        self.main_widget.spectrum_widget.mouse_left_clicked.connect(self.pick_model_parameter)
+
+    def update_model_parameters(self, x, y):
+        cur_model_ind = int(self.main_widget.model_list.currentRow())
+        self.data.update_model_parameter(cur_model_ind, x, y)
+
+    def pick_model_parameter(self, x, y):
+        cur_model_ind = int(self.main_widget.model_list.currentRow())
+        more_parameters_available = self.data.pick_model_parameters(cur_model_ind, x, y)
+        if not more_parameters_available:
+            self.end_model_picking()
+
+    def end_model_picking(self):
+        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
+        self.disconnect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
+        self.main_widget.model_define_btn.setText("Define")
+        self.main_widget.spectrum_widget.mouse_moved.disconnect(self.update_model_parameters)
+        self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.pick_model_parameter)
 
     def load_data(self, filename=None):
         if filename is None:
