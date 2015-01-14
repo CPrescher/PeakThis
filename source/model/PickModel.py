@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+from lmfit import Parameters
 
 class PickModel(object):
     def __init__(self, number_picks):
@@ -29,7 +30,7 @@ class PickModel(object):
     def quick_eval(self, x):
         return self.eval(self.parameters, x=x)
 
-    def eval(self):
+    def eval(self, *args, **kwargs):
         raise NotImplementedError
 
     def make_params(self, *args, **kwargs):

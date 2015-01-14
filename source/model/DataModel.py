@@ -53,6 +53,9 @@ class DataModel(QtCore.QObject):
         self.background_points_changed.emit(Spectrum(x, y))
 
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
+        for ind in range(len(self.models)):
+            self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+
 
     def add_model(self, model):
         self.models.append(model)
@@ -70,15 +73,29 @@ class DataModel(QtCore.QObject):
 
     def get_model_spectrum(self, ind):
         x, _ = self.spectrum.data
+
+
         y = self.models[ind].quick_eval(x)
+
+        _, y_bkg = self.background_spectrum.data
+        if x.shape == y_bkg.shape:
+            y+=y_bkg
+
         return Spectrum(x, y)
 
     def update_model_parameter(self, ind, x, y):
+
+        y_bkg = self.background_model.data(x)
+        if y_bkg is not None:
+            y-=y_bkg
         self.models[ind].update_current_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
     def pick_model_parameters(self, ind, x, y):
+        y_bkg = self.background_model.data(x)
+        if y_bkg is not None:
+            y-=y_bkg
         more_parameters_available = self.models[ind].pick_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())

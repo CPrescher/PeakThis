@@ -107,13 +107,13 @@ class SpectrumWidget(QtGui.QWidget):
 
         self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
 
-        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3))
+        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=2))
 
         self.spectrum_plot.addItem(self.data_plot_item)
         self.spectrum_plot.addItem(self.background_plot_item)
+        self.spectrum_plot.addItem(self.model_sum_plot_item)
         self.spectrum_plot.addItem(self.background_scatter_item)
         self.residual_plot.addItem(self.residual_plot_item)
-        self.spectrum_plot.addItem(self.model_sum_plot_item)
 
     def plot_data(self, x, y):
         self.data_plot_item.setData(x, y)

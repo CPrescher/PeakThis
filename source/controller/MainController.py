@@ -143,6 +143,6 @@ class MainController(object):
     def load_data(self, filename=None):
         if filename is None:
             filename = str(QtGui.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
-                                                             '', ('Data (*.txt)')))
+                                                             ''))
         if filename is not '':
             self.data.load_data(filename)
