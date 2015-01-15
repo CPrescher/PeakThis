@@ -10,13 +10,13 @@ before_install:
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
     - export PATH=/home/travis/miniconda3/bin:$PATH
-    - conda config --add channels https://conda.binstar.org/dan_blanchard
     - conda update --yes conda
-    - export PYTHONPATH=$PWD:$PYTHONPATH
+    - export PYTHONPATH=$PWD/source:$PYTHONPATH
 
 install:
     - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose pyqt
     - pip install lmfit
 
 script:
+    - cd source
     - nosetests
