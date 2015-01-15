@@ -15,7 +15,8 @@ before_install:
     - export PYTHONPATH=$PWD:$PYTHONPATH
 
 install:
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose lmfit pyqt4
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose pyqt4
+    - pip install lmfit
 
 script:
     - nosetests
