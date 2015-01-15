@@ -41,6 +41,8 @@ class BackgroundModelTest(unittest.TestCase):
         self.array_almost_equal(self.bkg_model.y, self.y)
 
         self.bkg_model.delete_point_close_to(1, 2)
+        self.x = np.delete(self.x, 0)
+        self.y = np.delete(self.y, 0)
         self.array_almost_equal(self.bkg_model.x, self.x)
         self.array_almost_equal(self.bkg_model.y, self.y)
 
