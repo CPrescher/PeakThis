@@ -15,7 +15,7 @@ before_install:
 
 install:
     - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose pyqt
-    - pip install lmfit
+    - pip install lmfit pyqtgraph
 
 script:
     - cd source
