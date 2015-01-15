@@ -179,4 +179,4 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.array_not_almost_equal(after_define_y, after_y)
 
 
-        self.fail("Finish the Test!")
+        # self.fail("Finish the Test!")
