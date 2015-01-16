@@ -23,4 +23,4 @@ install:
 
 script:
     - cd source
-    - nosetests --with-coverage --cover-package=controller, model, view
+    - nosetests --with-coverage --cover-package=controller,model,view
