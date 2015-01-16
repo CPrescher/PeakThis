@@ -23,4 +23,4 @@ install:
 
 script:
     - cd source
-    - nosetests
+    - nosetests --with-coverage
