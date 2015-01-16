@@ -142,11 +142,11 @@ class MainController(object):
 
     def update_model_parameters(self, x, y):
         cur_model_ind = int(self.main_widget.model_list.currentRow())
-        self.data.update_model_parameter(cur_model_ind, x, y)
+        self.data.update_current_model_parameter(cur_model_ind, x, y)
 
     def pick_model_parameter(self, x, y):
         cur_model_ind = int(self.main_widget.model_list.currentRow())
-        more_parameters_available = self.data.pick_model_parameters(cur_model_ind, x, y)
+        more_parameters_available = self.data.pick_current_model_parameters(cur_model_ind, x, y)
         if not more_parameters_available:
             self.end_model_picking()
 

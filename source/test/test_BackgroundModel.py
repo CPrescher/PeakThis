@@ -56,6 +56,19 @@ class BackgroundModelTest(unittest.TestCase):
         bkg_y2 = self.bkg_model.data(x)
         self.assertNotAlmostEqual(np.sum(bkg_y - bkg_y2), 0)
 
+    def test_setting_wrong_method(self):
+        self.bkg_model.set_method('humptata')
+        self.assertEqual(self.bkg_model.data(2), None)
 
+        self.bkg_model.set_method('pchip')
+        self.assertNotEqual(self.bkg_model.data(2), None)
 
+    def test_getting_data_from_empty_bkg_model(self):
+        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0,0)
+        self.assertEqual(self.bkg_model.data(2), None)
 

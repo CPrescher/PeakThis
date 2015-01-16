@@ -51,8 +51,7 @@ class DataModelTest(unittest.TestCase):
         model_spectrum = self.data.get_model_spectrum(0)
         model_x, model_y = model_spectrum.data
         data_x, data_y = self.data.spectrum.data
-        bkg_x, bkg_y = self.data.background_spectrum.data
-        self.array_almost_equal(model_y, bkg_y)
+        self.assertEqual(np.sum(model_y), 0)
         self.array_almost_equal(model_x, data_x)
 
     def test_updating_models(self):
@@ -73,6 +72,23 @@ class DataModelTest(unittest.TestCase):
 
         self.array_almost_equal(new_spec_x, spec_x)
         self.array_almost_equal(new_spec_y, pure_model_y+bkg_y)
+
+    def test_picking_model_paameters(self):
+        self.data.add_model(PickGaussianModel())
+        _, model_y = self.data.get_model_spectrum(0).data
+
+        self.data.update_current_model_parameter(0, 1, 1)
+        _, model_y1 = self.data.get_model_spectrum(0).data
+
+        self.array_not_almost_equal(model_y,model_y1)
+        self.data.pick_current_model_parameters(0, 1, 1)
+
+        _, model_y2 = self.data.get_model_spectrum(0).data
+
+        self.array_almost_equal(model_y1, model_y2)
+
+
+
 
 
 

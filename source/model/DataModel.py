@@ -32,8 +32,11 @@ class DataModel(QtCore.QObject):
         self.background_spectrum = Spectrum()
         self.residual = Spectrum()
 
+        self.background_model_changed()
+
     def load_data(self, filename):
         self.spectrum.load(filename)
+        self.background_model_changed()
         self.spectrum_changed.emit(self.spectrum)
 
     def save_data(self, filename):
@@ -48,7 +51,7 @@ class DataModel(QtCore.QObject):
         else:
             self.background_spectrum = Spectrum(np.array([]), np.array([]))
         self.background_changed.emit(self.background_spectrum)
-        #emit the points:
+        # emit the points:
         x, y = self.background_model.get_points()
         self.background_points_changed.emit(Spectrum(x, y))
 
@@ -74,28 +77,26 @@ class DataModel(QtCore.QObject):
     def get_model_spectrum(self, ind):
         x, _ = self.spectrum.data
 
-
         y = self.models[ind].quick_eval(x)
 
         _, y_bkg = self.background_spectrum.data
         if x.shape == y_bkg.shape:
-            y+=y_bkg
+            y += y_bkg
 
         return Spectrum(x, y)
 
-    def update_model_parameter(self, ind, x, y):
-
+    def update_current_model_parameter(self, ind, x, y):
         y_bkg = self.background_model.data(x)
         if y_bkg is not None:
-            y-=y_bkg
+            y -= y_bkg
         self.models[ind].update_current_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
-    def pick_model_parameters(self, ind, x, y):
+    def pick_current_model_parameters(self, ind, x, y):
         y_bkg = self.background_model.data(x)
         if y_bkg is not None:
-            y-=y_bkg
+            y -= y_bkg
         more_parameters_available = self.models[ind].pick_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
@@ -111,10 +112,10 @@ class DataModel(QtCore.QObject):
         sum = np.zeros(x.shape)
         _, y_bkg = self.background_spectrum.data
         if x.shape == y_bkg.shape:
-            sum+=y_bkg
+            sum += y_bkg
 
         for model in self.models:
-            sum+= model.quick_eval(x)
+            sum += model.quick_eval(x)
         return Spectrum(x, sum)
 
     def save_models(self, filename):
