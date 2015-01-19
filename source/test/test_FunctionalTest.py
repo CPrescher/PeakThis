@@ -33,6 +33,13 @@ class PeakThisFunctionalTest(unittest.TestCase):
     def array_not_almost_equal(self, array1, array2):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
+    def add_peak(self, type_number, click1_pos, click2_pos):
+        QTest.mouseClick(self.main_widget.model_add_btn, QtCore.Qt.LeftButton)
+        self.main_widget.model_selector_dialog.model_list.setCurrentRow(type_number)
+        QTest.mouseClick(self.main_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
+        QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click1_pos[0], click1_pos[1])
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click2_pos[0], click2_pos[1])
 
     def create_spectrum(self):
         self.x = np.linspace(0, 10, 145)
@@ -177,6 +184,25 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         after_define_x, after_define_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_not_almost_equal(after_define_y, after_y)
+
+
+        # She decides to add some other peaks for fitting all the peaks she sees:
+        self.add_peak(0, (6,5), (2, 4.5))
+        self.add_peak(0, (4,8), (2, 9.5))
+        self.add_peak(0, (6,15), (2, 14.6))
+
+        self.assertEqual(self.main_widget.model_list.count(), 4)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 4)
+
+        # then she sees that may be one peak should be removed from the list
+        # she selects the second peak and clicks the delete button
+
+        self.main_widget.model_list.setCurrentRow(1)
+        QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
+
+        self.assertEqual(self.main_widget.model_list.count(), 3)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 3)
+
 
 
         # self.fail("Finish the Test!")
