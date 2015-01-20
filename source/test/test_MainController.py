@@ -18,12 +18,17 @@ class MainControllerTest(unittest.TestCase):
         self.app = QtGui.QApplication([])
         self.controller = MainController()
         self.data = self.controller.data
-        self.main_view = self.controller.main_widget
+        self.main_widget = self.controller.main_widget
         self.model_widget = self.controller.main_widget.control_widget.model_widget
         self.spectrum_widget = self.controller.main_widget.spectrum_widget
 
     def tearDown(self):
         del self.app
+
+    def add_peak(self, model_type_ind=0):
+        QTest.mouseClick(self.main_widget.model_add_btn, QtCore.Qt.LeftButton)
+        self.main_widget.model_selector_dialog.model_list.setCurrentRow(model_type_ind)
+        QTest.mouseClick(self.main_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
@@ -63,9 +68,7 @@ class MainControllerTest(unittest.TestCase):
 
     def test_updating_model_parameters(self):
         # adding a dummy model (tested in previous unittest)
-        QTest.mouseClick(self.model_widget.add_btn, QtCore.Qt.LeftButton)
-        self.model_widget.model_selector_dialog.model_list.setCurrentRow(0)
-        QTest.mouseClick(self.model_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
+        self.add_peak()
 
         start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
         self.model_widget.parameter_table.item(0,1).setText('20')
@@ -73,5 +76,18 @@ class MainControllerTest(unittest.TestCase):
         after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
+
+    def test_deleting_models(self):
+        #adding some models:
+        self.add_peak()
+        self.add_peak()
+        self.add_peak()
+
+        self.assertEqual(self.model_widget.model_list.count(),3)
+        self.assertEqual(len(self.spectrum_widget.model_plot_items), 3)
+
+        # now we delete the press delete and see what happens:
+        self.fail("Finish the test!")
+
 
 
