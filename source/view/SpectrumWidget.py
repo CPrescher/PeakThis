@@ -183,9 +183,10 @@ class SpectrumWidget(QtGui.QWidget):
         self.update_model(ind, x, y)
 
     def activate_model_spectrum(self, ind):
-        self.model_plot_items[self.current_selected_model].setPen(pg.mkPen((253,153,50), width=1))
-        self.model_plot_items[ind].setPen(pg.mkPen((200,120,20), width=1))
-        self.current_selected_model=ind
+        if len(self.model_plot_items):
+            self.model_plot_items[self.current_selected_model].setPen(pg.mkPen((253,153,50), width=1))
+            self.model_plot_items[ind].setPen(pg.mkPen((200,120,20), width=1))
+            self.current_selected_model=ind
 
     def del_model(self, index=-1):
         self.spectrum_plot.removeItem(self.model_plot_items[index])
