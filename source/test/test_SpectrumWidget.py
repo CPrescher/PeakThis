@@ -91,3 +91,4 @@ class SpectrumWidgetTest(unittest.TestCase):
 
 
 
+

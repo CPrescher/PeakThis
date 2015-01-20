@@ -91,4 +91,10 @@ class MainControllerTest(unittest.TestCase):
         self.assertEqual(self.model_widget.model_list.count(), 2)
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
 
+        # now add two more and select a peak in between
+        self.add_peak()
+        self.add_peak()
+        self.model_widget.model_list.setCurrentRow(2)
+        QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
+
 

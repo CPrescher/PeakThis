@@ -69,8 +69,6 @@ class MainController(object):
 
         # deleting models
         self.main_widget.model_delete_btn.clicked.connect(self.del_model_btn_clicked)
-        self.data.model_deleted.connect(self.main_widget.model_list.takeItem)
-        self.data.model_deleted.connect(self.main_widget.spectrum_widget.del_model)
 
 
         ##############################################
@@ -122,7 +120,10 @@ class MainController(object):
 
     def del_model_btn_clicked(self):
         cur_ind = self.main_widget.model_list.currentRow()
-        self.data.del_model(cur_ind)
+        if cur_ind != -1:
+            self.main_widget.model_list.takeItem(cur_ind)
+            self.main_widget.spectrum_widget.del_model(cur_ind)
+            self.data.del_model(cur_ind)
 
     def add_model_dialog_accepted(self):
         selected_name = self.main_widget.model_selector_dialog.get_selected_item_string()
