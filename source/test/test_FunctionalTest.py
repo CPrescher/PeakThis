@@ -4,6 +4,7 @@ __author__ = 'Clemens Prescher'
 import unittest
 
 import numpy as np
+from scipy.interpolate import PchipInterpolator
 
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
@@ -50,13 +51,28 @@ class PeakThisFunctionalTest(unittest.TestCase):
     def create_spectrum(self):
         self.x = np.linspace(0, 10, 145)
         self.y = np.zeros(self.x.shape)
-        gauss_curve = PickGaussianModel()
-        gauss_curve.parameters['center'].value = 6
-        gauss_curve.parameters['amplitude'].value = 10
-        self.y += gauss_curve.quick_eval(self.x)
-        gauss_curve.parameters['center'].value = 2
-        gauss_curve.parameters['amplitude'].value = 6
-        self.y += gauss_curve.quick_eval(self.x)
+
+        #creating the background:
+        bkg_x = [ 0, 3, 7, 10]
+        bkg_y = [ 1, 1.2, 1.1, 1]
+        pchip_interpolator = PchipInterpolator(bkg_x, bkg_y, extrapolate=True)
+        self.y += pchip_interpolator(self.x)
+
+        # creating the models
+        def create_peak(x, center, amplitude, sigma=0.2):
+            gauss_curve = PickGaussianModel()
+            gauss_curve.parameters['center'].value = center
+            gauss_curve.parameters['amplitude'].value = amplitude
+            return gauss_curve.quick_eval(self.x)
+
+        self.y += create_peak(self.x, 1, 10)
+        self.y += create_peak(self.x, 3, 5)
+        self.y += create_peak(self.x, 6, 2)
+        self.y += create_peak(self.x, 7.5, 3)
+        self.y += create_peak(self.x, 9, 8)
+
+        #adding noise
+        self.y += np.random.normal(0, 1, self.y.shape)
 
         self.temp_file = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
         np.savetxt(self.temp_file, np.dstack((self.x, self.y))[0])
@@ -81,25 +97,25 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
-        click_points_x = [2, 4, 5]
-        click_points_y = [3, 4, 5]
+        bkg_click_points_x = [ 0, 3, 5]
+        bkg_click_points_y = [ 1, 1.2, 6]
 
-        for ind in range(len(click_points_x)):
-            self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click_points_x[ind],
-                                                                                   click_points_y[ind])
+        for ind in range(len(bkg_click_points_x)):
+            self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(bkg_click_points_x[ind],
+                                                                                   bkg_click_points_y[ind])
 
         bkg_points_x, bkg_points_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
 
-        self.array_almost_equal(bkg_points_x, click_points_x)
-        self.array_almost_equal(bkg_points_y, click_points_y)
+        self.array_almost_equal(bkg_points_x, bkg_click_points_x)
+        self.array_almost_equal(bkg_points_y, bkg_click_points_y)
 
         # every time she clicks in the spectrum after the first three clicks she sees that the background changes
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5.4, 2.4)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(7, 1.1)
 
         x, bkg_y1 = self.main_widget.spectrum_widget.background_plot_item.getData()
         self.array_almost_equal(self.x, x)
 
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(6.3, 2.5)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10, 1)
         x, bkg_y2 = self.main_widget.spectrum_widget.background_plot_item.getData()
 
         self.array_not_almost_equal(bkg_y1, bkg_y2)
@@ -122,12 +138,12 @@ class PeakThisFunctionalTest(unittest.TestCase):
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
         # she notices that clicking into the spectrum now does not effect background any more...
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10,10)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10, 10)
         x, bkg_y5 = self.main_widget.spectrum_widget.background_plot_item.getData()
         self.array_almost_equal(bkg_y5, bkg_y4)
 
         # while playing and being happy that everything works she realizes that there is one point which might be
-        # better a little bit lower
+        # better deleted
         # She clicks the define button again and moves to the point and tries to delete by pressing x
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
@@ -135,25 +151,26 @@ class PeakThisFunctionalTest(unittest.TestCase):
         class DummyKeyPressEvent():
             def __init__(self, text):
                 self._text = text
+
             def text(self):
                 return self._text
 
 
-        self.main_widget.spectrum_widget.spectrum_plot.update_cur_mouse_position(6.2, 2.6)
+        self.main_widget.spectrum_widget.spectrum_plot.update_cur_mouse_position(6.2, 4.5)
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
 
-        x_click, y_click = self.main_widget.spectrum_widget.background_scatter_item.getData()
-        self.array_almost_equal(x_click, [2, 4, 5, 5.4])
-        self.array_almost_equal(y_click, [3, 4, 5, 2.4])
+        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        self.array_almost_equal(bkg_scatter_x, [ 0, 3, 7, 10])
+        self.array_almost_equal(bkg_scatter_y, [ 1, 1.2, 1.1, 1])
 
         # Now she is satisfied with the result and finishes the background determination process
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
         # she notices that pressing x does not delete points anymore
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
-        x_click, y_click = self.main_widget.spectrum_widget.background_scatter_item.getData()
-        self.array_almost_equal(x_click, [2, 4, 5, 5.4])
-        self.array_almost_equal(y_click, [3, 4, 5, 2.4])
+        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        self.array_almost_equal(bkg_scatter_x, [ 0, 3, 7, 10])
+        self.array_almost_equal(bkg_scatter_y, [ 1, 1.2, 1.1, 1])
 
         # As Edith is now happy with the background she decides to add a peak, because that's what she is here for,
         # right?
@@ -175,8 +192,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # she wonders if it is possible to change the parameters in the text boxes of the parameter table, and sees
         # that the spectrum is changing
         start_x, start_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
-        self.model_widget.parameter_table.item(0,1).setText('20')
-        self.model_widget.parameter_table.item(2,1).setText('19')
+        self.model_widget.parameter_table.item(0, 1).setText('20')
+        self.model_widget.parameter_table.item(2, 1).setText('19')
         after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
@@ -185,36 +202,35 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # she did before with the Background
 
         QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(5, 3)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(4, 3.5)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1, 10)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1.3, 4.5)
 
         after_define_x, after_define_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_not_almost_equal(after_define_y, after_y)
 
 
         # She decides to add some other peaks for fitting all the peaks she sees:
-        self.add_peak(0, (6,5), (2, 4.5))
-        self.add_peak(0, (4,8), (2, 9.5))
-        self.add_peak(0, (6,15), (2, 14.6))
+        self.add_peak(0, (3, 5), (3.3, 9.5))
+        self.add_peak(0, (6, 2), (6.2, 14.6))
+        self.add_peak(0, (7.5, 3), (7.8, 8))
+        self.add_peak(0, (9, 8), (9.4, 11))
 
-        self.assertEqual(self.main_widget.model_list.count(), 4)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 4)
+
+        self.assertEqual(self.main_widget.model_list.count(), 5)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
 
         # she sees that there is a copy button and wonders if this will just take of the hassle to always use the
         # model selector
         QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
 
+        self.assertEqual(self.main_widget.model_list.count(), 6)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 6)
+
+        # then she sees that the last peak is doubled now and should be removed from the list
+
+        QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.main_widget.model_list.count(), 5)
         self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
-
-        # then she sees that may be one peak should be removed from the list
-        # she selects the second peak and clicks the delete button
-
-        self.main_widget.model_list.setCurrentRow(1)
-        QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
-
-        self.assertEqual(self.main_widget.model_list.count(), 4)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 4)
 
 
 
