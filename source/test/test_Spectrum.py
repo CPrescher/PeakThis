@@ -1,9 +1,12 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 import unittest
-from model.Spectrum import Spectrum, BkgNotInRangeError
-import numpy as np
 import os
+
+import numpy as np
+
+from model.Spectrum import Spectrum, BkgNotInRangeError
+
 
 class SpectrumTest(unittest.TestCase):
     def setUp(self):
@@ -34,7 +37,7 @@ class SpectrumTest(unittest.TestCase):
 
     def test_saving_a_file(self):
         x = np.linspace(-5, 5, 100)
-        y = x**2
+        y = x ** 2
         spec = Spectrum(x, y)
         spec.save("test.dat")
 
@@ -80,7 +83,7 @@ class SpectrumTest(unittest.TestCase):
 
         spectrum3 = spectrum1 + spectrum2
         self.array_almost_equal(spectrum3._x, spectrum1._x)
-        self.array_almost_equal(spectrum3._y, spectrum1._y*2, 2)
+        self.array_almost_equal(spectrum3._y, spectrum1._y * 2, 2)
 
         spectrum3 = spectrum1 + spectrum1
         self.array_almost_equal(spectrum3._y, np.sin(x) * 2, 2)
@@ -102,7 +105,7 @@ class SpectrumTest(unittest.TestCase):
 
     def test_using_background_spectrum(self):
         x = np.linspace(-5, 5, 100)
-        spec_y = x**2
+        spec_y = x ** 2
         bkg_y = x
 
         spec = Spectrum(x, spec_y)
@@ -112,11 +115,11 @@ class SpectrumTest(unittest.TestCase):
         new_x, new_y = spec.data
 
         self.array_almost_equal(new_x, x)
-        self.array_almost_equal(new_y, spec_y-bkg_y)
+        self.array_almost_equal(new_y, spec_y - bkg_y)
 
     def test_using_background_spectrum_with_different_spacing(self):
         x = np.linspace(-5, 5, 100)
-        spec_y = x**2
+        spec_y = x ** 2
         x_bkg = np.linspace(-5, 5, 99)
         bkg_y = x_bkg
 
@@ -127,10 +130,10 @@ class SpectrumTest(unittest.TestCase):
         new_x, new_y = spec.data
 
         self.array_almost_equal(new_x, x)
-        self.array_almost_equal(new_y, spec_y-x)
+        self.array_almost_equal(new_y, spec_y - x)
 
     def test_background_out_of_range_throws_error(self):
-        x1 = np.linspace(0,10)
+        x1 = np.linspace(0, 10)
         x2 = np.linspace(-10, -1)
 
         spec = Spectrum(x1, x1)
@@ -142,9 +145,9 @@ class SpectrumTest(unittest.TestCase):
 
     def test_setting_new_data(self):
         spec = Spectrum()
-        x = np.linspace(0,10)
+        x = np.linspace(0, 10)
         y = np.sin(x)
-        spec.data = x,y
+        spec.data = x, y
 
         new_x, new_y = spec.data
         self.array_almost_equal(new_x, x)

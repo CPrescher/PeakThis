@@ -1,7 +1,8 @@
 # -*- coding: utf8 -*-
 
-import numpy as np
 import copy
+
+import numpy as np
 from PyQt4 import QtCore, QtGui
 
 from view.MainWidget import MainWidget
@@ -119,7 +120,6 @@ class MainController(object):
     def add_model_btn_clicked(self):
         self.main_widget.model_selector_dialog.populate_models(models_dict)
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
-
 
 
     def del_model_btn_clicked(self):

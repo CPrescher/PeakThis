@@ -4,6 +4,7 @@ __author__ = 'Clemens Prescher'
 import unittest
 
 import numpy as np
+
 from model.BackgroundModel import BackgroundModel
 
 
@@ -64,11 +65,11 @@ class BackgroundModelTest(unittest.TestCase):
         self.assertNotEqual(self.bkg_model.data(2), None)
 
     def test_getting_data_from_empty_bkg_model(self):
-        self.bkg_model.delete_point_close_to(0,0)
-        self.bkg_model.delete_point_close_to(0,0)
-        self.bkg_model.delete_point_close_to(0,0)
-        self.bkg_model.delete_point_close_to(0,0)
-        self.bkg_model.delete_point_close_to(0,0)
-        self.bkg_model.delete_point_close_to(0,0)
+        self.bkg_model.delete_point_close_to(0, 0)
+        self.bkg_model.delete_point_close_to(0, 0)
+        self.bkg_model.delete_point_close_to(0, 0)
+        self.bkg_model.delete_point_close_to(0, 0)
+        self.bkg_model.delete_point_close_to(0, 0)
+        self.bkg_model.delete_point_close_to(0, 0)
         self.assertEqual(self.bkg_model.data(2), None)
 

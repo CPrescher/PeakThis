@@ -3,6 +3,7 @@ __author__ = 'Clemens Prescher'
 
 import unittest
 from copy import copy
+
 import numpy as np
 
 from model.DataModel import DataModel
@@ -71,7 +72,7 @@ class DataModelTest(unittest.TestCase):
         pure_model_y = self.data.models[0].quick_eval(spec_x)
 
         self.array_almost_equal(new_spec_x, spec_x)
-        self.array_almost_equal(new_spec_y, pure_model_y+bkg_y)
+        self.array_almost_equal(new_spec_y, pure_model_y + bkg_y)
 
     def test_picking_model_paameters(self):
         self.data.add_model(PickGaussianModel())
@@ -80,19 +81,9 @@ class DataModelTest(unittest.TestCase):
         self.data.update_current_model_parameter(0, 1, 1)
         _, model_y1 = self.data.get_model_spectrum(0).data
 
-        self.array_not_almost_equal(model_y,model_y1)
+        self.array_not_almost_equal(model_y, model_y1)
         self.data.pick_current_model_parameters(0, 1, 1)
 
         _, model_y2 = self.data.get_model_spectrum(0).data
 
         self.array_almost_equal(model_y1, model_y2)
-
-
-
-
-
-
-
-
-
-

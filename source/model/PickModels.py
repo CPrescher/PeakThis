@@ -2,8 +2,8 @@
 __author__ = 'Clemens Prescher'
 
 from lmfit.models import *
-from model.PickModel import PickModel
 
+from model.PickModel import PickModel
 
 
 class PickConstantModel(ConstantModel, PickModel):
@@ -79,7 +79,6 @@ class PickGaussianModel(GaussianModel, PickModel):
         elif self.current_pick == 1:
             self.parameters['sigma'].value = abs(x - self.parameters['center']) * 0.8493218001909796
             self.parameters['amplitude'].value = self.pick_points[0].y * self.parameters['sigma'].value * 2.506470408
-
 
 
 models_dict = {

@@ -4,11 +4,13 @@ __author__ = 'Clemens Prescher'
 
 import unittest
 import os
+
 import numpy as np
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
 
 from controller.MainController import MainController
+
 
 test_directory = os.path.dirname(os.path.realpath(__file__))
 

@@ -2,15 +2,12 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
+import tempfile
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
-import matplotlib.pyplot as plt
-
-import tempfile
 
 from controller.MainController import MainController
 from model.PickModels import PickGaussianModel
@@ -49,12 +46,12 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
 
     def create_spectrum(self):
-        self.x = np.linspace(0, 10, 145)
+        self.x = np.linspace(0, 10, 1000)
         self.y = np.zeros(self.x.shape)
 
-        #creating the background:
-        bkg_x = [ 0, 3, 7, 10]
-        bkg_y = [ 1, 1.2, 1.1, 1]
+        # creating the background:
+        bkg_x = [0, 3, 7, 10]
+        bkg_y = [1, 1.2, 1.1, 1]
         pchip_interpolator = PchipInterpolator(bkg_x, bkg_y, extrapolate=True)
         self.y += pchip_interpolator(self.x)
 
@@ -63,6 +60,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
             gauss_curve = PickGaussianModel()
             gauss_curve.parameters['center'].value = center
             gauss_curve.parameters['amplitude'].value = amplitude
+            gauss_curve.parameters['sigma'].value = sigma
             return gauss_curve.quick_eval(self.x)
 
         self.y += create_peak(self.x, 1, 10)
@@ -72,7 +70,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.y += create_peak(self.x, 9, 8)
 
         #adding noise
-        self.y += np.random.normal(0, 1, self.y.shape)
+        self.y += np.random.normal(0, 0.03 * np.max(self.y), self.y.shape)
 
         self.temp_file = tempfile.NamedTemporaryFile(suffix='.txt', delete=False)
         np.savetxt(self.temp_file, np.dstack((self.x, self.y))[0])
@@ -97,8 +95,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
-        bkg_click_points_x = [ 0, 3, 5]
-        bkg_click_points_y = [ 1, 1.2, 6]
+        bkg_click_points_x = [0, 3, 5]
+        bkg_click_points_y = [1, 1.2, 6]
 
         for ind in range(len(bkg_click_points_x)):
             self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(bkg_click_points_x[ind],
@@ -160,8 +158,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
 
         bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
-        self.array_almost_equal(bkg_scatter_x, [ 0, 3, 7, 10])
-        self.array_almost_equal(bkg_scatter_y, [ 1, 1.2, 1.1, 1])
+        self.array_almost_equal(bkg_scatter_x, [0, 3, 7, 10])
+        self.array_almost_equal(bkg_scatter_y, [1, 1.2, 1.1, 1])
 
         # Now she is satisfied with the result and finishes the background determination process
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
@@ -169,8 +167,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # she notices that pressing x does not delete points anymore
         self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
         bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
-        self.array_almost_equal(bkg_scatter_x, [ 0, 3, 7, 10])
-        self.array_almost_equal(bkg_scatter_y, [ 1, 1.2, 1.1, 1])
+        self.array_almost_equal(bkg_scatter_x, [0, 3, 7, 10])
+        self.array_almost_equal(bkg_scatter_y, [1, 1.2, 1.1, 1])
 
         # As Edith is now happy with the background she decides to add a peak, because that's what she is here for,
         # right?
@@ -214,7 +212,6 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.add_peak(0, (6, 2), (6.2, 14.6))
         self.add_peak(0, (7.5, 3), (7.8, 8))
         self.add_peak(0, (9, 8), (9.4, 11))
-
 
         self.assertEqual(self.main_widget.model_list.count(), 5)
         self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)

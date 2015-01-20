@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
+
 import numpy as np
 
 from model.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel

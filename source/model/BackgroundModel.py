@@ -26,7 +26,7 @@ class BackgroundModel(QtCore.QObject):
         self.background_model_changed.emit()
 
     def delete_point_close_to(self, x, y, max_distance=2):
-        if len(self.x)>0:
+        if len(self.x) > 0:
             distances = np.sqrt((np.array(self.x) - x) ** 2 + (np.array(self.y) - y) ** 2)
             ind = np.argsort(distances)
 
@@ -48,9 +48,9 @@ class BackgroundModel(QtCore.QObject):
         elif len(self.x) == 1:
             return np.ones(x.shape) * self.y[0]
         elif len(self.x) == 2:
-            m = (self.y[1]-self.y[0])/(self.x[1]-self.x[0])
-            n = self.y[1] - self.x[1]*m
-            return m*x+n
+            m = (self.y[1] - self.y[0]) / (self.x[1] - self.x[0])
+            n = self.y[1] - self.x[1] * m
+            return m * x + n
         elif len(self.x) >= 2:
             ind = np.argsort(self.x)
             self.x = self.x[ind]
@@ -60,7 +60,7 @@ class BackgroundModel(QtCore.QObject):
                 pchip_interpolator = PchipInterpolator(self.x, self.y, extrapolate=True)
                 y = pchip_interpolator(x)
             elif self.method == 'spline':
-                spline_interpolator = UnivariateSpline(self.x, self.y, k = 3, s=0)
+                spline_interpolator = UnivariateSpline(self.x, self.y, k=3, s=0)
                 y = spline_interpolator(x)
             else:
                 y = None

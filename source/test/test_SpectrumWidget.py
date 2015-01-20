@@ -1,11 +1,10 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-
-
 import unittest
+
 import numpy as np
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 from view.SpectrumWidget import SpectrumWidget
 from model.Spectrum import Spectrum
@@ -16,9 +15,8 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.app = QtGui.QApplication([])
         self.spectrum_widget = SpectrumWidget()
 
-
         self.dummy_x = np.linspace(0, 5, 100)
-        self.dummy_y = self.dummy_x**2
+        self.dummy_y = self.dummy_x ** 2
         self.dummy_spectrum = Spectrum(self.dummy_x, self.dummy_y)
 
     def tearDown(self):
@@ -31,7 +29,7 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
     def test_creating_data_plot(self):
-        self.spectrum_widget.plot_data(self.dummy_x,self.dummy_y)
+        self.spectrum_widget.plot_data(self.dummy_x, self.dummy_y)
         x_plot, y_plot = self.spectrum_widget.data_plot_item.getData()
         self.array_almost_equal(self.dummy_x, x_plot)
         self.array_almost_equal(self.dummy_y, y_plot)
@@ -40,7 +38,7 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.spectrum_widget.plot_background(self.dummy_x, self.dummy_y)
         self.spectrum_widget.plot_background_points(self.dummy_x, self.dummy_y)
 
-        x_plot, y_plot =  self.spectrum_widget.background_plot_item.getData()
+        x_plot, y_plot = self.spectrum_widget.background_plot_item.getData()
         self.array_almost_equal(self.dummy_x, x_plot)
         self.array_almost_equal(self.dummy_y, y_plot)
 
@@ -49,7 +47,7 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.array_almost_equal(self.dummy_y, y_scatter)
 
     def test_adding_model_plot(self):
-        #adding the model
+        # adding the model
         self.spectrum_widget.add_model()
         self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
 
@@ -60,16 +58,16 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.array_almost_equal(self.dummy_y, y_model)
 
         # changing the data using a spectrum
-        self.spectrum_widget.update_model_spectrum(0, Spectrum(x_model, y_model*2))
+        self.spectrum_widget.update_model_spectrum(0, Spectrum(x_model, y_model * 2))
         x_model, y_model = self.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(self.dummy_x, x_model)
-        self.array_almost_equal(self.dummy_y*2, y_model)
+        self.array_almost_equal(self.dummy_y * 2, y_model)
 
         # adding another model using a spectrum
-        self.spectrum_widget.add_model(Spectrum(self.dummy_x/2.0, self.dummy_y*1.5))
+        self.spectrum_widget.add_model(Spectrum(self.dummy_x / 2.0, self.dummy_y * 1.5))
         x_model, y_model = self.spectrum_widget.model_plot_items[1].getData()
-        self.array_almost_equal(self.dummy_x/2, x_model)
-        self.array_almost_equal(self.dummy_y*1.5, y_model)
+        self.array_almost_equal(self.dummy_x / 2, x_model)
+        self.array_almost_equal(self.dummy_y * 1.5, y_model)
 
     def test_deleting_model_plots(self):
         self.spectrum_widget.add_model(self.dummy_spectrum)
@@ -86,9 +84,3 @@ class SpectrumWidgetTest(unittest.TestCase):
         self.spectrum_widget.del_model()
         self.spectrum_widget.del_model()
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 0)
-
-
-
-
-
-
