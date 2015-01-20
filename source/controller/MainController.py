@@ -23,7 +23,7 @@ class MainController(object):
 
     def plot_some_data(self):
         x = np.linspace(0, 30, 1000)
-        y = np.sin(x)+1
+        y = np.sin(x) + 1
         self.data.spectrum._x = x
         self.data.spectrum._y = y
         self.main_widget.spectrum_widget.plot_data(x, y)
@@ -31,11 +31,24 @@ class MainController(object):
     def create_subscriptions(self):
         self.connect_click_function(self.main_widget.load_file_btn, self.load_data)
 
+        ######################################
+        # Data signals
         self.data.spectrum_changed.connect(self.main_widget.spectrum_widget.plot_data_spectrum)
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
         self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
         self.data.model_added.connect(self.update_displayed_models)
+
+        #####################################
+        # Gui Model signals
+
+        # Adding models
+        self.main_widget.model_add_btn.clicked.connect(self.add_model_btn_clicked)
+        self.main_widget.control_widget.model_widget.model_selector_dialog.accepted.connect(
+            self.add_model_dialog_accepted
+        )
+
+        # updating models in Gui and spectrum
         self.main_widget.control_widget.model_widget.model_selected_changed.connect(
             self.update_displayed_model_parameters
         )
@@ -52,17 +65,18 @@ class MainController(object):
             self.update_displayed_model_parameters
         )
         self.data.model_sum_changed.connect(self.main_widget.spectrum_widget.plot_model_sum_spectrum)
-
         self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
 
+        # deleting models
+        self.main_widget.model_delete_btn.clicked.connect(self.del_model_btn_clicked)
+        self.data.model_deleted.connect(self.main_widget.model_list.takeItem)
+        self.data.model_deleted.connect(self.main_widget.spectrum_widget.del_model)
 
+
+        ##############################################
+        # Background controls
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
-
-        self.main_widget.control_widget.model_widget.add_btn.clicked.connect(self.add_model_btn_clicked)
-        self.main_widget.control_widget.model_widget.model_selector_dialog.accepted.connect(
-            self.add_model_dialog_accepted
-        )
 
     def connect_click_function(self, emitter, function):
         self.main_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
@@ -102,15 +116,19 @@ class MainController(object):
     def spectrum_key_press_event_empty(self, QKeyEvent):
         pass
 
-    def add_model_btn_clicked(self, *args, **kwargs):
+    def add_model_btn_clicked(self):
         self.main_widget.model_selector_dialog.populate_models(models_dict)
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
+
+    def del_model_btn_clicked(self):
+        cur_ind = self.main_widget.model_list.currentRow()
+        self.data.del_model(cur_ind)
 
     def add_model_dialog_accepted(self):
         selected_name = self.main_widget.model_selector_dialog.get_selected_item_string()
         self.data.add_model(models_dict[selected_name]())
         self.main_widget.spectrum_widget.add_model(self.data.get_model_spectrum(-1))
-        self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models)-1)
+        self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models) - 1)
 
     def update_displayed_models(self):
         self.main_widget.model_list.blockSignals(True)

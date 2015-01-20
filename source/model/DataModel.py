@@ -59,7 +59,6 @@ class DataModel(QtCore.QObject):
         for ind in range(len(self.models)):
             self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
 
-
     def add_model(self, model):
         self.models.append(model)
         self.model_added.emit()

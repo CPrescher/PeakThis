@@ -71,23 +71,24 @@ class MainControllerTest(unittest.TestCase):
         self.add_peak()
 
         start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
-        self.model_widget.parameter_table.item(0,1).setText('20')
-        self.model_widget.parameter_table.item(2,1).setText('19')
+        self.model_widget.parameter_table.item(0, 1).setText('20')
+        self.model_widget.parameter_table.item(2, 1).setText('19')
         after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
 
     def test_deleting_models(self):
-        #adding some models:
+        # adding some models:
         self.add_peak()
         self.add_peak()
         self.add_peak()
 
-        self.assertEqual(self.model_widget.model_list.count(),3)
+        self.assertEqual(self.model_widget.model_list.count(), 3)
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 3)
 
         # now we delete the press delete and see what happens:
-        self.fail("Finish the test!")
-
+        QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
+        self.assertEqual(self.model_widget.model_list.count(), 2)
+        self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
 
 
