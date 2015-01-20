@@ -60,7 +60,7 @@ class ModelWidget(QtGui.QGroupBox):
     def get_parameters(self):
         parameters = Parameters()
         for row_ind in range(self.parameter_table.rowCount()):
-            name = str(self.parameter_table.item(row_ind,0).text())
+            name = str(self.parameter_table.item(row_ind, 0).text())
             value = convert_qstring_to_float(self.parameter_table.item(row_ind, 1).text())
             vary = convert_qstring_to_float(self.parameter_table.item(row_ind, 2).text())
             min = convert_qstring_to_float(self.parameter_table.item(row_ind, 3).text())
@@ -75,30 +75,32 @@ class ModelWidget(QtGui.QGroupBox):
     def item_changed(self):
         self.model_parameters_changed.emit(*self.get_parameters())
 
+
 def convert_qstring_to_float(text):
     text = str(text)
-    if text=="None":
+    if text == "None":
         return None
-    elif text=="True":
+    elif text == "True":
         return True
-    elif text=="False":
+    elif text == "False":
         return False
     else:
         return float(text)
+
 
 class ModelSelectorDialog(QtGui.QDialog):
     def __init__(self, parent=None):
         super(ModelSelectorDialog, self).__init__(parent)
 
-        self.setMaximumSize(50,250)
-        self.setMinimumSize(50,250)
+        self.setMaximumSize(50, 250)
+        self.setMinimumSize(50, 250)
 
         self.setWindowTitle("Model Selector")
 
         self._vertical_layout = QtGui.QVBoxLayout()
         self.model_list = QtGui.QListWidget()
-        self.model_list.setMaximumHeight(60)
-        self.model_list.setMaximumWidth(140)
+        self.model_list.setMaximumHeight(120)
+        self.model_list.setMaximumWidth(180)
 
         self._ok_cancel_layout = QtGui.QHBoxLayout()
         self.ok_btn = QtGui.QPushButton("OK")
@@ -117,7 +119,6 @@ class ModelSelectorDialog(QtGui.QDialog):
         self.ok_btn.clicked.connect(self.accept)
         self.model_list.doubleClicked.connect(self.accept)
         self.cancel_btn.clicked.connect(self.reject)
-
 
 
     def populate_models(self, model_dict):
