@@ -77,6 +77,12 @@ class MainControllerTest(unittest.TestCase):
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
 
+    def test_copy_models(self):
+        self.add_peak()
+        QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
+        self.assertEqual(self.model_widget.model_list.count(), 2)
+        self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
+
     def test_deleting_models(self):
         # adding some models:
         self.add_peak()

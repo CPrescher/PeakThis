@@ -41,6 +41,12 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click1_pos[0], click1_pos[1])
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click2_pos[0], click2_pos[1])
 
+    def copy_model(self, click1_pos, click2_pos):
+        QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click1_pos[0], click1_pos[1])
+        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click2_pos[0], click2_pos[1])
+
+
     def create_spectrum(self):
         self.x = np.linspace(0, 10, 145)
         self.y = np.zeros(self.x.shape)
@@ -194,14 +200,21 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.assertEqual(self.main_widget.model_list.count(), 4)
         self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 4)
 
+        # she sees that there is a copy button and wonders if this will just take of the hassle to always use the
+        # model selector
+        QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
+
+        self.assertEqual(self.main_widget.model_list.count(), 5)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
+
         # then she sees that may be one peak should be removed from the list
         # she selects the second peak and clicks the delete button
 
         self.main_widget.model_list.setCurrentRow(1)
         QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
 
-        self.assertEqual(self.main_widget.model_list.count(), 3)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 3)
+        self.assertEqual(self.main_widget.model_list.count(), 4)
+        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 4)
 
 
 

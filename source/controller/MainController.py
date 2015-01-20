@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 import numpy as np
+import copy
 from PyQt4 import QtCore, QtGui
 
 from view.MainWidget import MainWidget
@@ -47,6 +48,7 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.model_selector_dialog.accepted.connect(
             self.add_model_dialog_accepted
         )
+        self.main_widget.model_copy_btn.clicked.connect(self.copy_model_btn_clicked)
 
         # updating models in Gui and spectrum
         self.main_widget.control_widget.model_widget.model_selected_changed.connect(
@@ -118,6 +120,8 @@ class MainController(object):
         self.main_widget.model_selector_dialog.populate_models(models_dict)
         self.main_widget.control_widget.model_widget.show_model_selector_dialog()
 
+
+
     def del_model_btn_clicked(self):
         cur_ind = self.main_widget.model_list.currentRow()
         if cur_ind != -1:
@@ -130,6 +134,13 @@ class MainController(object):
         self.data.add_model(models_dict[selected_name]())
         self.main_widget.spectrum_widget.add_model(self.data.get_model_spectrum(-1))
         self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models) - 1)
+
+    def copy_model_btn_clicked(self):
+        cur_ind = self.main_widget.model_list.currentRow()
+        if cur_ind != -1:
+            self.data.add_model(copy.deepcopy(self.data.models[cur_ind]))
+            self.main_widget.spectrum_widget.add_model(self.data.get_model_spectrum(-1))
+            self.main_widget.control_widget.model_widget.model_list.setCurrentRow(len(self.data.models) - 1)
 
     def update_displayed_models(self):
         self.main_widget.model_list.blockSignals(True)

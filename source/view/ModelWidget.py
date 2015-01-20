@@ -16,6 +16,7 @@ class ModelWidget(QtGui.QGroupBox):
 
         self.add_btn = QtGui.QPushButton("Add")
         self.delete_btn = QtGui.QPushButton("Delete")
+        self.copy_btn = QtGui.QPushButton("Copy")
         self.define_btn = QtGui.QPushButton("Define")
 
         self.model_list = QtGui.QListWidget()
@@ -26,9 +27,10 @@ class ModelWidget(QtGui.QGroupBox):
 
         self.grid_layout.addWidget(self.add_btn, 0, 0)
         self.grid_layout.addWidget(self.delete_btn, 0, 1)
-        self.grid_layout.addWidget(self.define_btn, 0, 2)
-        self.grid_layout.addWidget(self.model_list, 1, 0, 1, 3)
-        self.grid_layout.addWidget(self.parameter_table, 2, 0, 1, 3)
+        self.grid_layout.addWidget(self.define_btn, 1, 0)
+        self.grid_layout.addWidget(self.copy_btn, 1, 1)
+        self.grid_layout.addWidget(self.model_list, 2, 0, 1, 2)
+        self.grid_layout.addWidget(self.parameter_table, 3, 0, 1, 2)
 
         self.setLayout(self.grid_layout)
 
