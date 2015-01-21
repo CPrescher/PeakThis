@@ -40,6 +40,11 @@ class DataModel(QtCore.QObject):
         self.background_model_changed()
         self.spectrum_changed.emit(self.spectrum)
 
+    def set_data(self, x, y):
+        self.spectrum.data = x, y
+        self.background_model_changed()
+        self.spectrum_changed.emit(self.spectrum)
+
     def save_data(self, filename):
         pass
 
@@ -136,6 +141,9 @@ class DataModel(QtCore.QObject):
             combined_parameters += self.models[ind].parameters
 
         x, y = self.spectrum.data
+        x_bkg, y_bkg = self.background_spectrum.data
+        if x.shape == y_bkg.shape:
+            y-=y_bkg
         out = combined_model.fit(y, params=combined_parameters, x=x)
 
         # save the data into the model
@@ -143,3 +151,6 @@ class DataModel(QtCore.QObject):
             for key, val in out.best_values.iteritems():
                 if key in model.parameters.keys():
                     model.parameters[key].value = val
+            self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())

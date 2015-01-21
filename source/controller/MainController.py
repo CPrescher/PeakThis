@@ -74,6 +74,9 @@ class MainController(object):
         self.main_widget.model_delete_btn.clicked.connect(self.del_model_btn_clicked)
 
 
+        # Fitting signals
+        self.main_widget.fit_btn.clicked.connect(self.data.fit_data)
+
         ##############################################
         # Background controls
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)

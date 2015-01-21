@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+from copy import deepcopy
+
 
 class PickModel(object):
     num_pick_models = 0
@@ -39,7 +41,7 @@ class PickModel(object):
         self.parameters[self.prefix + param_name].value = value
 
     def get_parameter_value(self, param_name):
-        return self.parameters[self._prefix + param_name].value
+        return self.parameters[self.prefix + param_name].value
 
     def quick_eval(self, x):
         return self.eval(self.parameters, x=x)
@@ -49,6 +51,25 @@ class PickModel(object):
 
     def make_params(self, *args, **kwargs):
         raise NotImplementedError
+
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls()
+
+        result.prefix = result._prefix
+        result.make_params()
+        for parameter_name in self._param_root_names:
+            # print result.parameters
+            # print self.parameters
+            result_param = result.get_param(parameter_name)
+            current_param = self.get_param(parameter_name)
+
+            result_param.value = current_param.value
+            result_param.vary   = current_param.vary
+            result_param.min = current_param.min
+            result_param.max = current_param.max
+
+        return result
 
 
 class Point():

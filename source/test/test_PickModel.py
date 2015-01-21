@@ -2,7 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-
+import copy
 import numpy as np
 
 from model.PickModels import PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
@@ -62,3 +62,9 @@ class PickModelTest(unittest.TestCase):
         model.pick_parameter(3, 5)
         self.assertAlmostEqual(self.get_model_value(model, 1), 10, places=2)
         self.assertAlmostEqual(self.get_model_value(model, 3), 5, places=2)
+
+    def test_copying_models_results_in_a_different_prefix(self):
+        model1 = PickGaussianModel()
+        model2 = copy.deepcopy(model1)
+
+        self.assertNotEqual(model1.prefix, model2.prefix)

@@ -27,7 +27,7 @@ class MainControllerTest(unittest.TestCase):
     def tearDown(self):
         del self.app
 
-    def add_peak(self, model_type_ind=0):
+    def add_model(self, model_type_ind=0):
         QTest.mouseClick(self.main_widget.model_add_btn, QtCore.Qt.LeftButton)
         self.main_widget.model_selector_dialog.model_list.setCurrentRow(model_type_ind)
         QTest.mouseClick(self.main_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
@@ -69,7 +69,7 @@ class MainControllerTest(unittest.TestCase):
         self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
 
     def test_updating_model_parameters(self):
-        self.add_peak()
+        self.add_model()
 
         start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
         self.model_widget.parameter_table.item(0, 1).setText('2.0')
@@ -81,16 +81,16 @@ class MainControllerTest(unittest.TestCase):
         self.array_not_almost_equal(start_y, after_y)
 
     def test_copy_models(self):
-        self.add_peak()
+        self.add_model()
         QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.model_widget.model_list.count(), 2)
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
 
     def test_deleting_models(self):
         # adding some models:
-        self.add_peak()
-        self.add_peak()
-        self.add_peak()
+        self.add_model()
+        self.add_model()
+        self.add_model()
 
         self.assertEqual(self.model_widget.model_list.count(), 3)
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 3)
@@ -101,9 +101,30 @@ class MainControllerTest(unittest.TestCase):
         self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
 
         # now add two more and select a peak in between
-        self.add_peak()
-        self.add_peak()
+        self.add_model()
+        self.add_model()
         self.model_widget.model_list.setCurrentRow(2)
         QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
+
+    def test_fitting_a_model_and_updating_gui(self):
+        # create dummy data
+        x = np.linspace(-3, 3)
+        intercept =  0.1
+        slope = 2.
+        y = intercept + x * slope
+
+        self.data.set_data(x, y)
+        self.add_model(2)
+
+        before_x, before_y = self.spectrum_widget.model_plot_items[0].getData()
+        QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
+
+        after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
+
+        self.array_not_almost_equal(before_y, after_y)
+
+
+
+
 
 
