@@ -41,6 +41,8 @@ class MainWidget(QtGui.QWidget):
         self.model_list = self.control_widget.model_widget.model_list
         self.model_parameter_table = self.control_widget.model_widget.parameter_table
 
+        self.fit_btn = self.control_widget.fit_widget.fit_btn
+
     def show(self):
         QtGui.QWidget.show(self)
         self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
@@ -56,10 +58,12 @@ class ControlWidget(QtGui.QWidget):
         self.file_widget = FileWidget()
         self.background_widget = BackgroundWidget()
         self.model_widget = ModelWidget()
+        self.fit_widget = FitWidget()
 
         self.main_vertical_layout.addWidget(self.file_widget)
         self.main_vertical_layout.addWidget(self.background_widget)
         self.main_vertical_layout.addWidget(self.model_widget)
+        self.main_vertical_layout.addWidget(self.fit_widget)
 
         self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed,
                                                                   QtGui.QSizePolicy.Expanding))
@@ -123,6 +127,17 @@ class BackgroundWidget(QtGui.QGroupBox):
 
         self.setLayout(self.grid_layout)
 
+
+class FitWidget(QtGui.QGroupBox):
+    def __init__(self, parent=None):
+        super(FitWidget, self).__init__(parent)
+        self.setTitle('Fit')
+        self.main_layout = QtGui.QHBoxLayout()
+
+        self.fit_btn = QtGui.QPushButton('Fit')
+        self.main_layout.addWidget(self.fit_btn)
+
+        self.setLayout(self.main_layout)
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

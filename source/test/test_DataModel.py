@@ -7,7 +7,7 @@ from copy import copy
 import numpy as np
 
 from model.DataModel import DataModel
-from model.PickModels import PickGaussianModel, PickQuadraticModel
+from model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
 
 
 class DataModelTest(unittest.TestCase):
@@ -22,6 +22,13 @@ class DataModelTest(unittest.TestCase):
 
     def array_not_almost_equal(self, array1, array2):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
+
+    def create_peak(self, x, center, amplitude, sigma=0.2):
+        gauss_curve = PickGaussianModel()
+        gauss_curve.parameters['center'].value = center
+        gauss_curve.parameters['amplitude'].value = amplitude
+        gauss_curve.parameters['sigma'].value = sigma
+        return gauss_curve.quick_eval(x)
 
     def test_add_models(self):
         self.data.add_model(PickGaussianModel())
@@ -74,7 +81,7 @@ class DataModelTest(unittest.TestCase):
         self.array_almost_equal(new_spec_x, spec_x)
         self.array_almost_equal(new_spec_y, pure_model_y + bkg_y)
 
-    def test_picking_model_paameters(self):
+    def test_picking_model_parameters(self):
         self.data.add_model(PickGaussianModel())
         _, model_y = self.data.get_model_spectrum(0).data
 
@@ -87,3 +94,84 @@ class DataModelTest(unittest.TestCase):
         _, model_y2 = self.data.get_model_spectrum(0).data
 
         self.array_almost_equal(model_y1, model_y2)
+
+    def test_fitting_model(self):
+        self.data.add_model(PickLinearModel())
+        slope = 1.4
+        intercept = 0.1
+
+        x = np.linspace(-3, 3., 100)
+        y = intercept + slope * x + np.random.normal(0, 0.01, x.shape)
+        self.data.spectrum.data = x, y
+
+        self.data.fit_data()
+
+        self.assertAlmostEqual(self.data.models[0].parameters['intercept'].value, intercept, places=2)
+        self.assertAlmostEqual(self.data.models[0].parameters['slope'].value, slope, places=2)
+
+    def test_fitting_different_models(self):
+        self.data.add_model(PickLinearModel())
+        self.data.add_model(PickGaussianModel())
+
+        #create data
+        x = np.linspace(-3, 3, 1000)
+
+        slope = 1.4
+        intercept = 0.1
+        y = intercept+slope*x
+
+        center = 0
+        amplitude = 10
+        sigma = 0.1
+        y += self.create_peak(x, center, amplitude, sigma)
+
+        self.data.pick_current_model_parameters(1, 0, 10)
+        self.data.pick_current_model_parameters(1, 0.25, 0.02)
+
+        print self.data.models[1].parameters['amplitude'].value
+        print self.data.models[1].parameters['sigma'].value
+
+        self.data.spectrum.data = x, y
+        self.data.fit_data()
+
+        self.assertAlmostEqual(self.data.models[0].parameters['intercept'].value, intercept, places=7)
+        self.assertAlmostEqual(self.data.models[0].parameters['slope'].value, slope, places=7)
+
+        self.assertAlmostEqual(self.data.models[1].parameters['center'].value, center, places=7)
+        self.assertAlmostEqual(self.data.models[1].parameters['amplitude'].value, amplitude, places=7)
+        self.assertAlmostEqual(self.data.models[1].parameters['sigma'].value, sigma, places=7)
+
+    def test_fitting_multiple_models_of_the_same_type(self):
+        # create test data:
+        x = np.linspace(0, 10, 100)
+
+        center_1 = 3
+        amplitude_1 = 10
+        sigma_1 = 0.3
+
+        center_2 = 7
+        amplitude_2 = 6
+        sigma_2 = 0.5
+
+        y = self.create_peak(x, center_1, amplitude_1, sigma_1)
+        y += self.create_peak(x, center_2, amplitude_2, sigma_2)
+
+        # creating the models in the data
+        self.data.add_model(PickGaussianModel())
+        self.data.add_model(PickGaussianModel())
+
+        # define some initial values for the peaks
+        self.data.pick_current_model_parameters(0, 3, 10)
+        self.data.pick_current_model_parameters(0, 3.25, 0.02)
+
+        self.data.pick_current_model_parameters(1, 7, 6)
+        self.data.pick_current_model_parameters(1, 7.25, 0.02)
+
+        self.data.fit_data()
+
+
+
+
+
+
+

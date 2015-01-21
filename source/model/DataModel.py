@@ -2,6 +2,7 @@
 __author__ = 'Clemens Prescher'
 
 import numpy as np
+import copy
 from PyQt4 import QtCore
 
 from model.Spectrum import Spectrum
@@ -124,4 +125,21 @@ class DataModel(QtCore.QObject):
         pass
 
     def fit_data(self):
-        pass
+        if len(self.models) == 0:
+            return
+
+        combined_model = self.models[0]
+        combined_parameters = self.models[0].parameters
+
+        for ind in xrange(1, len(self.models)):
+            combined_model += self.models[ind]
+            combined_parameters += self.models[ind].parameters
+
+        x, y = self.spectrum.data
+        out = combined_model.fit(y, params=combined_parameters, x=x)
+
+        # save the data into the model
+        for ind, model in enumerate(self.models):
+            for key, val in out.best_values.iteritems():
+                if key in model.parameters.keys():
+                    model.parameters[key].value = val

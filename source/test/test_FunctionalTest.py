@@ -61,7 +61,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
             gauss_curve.parameters['center'].value = center
             gauss_curve.parameters['amplitude'].value = amplitude
             gauss_curve.parameters['sigma'].value = sigma
-            return gauss_curve.quick_eval(self.x)
+            return gauss_curve.quick_eval(x)
 
         self.y += create_peak(self.x, 1, 10)
         self.y += create_peak(self.x, 3, 5)
@@ -228,6 +228,14 @@ class PeakThisFunctionalTest(unittest.TestCase):
         QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.main_widget.model_list.count(), 5)
         self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
+
+        # now she is satisfied with the initial model and wants to fit the peaks:
+        before_x, before_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
+        after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        self.array_not_almost_equal(before_y, after_y)
+
+
 
 
 

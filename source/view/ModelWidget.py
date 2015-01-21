@@ -41,7 +41,6 @@ class ModelWidget(QtGui.QGroupBox):
     def show_model_selector_dialog(self):
         self.model_selector_dialog.show()
 
-
     def update_parameters(self, parameters):
         self.parameter_table.blockSignals(True)
         self.parameter_table.clear()
@@ -57,7 +56,6 @@ class ModelWidget(QtGui.QGroupBox):
             ind += 1
         self.parameter_table.resizeColumnsToContents()
         self.parameter_table.blockSignals(False)
-
 
     def get_parameters(self):
         parameters = Parameters()
