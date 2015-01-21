@@ -70,8 +70,8 @@ class DataModel(QtCore.QObject):
             self.models[ind].parameters[key].vary = parameters[key].vary
             self.models[ind].parameters[key].min = parameters[key].min
             self.models[ind].parameters[key].max = parameters[key].max
-        self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
 
+        self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
     def get_model_spectrum(self, ind):

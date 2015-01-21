@@ -45,15 +45,14 @@ class ModelWidget(QtGui.QGroupBox):
         self.parameter_table.blockSignals(True)
         self.parameter_table.clear()
         self.parameter_table.setRowCount(len(parameters))
-        ind = 0
-        for name in parameters:
+
+        for ind, name in enumerate(parameters):
             self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(name))
             self.parameter_table.setItem(ind, 1, QtGui.QTableWidgetItem(str(parameters[name].value)))
             self.parameter_table.setItem(ind, 2, QtGui.QTableWidgetItem(str(parameters[name].vary)))
             self.parameter_table.setItem(ind, 3, QtGui.QTableWidgetItem(str(parameters[name].min)))
             self.parameter_table.setItem(ind, 4, QtGui.QTableWidgetItem(str(parameters[name].max)))
 
-            ind += 1
         self.parameter_table.resizeColumnsToContents()
         self.parameter_table.blockSignals(False)
 

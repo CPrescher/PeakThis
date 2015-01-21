@@ -25,9 +25,9 @@ class DataModelTest(unittest.TestCase):
 
     def create_peak(self, x, center, amplitude, sigma=0.2):
         gauss_curve = PickGaussianModel()
-        gauss_curve.parameters['center'].value = center
-        gauss_curve.parameters['amplitude'].value = amplitude
-        gauss_curve.parameters['sigma'].value = sigma
+        gauss_curve.set_parameter_value('center', center)
+        gauss_curve.set_parameter_value('amplitude', amplitude)
+        gauss_curve.set_parameter_value('sigma', sigma)
         return gauss_curve.quick_eval(x)
 
     def test_add_models(self):
@@ -70,7 +70,7 @@ class DataModelTest(unittest.TestCase):
         self.array_almost_equal(spec_y, bkg_y)
 
         new_parameters = copy(self.data.models[0].parameters)
-        new_parameters['amplitude'].value = 10
+        new_parameters[self.data.models[0].prefix + 'amplitude'].value = 10
 
         self.data.update_model(0, new_parameters)
         new_spec = self.data.get_model_spectrum(0)
@@ -106,19 +106,19 @@ class DataModelTest(unittest.TestCase):
 
         self.data.fit_data()
 
-        self.assertAlmostEqual(self.data.models[0].parameters['intercept'].value, intercept, places=2)
-        self.assertAlmostEqual(self.data.models[0].parameters['slope'].value, slope, places=2)
+        self.assertAlmostEqual(self.data.models[0].get_parameter_value('intercept'), intercept, places=2)
+        self.assertAlmostEqual(self.data.models[0].get_parameter_value('slope'), slope, places=2)
 
     def test_fitting_different_models(self):
         self.data.add_model(PickLinearModel())
         self.data.add_model(PickGaussianModel())
 
-        #create data
+        # create data
         x = np.linspace(-3, 3, 1000)
 
         slope = 1.4
         intercept = 0.1
-        y = intercept+slope*x
+        y = intercept + slope * x
 
         center = 0
         amplitude = 10
@@ -128,18 +128,15 @@ class DataModelTest(unittest.TestCase):
         self.data.pick_current_model_parameters(1, 0, 10)
         self.data.pick_current_model_parameters(1, 0.25, 0.02)
 
-        print self.data.models[1].parameters['amplitude'].value
-        print self.data.models[1].parameters['sigma'].value
-
         self.data.spectrum.data = x, y
         self.data.fit_data()
 
-        self.assertAlmostEqual(self.data.models[0].parameters['intercept'].value, intercept, places=7)
-        self.assertAlmostEqual(self.data.models[0].parameters['slope'].value, slope, places=7)
+        self.assertAlmostEqual(self.data.models[0].get_parameter_value('intercept'), intercept, places=7)
+        self.assertAlmostEqual(self.data.models[0].get_parameter_value('slope'), slope, places=7)
 
-        self.assertAlmostEqual(self.data.models[1].parameters['center'].value, center, places=7)
-        self.assertAlmostEqual(self.data.models[1].parameters['amplitude'].value, amplitude, places=7)
-        self.assertAlmostEqual(self.data.models[1].parameters['sigma'].value, sigma, places=7)
+        self.assertAlmostEqual(self.data.models[1].get_parameter_value('center'), center, places=7)
+        self.assertAlmostEqual(self.data.models[1].get_parameter_value('amplitude'), amplitude, places=7)
+        self.assertAlmostEqual(self.data.models[1].get_parameter_value('sigma'), sigma, places=7)
 
     def test_fitting_multiple_models_of_the_same_type(self):
         # create test data:

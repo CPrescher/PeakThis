@@ -58,9 +58,9 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # creating the models
         def create_peak(x, center, amplitude, sigma=0.2):
             gauss_curve = PickGaussianModel()
-            gauss_curve.parameters['center'].value = center
-            gauss_curve.parameters['amplitude'].value = amplitude
-            gauss_curve.parameters['sigma'].value = sigma
+            gauss_curve.set_parameter_value('center', center)
+            gauss_curve.set_parameter_value('amplitude', amplitude)
+            gauss_curve.set_parameter_value('sigma', sigma)
             return gauss_curve.quick_eval(x)
 
         self.y += create_peak(self.x, 1, 10)
@@ -191,6 +191,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # that the spectrum is changing
         start_x, start_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.model_widget.parameter_table.item(0, 1).setText('20')
+        self.model_widget.parameter_table.item(1, 1).setText('3')
         self.model_widget.parameter_table.item(2, 1).setText('19')
         after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(start_x, after_x)
@@ -232,11 +233,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # now she is satisfied with the initial model and wants to fit the peaks:
         before_x, before_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
+
         after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_not_almost_equal(before_y, after_y)
-
-
-
-
-
         # self.fail("Finish the Test!")

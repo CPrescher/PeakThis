@@ -3,7 +3,14 @@ __author__ = 'Clemens Prescher'
 
 
 class PickModel(object):
+    num_pick_models = 0
+
     def __init__(self, number_picks):
+        self.id = PickModel.num_pick_models
+        PickModel.num_pick_models += 1
+
+        self.prefix = "id"+str(self.id)+"_"
+
         self.current_pick = 0
         self.number_picks = number_picks
         self.pick_points = [Point()] * number_picks
@@ -24,6 +31,15 @@ class PickModel(object):
         else:
             self.current_pick = 0
             return False
+
+    def get_param(self, param_name):
+        return self.parameters[self.prefix + param_name]
+
+    def set_parameter_value(self, param_name, value):
+        self.parameters[self.prefix + param_name].value = value
+
+    def get_parameter_value(self, param_name):
+        return self.parameters[self._prefix + param_name].value
 
     def quick_eval(self, x):
         return self.eval(self.parameters, x=x)

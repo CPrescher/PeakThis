@@ -69,12 +69,13 @@ class MainControllerTest(unittest.TestCase):
         self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
 
     def test_updating_model_parameters(self):
-        # adding a dummy model (tested in previous unittest)
         self.add_peak()
 
         start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
-        self.model_widget.parameter_table.item(0, 1).setText('20')
-        self.model_widget.parameter_table.item(2, 1).setText('19')
+        self.model_widget.parameter_table.item(0, 1).setText('2.0')
+        self.model_widget.parameter_table.item(1, 1).setText('3.0')
+        self.model_widget.parameter_table.item(2, 1).setText('3.0')
+
         after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
