@@ -216,6 +216,12 @@ class SpectrumWidget(QtGui.QWidget):
     def get_mouse_position(self):
         return self._spectrum_plot.get_mouse_position()
 
+    def set_spectrum_plot_keypress_callback(self, fcn_callback):
+        self._spectrum_plot.keyPressEvent = fcn_callback
+
+    def set_spectrum_plot_focus(self):
+        self._spectrum_plot.setFocus()
+
 
 class ModifiedPlotItem(pg.PlotItem):
     mouse_moved = QtCore.pyqtSignal(float, float)

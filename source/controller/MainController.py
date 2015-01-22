@@ -95,8 +95,9 @@ class MainController(object):
         self.main_widget.background_define_btn.setText('Finish')
         self.main_widget.control_widget.disable(self.main_widget.background_define_btn)
 
-        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent = self.spectrum_key_press_event_background_picking
-        self.main_widget.spectrum_widget.spectrum_plot.setFocus()
+        self.main_widget.spectrum_widget.set_spectrum_plot_keypress_callback(
+            self.spectrum_key_press_event_background_picking)
+        self.main_widget.spectrum_widget.set_spectrum_plot_focus()
 
         self.main_widget.spectrum_widget.mouse_left_clicked.connect(self.data.background_model.add_point)
 
@@ -106,7 +107,8 @@ class MainController(object):
         self.main_widget.background_define_btn.setText('Define')
         self.main_widget.control_widget.enable()
 
-        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent = self.spectrum_key_press_event_empty
+        self.main_widget.spectrum_widget.set_spectrum_plot_keypress_callback(
+            self.spectrum_key_press_event_empty)
         self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.data.background_model.add_point)
 
     def background_model_changed(self):
@@ -157,6 +159,9 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
 
     def start_model_picking(self):
+        print self.main_widget.model_list.currentRow()
+        if self.main_widget.model_list.currentRow()==-1:
+            return
         self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
         self.connect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
         self.main_widget.model_define_btn.setText("Finish")
