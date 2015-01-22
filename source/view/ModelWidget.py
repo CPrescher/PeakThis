@@ -36,10 +36,10 @@ class ModelWidget(QtGui.QGroupBox):
         self.grid_layout.addWidget(self.model_list, 2, 0, 1, 2)
         self.grid_layout.addWidget(self.parameter_table, 3, 0, 1, 2)
 
-        self.create_parameter_table_header()
+        self.model_selector_dialog = ModelSelectorDialog(self)
 
+        self.create_parameter_table_header()
         self.setLayout(self.grid_layout)
-        self.model_selector_dialog = ModelSelectorDialog(self.add_btn)
         self.create_signals()
 
     def create_parameter_table_header(self):
@@ -113,8 +113,8 @@ class ModelSelectorDialog(QtGui.QDialog):
         self.model_list.setMaximumWidth(180)
 
         self._ok_cancel_layout = QtGui.QHBoxLayout()
-        self.ok_btn = FlatButton("OK")
-        self.cancel_btn = FlatButton("Cancel")
+        self.ok_btn = QtGui.QPushButton("OK")
+        self.cancel_btn = QtGui.QPushButton("Cancel")
 
         self._ok_cancel_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
                                                                QtGui.QSizePolicy.Fixed))
