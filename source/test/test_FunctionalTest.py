@@ -189,11 +189,11 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         # she wonders if it is possible to change the parameters in the text boxes of the parameter table, and sees
         # that the spectrum is changing
-        start_x, start_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        start_x, start_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.model_widget.parameter_table.item(0, 1).setText('20')
         self.model_widget.parameter_table.item(1, 1).setText('3')
         self.model_widget.parameter_table.item(2, 1).setText('19')
-        after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        after_x, after_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
 
@@ -204,7 +204,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1, 10)
         self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1.3, 4.5)
 
-        after_define_x, after_define_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        after_define_x, after_define_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_not_almost_equal(after_define_y, after_y)
 
 
@@ -215,30 +215,30 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.add_peak(0, (9, 8), (9.4, 11))
 
         self.assertEqual(self.main_widget.model_list.count(), 5)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
+        self.assertEqual(self.main_widget.spectrum_widget.get_number_of_model_plots(), 5)
 
         # she sees that there is a copy button and wonders if this will just take of the hassle to always use the
         # model selector
         QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
 
         self.assertEqual(self.main_widget.model_list.count(), 6)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 6)
+        self.assertEqual(self.main_widget.spectrum_widget.get_number_of_model_plots(), 6)
 
         # then she sees that the last peak is doubled now and should be removed from the list
 
         QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.main_widget.model_list.count(), 5)
-        self.assertEqual(len(self.main_widget.spectrum_widget.model_plot_items), 5)
+        self.assertEqual(self.main_widget.spectrum_widget.get_number_of_model_plots(), 5)
 
         # now she is satisfied with the initial model and wants to fit the peaks:
-        before_x, before_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        before_x, before_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
 
-        after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
+        after_x, after_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_not_almost_equal(before_y, after_y)
 
         # and she sees that the lower graph now also shows the residual
-        residual_x, residual_y = self.main_widget.spectrum_widget.residual_plot_item.getData()
+        residual_x, residual_y = self.main_widget.spectrum_widget.get_residual_plot_data()
         self.array_almost_equal(after_x, residual_x)
         self.assertNotEqual(np.sum(residual_y), 0)
 

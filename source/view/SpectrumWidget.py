@@ -140,6 +140,9 @@ class SpectrumWidget(QtGui.QWidget):
         x, y = spectrum.data
         self.plot_data(x, y)
 
+    def get_plot_data(self):
+        return self.data_plot_item.getData()
+
     def plot_background(self, x, y):
         self.background_plot_item.setData(x, y)
 
@@ -154,6 +157,12 @@ class SpectrumWidget(QtGui.QWidget):
         x, y = spectrum.data
         self.plot_background_points(x, y)
 
+    def get_background_plot_data(self):
+        return self.background_plot_item.getData()
+
+    def get_background_points_data(self):
+        return self.background_scatter_item.getData()
+
     def plot_residual(self, x, y):
         self.residual_plot_item.setData(x, y)
 
@@ -161,12 +170,18 @@ class SpectrumWidget(QtGui.QWidget):
         x, y = spectrum.data
         self.plot_residual(x, y)
 
+    def get_residual_plot_data(self):
+        return self.residual_plot_item.getData()
+
     def plot_model_sum(self, x, y):
         self.model_sum_plot_item.setData(x,y)
 
     def plot_model_sum_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_model_sum(x, y)
+
+    def get_model_sum_plot_data(self):
+        return self.model_sum_plot_item.getData()
 
     def add_model(self, spectrum=None):
         self.model_plot_items.append(pg.PlotDataItem())
@@ -191,6 +206,12 @@ class SpectrumWidget(QtGui.QWidget):
     def del_model(self, index=-1):
         self.spectrum_plot.removeItem(self.model_plot_items[index])
         del self.model_plot_items[index]
+
+    def get_model_plot_data(self, index):
+        return self.model_plot_items[index].getData()
+
+    def get_number_of_model_plots(self):
+        return len(self.model_plot_items)
 
     def get_mouse_position(self):
         return self.spectrum_plot.get_mouse_position()

@@ -66,17 +66,17 @@ class MainControllerTest(unittest.TestCase):
         self.assertGreater(len(self.data.models), 0)
 
         # and in the spectrum
-        self.assertGreater(len(self.spectrum_widget.model_plot_items), 0)
+        self.assertGreater(self.spectrum_widget.get_number_of_model_plots(), 0)
 
     def test_updating_model_parameters(self):
         self.add_model()
 
-        start_x, start_y = self.spectrum_widget.model_plot_items[0].getData()
+        start_x, start_y = self.spectrum_widget.get_model_plot_data(0)
         self.model_widget.parameter_table.item(0, 1).setText('2.0')
         self.model_widget.parameter_table.item(1, 1).setText('3.0')
         self.model_widget.parameter_table.item(2, 1).setText('3.0')
 
-        after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
+        after_x, after_y = self.spectrum_widget.get_model_plot_data(0)
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
 
@@ -84,7 +84,7 @@ class MainControllerTest(unittest.TestCase):
         self.add_model()
         QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.model_widget.model_list.count(), 2)
-        self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
+        self.assertEqual(self.spectrum_widget.get_number_of_model_plots(), 2)
 
     def test_deleting_models(self):
         # adding some models:
@@ -93,12 +93,12 @@ class MainControllerTest(unittest.TestCase):
         self.add_model()
 
         self.assertEqual(self.model_widget.model_list.count(), 3)
-        self.assertEqual(len(self.spectrum_widget.model_plot_items), 3)
+        self.assertEqual(self.spectrum_widget.get_number_of_model_plots(), 3)
 
         # now we delete the press delete and see what happens:
         QTest.mouseClick(self.main_widget.model_delete_btn, QtCore.Qt.LeftButton)
         self.assertEqual(self.model_widget.model_list.count(), 2)
-        self.assertEqual(len(self.spectrum_widget.model_plot_items), 2)
+        self.assertEqual(self.spectrum_widget.get_number_of_model_plots(), 2)
 
         # now add two more and select a peak in between
         self.add_model()
@@ -116,15 +116,15 @@ class MainControllerTest(unittest.TestCase):
         self.data.set_data(x, y)
         self.add_model(2)
 
-        before_x, before_y = self.spectrum_widget.model_plot_items[0].getData()
+        before_x, before_y = self.spectrum_widget.get_model_plot_data(0)
         QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
 
         # model should have changed after it was fitted
-        after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
+        after_x, after_y = self.spectrum_widget.get_model_plot_data(0)
         self.array_not_almost_equal(before_y, after_y)
 
         # there should now also be a residual in the lower plot:
-        residual_x, residual_y = self.spectrum_widget.residual_plot_item.getData()
+        residual_x, residual_y = self.spectrum_widget.get_residual_plot_data()
         self.array_almost_equal(after_x, residual_y)
         self.assertAlmostEqual(np.sum(residual_y), 0)
 
