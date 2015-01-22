@@ -21,64 +21,62 @@ class SpectrumWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(SpectrumWidget, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self._layout = QtGui.QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
 
-        self.create_spectrum()
-        self.create_mouse_position_widget()
+        self._create_spectrum()
+        self._create_mouse_position_widget()
 
-        self.setLayout(self.layout)
+        self.setLayout(self._layout)
 
-        self.create_plot_data_items()
+        self._create_plot_items()
 
-        self.spectrum_plot.connect_mouse_move_event()
-        self.residual_plot.connect_mouse_move_event()
+        self._spectrum_plot.connect_mouse_move_event()
+        self._residual_plot.connect_mouse_move_event()
 
-        self.spectrum_plot.mouse_moved.connect(self.update_mouse_position_widget)
-        self.residual_plot.mouse_moved.connect(self.update_mouse_position_widget)
+        self._spectrum_plot.mouse_moved.connect(self.update_mouse_position_widget)
+        self._residual_plot.mouse_moved.connect(self.update_mouse_position_widget)
 
-        self.spectrum_plot.mouse_left_clicked.connect(self.mouse_left_clicked.emit)
-        self.data_plot_item.sigClicked.connect(self.data_plot_item_clicked)
+        self._spectrum_plot.mouse_left_clicked.connect(self.mouse_left_clicked.emit)
+        self._data_plot_item.sigClicked.connect(self.data_plot_item_clicked)
 
-        self.spectrum_plot.mouse_moved.connect(self.mouse_moved.emit)
+        self._spectrum_plot.mouse_moved.connect(self.mouse_moved.emit)
 
-        self.model_plot_items = []
+    def _create_spectrum(self):
+        self._pg_layout_widget = pg.GraphicsLayoutWidget()
+        self._pg_layout = pg.GraphicsLayout()
+        self._pg_layout.setContentsMargins(0, 0, 0, 0)
+        self._pg_layout_widget.setContentsMargins(0, 0, 0, 0)
 
-    def create_spectrum(self):
-        self.pg_layout_widget = pg.GraphicsLayoutWidget()
-        self.pg_layout = pg.GraphicsLayout()
-        self.pg_layout.setContentsMargins(0, 0, 0, 0)
-        self.pg_layout_widget.setContentsMargins(0, 0, 0, 0)
+        self._spectrum_plot = ModifiedPlotItem()
+        self._residual_plot = ModifiedPlotItem()
 
-        self.spectrum_plot = ModifiedPlotItem()
-        self.residual_plot = ModifiedPlotItem()
+        self._pg_layout.addItem(self._spectrum_plot, 0, 0)
+        self._pg_layout.addItem(self._residual_plot, 1, 0)
 
-        self.pg_layout.addItem(self.spectrum_plot, 0, 0)
-        self.pg_layout.addItem(self.residual_plot, 1, 0)
+        self._residual_plot.setXLink(self._spectrum_plot)
+        self._residual_plot.hideAxis('bottom')
 
-        self.residual_plot.setXLink(self.spectrum_plot)
-        self.residual_plot.hideAxis('bottom')
+        self._pg_layout.layout.setRowStretchFactor(0, 100)
+        self._pg_layout.layout.setRowStretchFactor(1, 0)
 
-        self.pg_layout.layout.setRowStretchFactor(0, 100)
-        self.pg_layout.layout.setRowStretchFactor(1, 0)
+        self._pg_layout_widget.addItem(self._pg_layout)
+        self._layout.addWidget(self._pg_layout_widget)
 
-        self.pg_layout_widget.addItem(self.pg_layout)
-        self.layout.addWidget(self.pg_layout_widget)
-
-    def create_mouse_position_widget(self):
-        self.pos_layout = QtGui.QHBoxLayout()
+    def _create_mouse_position_widget(self):
+        self._pos_layout = QtGui.QHBoxLayout()
         self.x_lbl = QtGui.QLabel('x:')
         self.y_lbl = QtGui.QLabel('y:')
 
         self.x_lbl.setMinimumWidth(60)
         self.y_lbl.setMinimumWidth(60)
 
-        self.pos_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
+        self._pos_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
                                                         QtGui.QSizePolicy.Fixed))
-        self.pos_layout.addWidget(self.x_lbl)
-        self.pos_layout.addWidget(self.y_lbl)
+        self._pos_layout.addWidget(self.x_lbl)
+        self._pos_layout.addWidget(self.y_lbl)
 
-        self.layout.addLayout(self.pos_layout)
+        self._layout.addLayout(self._pos_layout)
 
 
     def data_plot_item_clicked(self):
@@ -87,38 +85,40 @@ class SpectrumWidget(QtGui.QWidget):
         x, y values to
         mouse_left_clicked. Otherwise the Data plot item blocks the signal...
         """
-        x, y = self.spectrum_plot.get_mouse_position()
+        x, y = self._spectrum_plot.get_mouse_position()
         self.mouse_left_clicked.emit(x,y)
 
     def update_mouse_position_widget(self, x, y):
         self.x_lbl.setText('x: {:02.4f}'.format(x))
         self.y_lbl.setText('y: {:02.4f}'.format(y))
 
-    def create_plot_data_items(self):
+    def _create_plot_items(self):
         self.current_selected_model = 0
-        self.data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.3),
+        self._data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.3),
                                                  brush=pg.mkBrush('g'),
                                                  size=5,
                                                  symbol = 'x',
                                                  pxMode=True)
 
-        self.background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
-        self.background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
+        self._background_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
+        self._background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=0.2),
                                                           brush=pg.mkBrush('k'),
                                                           size=6,
                                                           symbol='d')
 
-        self.residual_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
-        self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3, style=QtCore.Qt.DashLine))
+        self._residual_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
+        self._model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3, style=QtCore.Qt.DashLine))
 
-        self.spectrum_plot.addItem(self.data_plot_item)
-        self.spectrum_plot.addItem(self.background_plot_item)
-        self.spectrum_plot.addItem(self.model_sum_plot_item)
-        self.spectrum_plot.addItem(self.background_scatter_item)
-        self.residual_plot.addItem(self.residual_plot_item)
+        self._model_plot_items = []
+
+        self._spectrum_plot.addItem(self._data_plot_item)
+        self._spectrum_plot.addItem(self._background_plot_item)
+        self._spectrum_plot.addItem(self._model_sum_plot_item)
+        self._spectrum_plot.addItem(self._background_scatter_item)
+        self._residual_plot.addItem(self._residual_plot_item)
 
     def plot_data(self, x, y):
-        self.data_plot_item.setData(x, y)
+        self._data_plot_item.setData(x, y)
         self.set_limits(x, y)
 
     def set_limits(self, x, y, spacing=0.25):
@@ -130,7 +130,7 @@ class SpectrumWidget(QtGui.QWidget):
         x_space = spacing * x_range
         y_range = y_max - y_min
         y_space = spacing * y_range
-        self.spectrum_plot.setLimits(xMin=x_min - x_space,
+        self._spectrum_plot.setLimits(xMin=x_min - x_space,
                                      xMax=x_max + x_space,
                                      yMin=y_min - y_space,
                                      yMax=y_max + y_space)
@@ -141,80 +141,80 @@ class SpectrumWidget(QtGui.QWidget):
         self.plot_data(x, y)
 
     def get_plot_data(self):
-        return self.data_plot_item.getData()
+        return self._data_plot_item.getData()
 
     def plot_background(self, x, y):
-        self.background_plot_item.setData(x, y)
+        self._background_plot_item.setData(x, y)
 
     def plot_background_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_background(x, y)
 
     def plot_background_points(self, x, y):
-        self.background_scatter_item.setData(x, y)
+        self._background_scatter_item.setData(x, y)
 
     def plot_background_points_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_background_points(x, y)
 
     def get_background_plot_data(self):
-        return self.background_plot_item.getData()
+        return self._background_plot_item.getData()
 
     def get_background_points_data(self):
-        return self.background_scatter_item.getData()
+        return self._background_scatter_item.getData()
 
     def plot_residual(self, x, y):
-        self.residual_plot_item.setData(x, y)
+        self._residual_plot_item.setData(x, y)
 
     def plot_residual_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_residual(x, y)
 
     def get_residual_plot_data(self):
-        return self.residual_plot_item.getData()
+        return self._residual_plot_item.getData()
 
     def plot_model_sum(self, x, y):
-        self.model_sum_plot_item.setData(x,y)
+        self._model_sum_plot_item.setData(x,y)
 
     def plot_model_sum_spectrum(self, spectrum):
         x, y = spectrum.data
         self.plot_model_sum(x, y)
 
     def get_model_sum_plot_data(self):
-        return self.model_sum_plot_item.getData()
+        return self._model_sum_plot_item.getData()
 
     def add_model(self, spectrum=None):
-        self.model_plot_items.append(pg.PlotDataItem())
+        self._model_plot_items.append(pg.PlotDataItem())
         # self.activate_model_spectrum(len(self.model_plot_items)-1)
-        self.spectrum_plot.addItem(self.model_plot_items[-1])
+        self._spectrum_plot.addItem(self._model_plot_items[-1])
         if spectrum is not None:
             self.update_model_spectrum(-1, spectrum)
 
     def update_model(self, ind, x, y):
-        self.model_plot_items[ind].setData(x, y)
+        self._model_plot_items[ind].setData(x, y)
 
     def update_model_spectrum(self, ind, spectrum):
         x, y = spectrum.data
         self.update_model(ind, x, y)
 
     def activate_model_spectrum(self, ind):
-        if len(self.model_plot_items):
-            self.model_plot_items[self.current_selected_model].setPen(pg.mkPen((253,153,50), width=1))
-            self.model_plot_items[ind].setPen(pg.mkPen((200,120,20), width=1))
+        if len(self._model_plot_items):
+            self._model_plot_items[self.current_selected_model].setPen(pg.mkPen((253,153,50), width=1))
+            self._model_plot_items[ind].setPen(pg.mkPen((200,120,20), width=1))
             self.current_selected_model=ind
 
     def del_model(self, index=-1):
-        self.spectrum_plot.removeItem(self.model_plot_items[index])
-        del self.model_plot_items[index]
+        self._spectrum_plot.removeItem(self._model_plot_items[index])
+        del self._model_plot_items[index]
 
     def get_model_plot_data(self, index):
-        return self.model_plot_items[index].getData()
+        return self._model_plot_items[index].getData()
 
     def get_number_of_model_plots(self):
-        return len(self.model_plot_items)
+        return len(self._model_plot_items)
 
     def get_mouse_position(self):
-        return self.spectrum_plot.get_mouse_position()
+        return self._spectrum_plot.get_mouse_position()
 
 
 class ModifiedPlotItem(pg.PlotItem):
