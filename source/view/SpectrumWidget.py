@@ -108,7 +108,7 @@ class SpectrumWidget(QtGui.QWidget):
                                                           size=6,
                                                           symbol='d')
 
-        self.residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen('k', width=1.5))
+        self.residual_plot_item = pg.PlotDataItem(pen=pg.mkPen('r', width=1.5))
         self.model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen('c', width=3, style=QtCore.Qt.DashLine))
 
         self.spectrum_plot.addItem(self.data_plot_item)

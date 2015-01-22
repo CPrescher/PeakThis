@@ -21,6 +21,8 @@ class DataModel(QtCore.QObject):
 
     model_sum_changed = QtCore.pyqtSignal(Spectrum)
 
+    residual_changed = QtCore.pyqtSignal(Spectrum)
+
     def __init__(self):
         super(DataModel, self).__init__()
         self.models = []
@@ -154,3 +156,4 @@ class DataModel(QtCore.QObject):
             self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
 
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
+        self.residual_changed.emit(Spectrum(x, out.residual))

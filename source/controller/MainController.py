@@ -76,6 +76,7 @@ class MainController(object):
 
         # Fitting signals
         self.main_widget.fit_btn.clicked.connect(self.data.fit_data)
+        self.data.residual_changed.connect(self.main_widget.spectrum_widget.plot_residual_spectrum)
 
         ##############################################
         # Background controls

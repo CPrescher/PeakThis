@@ -236,4 +236,10 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         after_x, after_y = self.main_widget.spectrum_widget.model_plot_items[0].getData()
         self.array_not_almost_equal(before_y, after_y)
+
+        # and she sees that the lower graph now also shows the residual
+        residual_x, residual_y = self.main_widget.spectrum_widget.residual_plot_item.getData()
+        self.array_almost_equal(after_x, residual_x)
+        self.assertNotEqual(np.sum(residual_y), 0)
+
         # self.fail("Finish the Test!")

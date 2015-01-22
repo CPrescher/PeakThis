@@ -119,9 +119,14 @@ class MainControllerTest(unittest.TestCase):
         before_x, before_y = self.spectrum_widget.model_plot_items[0].getData()
         QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
 
+        # model should have changed after it was fitted
         after_x, after_y = self.spectrum_widget.model_plot_items[0].getData()
-
         self.array_not_almost_equal(before_y, after_y)
+
+        # there should now also be a residual in the lower plot:
+        residual_x, residual_y = self.spectrum_widget.residual_plot_item.getData()
+        self.array_almost_equal(after_x, residual_y)
+        self.assertAlmostEqual(np.sum(residual_y), 0)
 
 
 
