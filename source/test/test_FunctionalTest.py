@@ -36,13 +36,13 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.main_widget.model_selector_dialog.model_list.setCurrentRow(type_number)
         QTest.mouseClick(self.main_widget.model_selector_dialog.ok_btn, QtCore.Qt.LeftButton)
         QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click1_pos[0], click1_pos[1])
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click2_pos[0], click2_pos[1])
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(click1_pos[0], click1_pos[1])
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(click2_pos[0], click2_pos[1])
 
     def copy_model(self, click1_pos, click2_pos):
         QTest.mouseClick(self.main_widget.model_copy_btn, QtCore.Qt.LeftButton)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click1_pos[0], click1_pos[1])
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(click2_pos[0], click2_pos[1])
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(click1_pos[0], click1_pos[1])
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(click2_pos[0], click2_pos[1])
 
 
     def create_spectrum(self):
@@ -84,7 +84,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         # Edith notices that the spectrum is immediately shown in the graph window
         QtGui.QApplication.processEvents()
-        x, y = self.main_widget.spectrum_widget.data_plot_item.getData()
+        x, y = self.main_widget.spectrum_widget.get_plot_data()
 
         self.array_almost_equal(x, self.x)
         self.array_almost_equal(y, self.y)
@@ -99,22 +99,22 @@ class PeakThisFunctionalTest(unittest.TestCase):
         bkg_click_points_y = [1, 1.2, 6]
 
         for ind in range(len(bkg_click_points_x)):
-            self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(bkg_click_points_x[ind],
-                                                                                   bkg_click_points_y[ind])
+            self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(bkg_click_points_x[ind],
+                                                                                  bkg_click_points_y[ind])
 
-        bkg_points_x, bkg_points_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        bkg_points_x, bkg_points_y = self.main_widget.spectrum_widget.get_background_points_data()
 
         self.array_almost_equal(bkg_points_x, bkg_click_points_x)
         self.array_almost_equal(bkg_points_y, bkg_click_points_y)
 
         # every time she clicks in the spectrum after the first three clicks she sees that the background changes
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(7, 1.1)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(7, 1.1)
 
-        x, bkg_y1 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        x, bkg_y1 = self.main_widget.spectrum_widget.get_background_plot_data()
         self.array_almost_equal(self.x, x)
 
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10, 1)
-        x, bkg_y2 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(10, 1)
+        x, bkg_y2 = self.main_widget.spectrum_widget.get_background_plot_data()
 
         self.array_not_almost_equal(bkg_y1, bkg_y2)
 
@@ -123,12 +123,12 @@ class PeakThisFunctionalTest(unittest.TestCase):
 
         self.main_widget.background_method_cb.setCurrentIndex(1)
 
-        x, bkg_y3 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        x, bkg_y3 = self.main_widget.spectrum_widget.get_background_plot_data()
         self.array_not_almost_equal(bkg_y2, bkg_y3)
 
         # then she sees that spline is actually worse and goes back to pchip
         self.main_widget.background_method_cb.setCurrentIndex(0)
-        x, bkg_y4 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        x, bkg_y4 = self.main_widget.spectrum_widget.get_background_plot_data()
         self.array_almost_equal(bkg_y4, bkg_y2)
 
         # Edith decides that she is finished with the background and clicks the button to finish it
@@ -136,8 +136,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
         # she notices that clicking into the spectrum now does not effect background any more...
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(10, 10)
-        x, bkg_y5 = self.main_widget.spectrum_widget.background_plot_item.getData()
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(10, 10)
+        x, bkg_y5 = self.main_widget.spectrum_widget.get_background_plot_data()
         self.array_almost_equal(bkg_y5, bkg_y4)
 
         # while playing and being happy that everything works she realizes that there is one point which might be
@@ -154,10 +154,10 @@ class PeakThisFunctionalTest(unittest.TestCase):
                 return self._text
 
 
-        self.main_widget.spectrum_widget.spectrum_plot.update_cur_mouse_position(6.2, 4.5)
-        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
+        self.main_widget.spectrum_widget._spectrum_plot_set_current_mouse_position(6.2, 4.5)
+        self.main_widget.spectrum_widget._spectrum_plot_send_keypress_event(DummyKeyPressEvent('x'))
 
-        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.get_background_points_data()
         self.array_almost_equal(bkg_scatter_x, [0, 3, 7, 10])
         self.array_almost_equal(bkg_scatter_y, [1, 1.2, 1.1, 1])
 
@@ -165,8 +165,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
         # she notices that pressing x does not delete points anymore
-        self.main_widget.spectrum_widget.spectrum_plot.keyPressEvent(DummyKeyPressEvent('x'))
-        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.background_scatter_item.getData()
+        self.main_widget.spectrum_widget._spectrum_plot_send_keypress_event(DummyKeyPressEvent('x'))
+        bkg_scatter_x, bkg_scatter_y = self.main_widget.spectrum_widget.get_background_points_data()
         self.array_almost_equal(bkg_scatter_x, [0, 3, 7, 10])
         self.array_almost_equal(bkg_scatter_y, [1, 1.2, 1.1, 1])
 
@@ -201,8 +201,8 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # she did before with the Background
 
         QTest.mouseClick(self.main_widget.model_define_btn, QtCore.Qt.LeftButton)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1, 10)
-        self.main_widget.spectrum_widget.spectrum_plot.mouse_left_clicked.emit(1.3, 4.5)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(1, 10)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(1.3, 4.5)
 
         after_define_x, after_define_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_not_almost_equal(after_define_y, after_y)
