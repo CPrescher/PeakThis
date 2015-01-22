@@ -83,6 +83,8 @@ class MainController(object):
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
 
+        self.main_widget.closeEvent = self.close_event
+
     def connect_click_function(self, emitter, function):
         self.main_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
 
@@ -196,3 +198,8 @@ class MainController(object):
                                                              ''))
         if filename is not '':
             self.data.load_data(filename)
+
+
+    def close_event(self, _):
+        QtGui.QApplication.closeAllWindows()
+        QtGui.QApplication.quit()

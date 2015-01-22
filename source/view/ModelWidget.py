@@ -3,6 +3,7 @@ __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui, QtCore
 from lmfit import Parameters, Parameter
+from .GuiElements import FlatButton
 
 
 class ModelWidget(QtGui.QGroupBox):
@@ -13,13 +14,16 @@ class ModelWidget(QtGui.QGroupBox):
         super(ModelWidget, self).__init__("Models", parent)
 
         self.grid_layout = QtGui.QGridLayout()
+        self.grid_layout.setContentsMargins(5,10,5,5)
+        self.grid_layout.setSpacing(5)
 
-        self.add_btn = QtGui.QPushButton("Add")
-        self.delete_btn = QtGui.QPushButton("Delete")
-        self.copy_btn = QtGui.QPushButton("Copy")
-        self.define_btn = QtGui.QPushButton("Define")
+        self.add_btn = FlatButton("Add")
+        self.delete_btn = FlatButton("Delete")
+        self.copy_btn = FlatButton("Copy")
+        self.define_btn = FlatButton("Define")
 
         self.model_list = QtGui.QListWidget()
+        self.model_list.setFocusPolicy(QtCore.Qt.NoFocus)
 
         self.parameter_table = QtGui.QTableWidget()
         self.parameter_table.verticalHeader().setVisible(False)
@@ -32,18 +36,25 @@ class ModelWidget(QtGui.QGroupBox):
         self.grid_layout.addWidget(self.model_list, 2, 0, 1, 2)
         self.grid_layout.addWidget(self.parameter_table, 3, 0, 1, 2)
 
+        self.create_parameter_table_header()
+
         self.setLayout(self.grid_layout)
-
         self.model_selector_dialog = ModelSelectorDialog(self.add_btn)
-
         self.create_signals()
+
+    def create_parameter_table_header(self):
+        self.parameter_table.setHorizontalHeaderItem(0, QtGui.QTableWidgetItem("Param"))
+        self.parameter_table.setHorizontalHeaderItem(1, QtGui.QTableWidgetItem("Value"))
+        self.parameter_table.setHorizontalHeaderItem(2, QtGui.QTableWidgetItem("Fit"))
+        self.parameter_table.setHorizontalHeaderItem(3, QtGui.QTableWidgetItem("Min"))
+        self.parameter_table.setHorizontalHeaderItem(4, QtGui.QTableWidgetItem("Max"))
 
     def show_model_selector_dialog(self):
         self.model_selector_dialog.show()
 
     def update_parameters(self, parameters):
         self.parameter_table.blockSignals(True)
-        self.parameter_table.clear()
+        self.parameter_table.clearContents()
         self.parameter_table.setRowCount(len(parameters))
 
         for ind, name in enumerate(parameters):
@@ -102,8 +113,8 @@ class ModelSelectorDialog(QtGui.QDialog):
         self.model_list.setMaximumWidth(180)
 
         self._ok_cancel_layout = QtGui.QHBoxLayout()
-        self.ok_btn = QtGui.QPushButton("OK")
-        self.cancel_btn = QtGui.QPushButton("Cancel")
+        self.ok_btn = FlatButton("OK")
+        self.cancel_btn = FlatButton("Cancel")
 
         self._ok_cancel_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
                                                                QtGui.QSizePolicy.Fixed))

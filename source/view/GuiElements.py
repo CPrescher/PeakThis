@@ -4,6 +4,11 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtGui
 
 
+class FlatButton(QtGui.QPushButton):
+    def __init__(self, *args, **kwargs):
+        super(FlatButton, self).__init__(*args, **kwargs)
+        self.setFlat(True)
+
 class HorizontalLine(QtGui.QFrame):
     def __init__(self, parent=None):
         super(HorizontalLine, self).__init__(parent)
