@@ -4,6 +4,7 @@ __author__ = 'Clemens Prescher'
 import numpy as np
 import copy
 from PyQt4 import QtCore
+from lmfit import Parameters
 
 from model.Spectrum import Spectrum
 from model.BackgroundModel import BackgroundModel
@@ -73,10 +74,14 @@ class DataModel(QtCore.QObject):
 
     def update_model(self, ind, parameters):
         for key, val in parameters.iteritems():
-            self.models[ind].parameters[key].value = parameters[key].value
-            self.models[ind].parameters[key].vary = parameters[key].vary
-            self.models[ind].parameters[key].min = parameters[key].min
-            self.models[ind].parameters[key].max = parameters[key].max
+            if not key.startswith(self.models[ind].prefix):
+                model_key = self.models[ind].prefix + key
+            else:
+                model_key = key
+            self.models[ind].parameters[model_key].value = parameters[key].value
+            self.models[ind].parameters[model_key].vary = parameters[key].vary
+            self.models[ind].parameters[model_key].min = parameters[key].min
+            self.models[ind].parameters[model_key].max = parameters[key].max
 
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
@@ -135,17 +140,23 @@ class DataModel(QtCore.QObject):
         if len(self.models) == 0:
             return
 
-        combined_model = self.models[0]
-        combined_parameters = self.models[0].parameters
-
-        for ind in xrange(1, len(self.models)):
-            combined_model += self.models[ind]
-            combined_parameters += self.models[ind].parameters
+        # these elifs exist because we cannot create an empty combined model and then copy the models into it
+        combined_parameters = Parameters()
+        if len(self.models) == 1:
+            combined_model = self.models[0]
+            combined_parameters += self.models[0].parameters
+        elif len(self.models) > 1:
+            combined_model = self.models[0]+self.models[1]
+            combined_parameters = copy.deepcopy(self.models[0].parameters) + copy.deepcopy(self.models[1].parameters)
+            for ind in xrange(2, len(self.models)):
+                combined_model += self.models[ind]
+                combined_parameters += self.models[ind].parameters
 
         x, y = self.spectrum.data
         x_bkg, y_bkg = self.background_spectrum.data
         if x.shape == y_bkg.shape:
             y-=y_bkg
+
         out = combined_model.fit(y, params=combined_parameters, x=x)
 
         # save the data into the model

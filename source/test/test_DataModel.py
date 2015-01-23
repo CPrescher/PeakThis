@@ -166,6 +166,9 @@ class DataModelTest(unittest.TestCase):
 
         self.data.fit_data()
 
+        self.assertEqual(len(self.data.models[0].parameters),3)
+
+
 
 
 
