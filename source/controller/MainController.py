@@ -165,7 +165,6 @@ class MainController(object):
         self.main_widget.control_widget.model_widget.update_parameters(self.data.models[index].parameters)
 
     def start_model_picking(self):
-        print self.main_widget.model_list.currentRow()
         if self.main_widget.model_list.currentRow()==-1:
             return
         self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)

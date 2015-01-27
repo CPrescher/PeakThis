@@ -68,7 +68,6 @@ class DataModel(QtCore.QObject):
     def remove_background_model_point_close_to(self, x, y):
         if self._background_subtracted_flag:
             y += self.background_model.data(x)
-        print x, y
         self.background_model.delete_point_close_to(x, y)
         self.background_points_changed.emit(self.get_background_points_spectrum())
 
