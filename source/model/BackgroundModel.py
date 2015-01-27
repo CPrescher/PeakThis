@@ -43,8 +43,9 @@ class BackgroundModel(QtCore.QObject):
         self.background_model_changed.emit()
 
     def data(self, x):
+        x = np.asarray(x)
         if len(self.x) == 0:
-            return None
+            return np.zeros(x.shape)
         elif len(self.x) == 1:
             return np.ones(x.shape) * self.y[0]
         elif len(self.x) == 2:

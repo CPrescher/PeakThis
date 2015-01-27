@@ -25,6 +25,7 @@ class MainControllerTest(unittest.TestCase):
         self.spectrum_widget = self.controller.main_widget.spectrum_widget
 
     def tearDown(self):
+        self.main_widget.close()
         del self.app
 
     def add_model(self, model_type_ind=0):
@@ -139,7 +140,7 @@ class MainControllerTest(unittest.TestCase):
 
         # define a simple background
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
-        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(2,3)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(2,2)
         self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(4,4)
         QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
 
@@ -153,6 +154,64 @@ class MainControllerTest(unittest.TestCase):
         self.array_almost_equal(y_bkg_spec, np.zeros(y_bkg_spec.shape))
 
         self.array_almost_equal(y_bkg_points, np.zeros(x_bkg_points.shape))
+
+    def test_background_subtraction_with_new_defined_points(self):
+        # add some spectrum and a model
+        x = np.linspace(-3, 3)
+        y = x
+        self.data.set_spectrum_data(x, y)
+        self.add_model(1)
+
+        # define a simple linear background with slope 1
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(2,2)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(4,4)
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # set the background subtraction flag
+        QTest.mouseClick(self.main_widget.background_subtract_btn, QtCore.Qt.LeftButton)
+
+        # define new points for background subtraction
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(3,3)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(1,1)
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # the actual y values of the points after clicking should still be zero
+        x_bkg_points, y_bkg_points = self.main_widget.spectrum_widget.get_background_points_data()
+        self.array_almost_equal(y_bkg_points, np.zeros(x_bkg_points.shape))
+
+    def test_background_points_removal_with_background_subtraction(self):
+        #define some spectrum
+        x = np.linspace(-3, 3)
+        y = x
+        self.data.set_spectrum_data(x, y)
+
+        # define a simple linear background with slope 1
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(1,1)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(2,2)
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        #now lets try to remove a point without background subtraction, it should remove (1,1)
+        self.data.remove_background_model_point_close_to(1.6, 0)
+        x_bkg_points, y_bkg_points = self.main_widget.spectrum_widget.get_background_points_data()
+        self.array_almost_equal(x_bkg_points, [2])
+
+        # re-add the point, turn on background subtraction and click on the same spot
+        # this time it should remove the other point since it is closer
+        # after background subtraction
+
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(1,1)
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # set the background subtraction flag
+        QTest.mouseClick(self.main_widget.background_subtract_btn, QtCore.Qt.LeftButton)
+
+        self.data.remove_background_model_point_close_to(1.6, 0)
+        x_bkg_points, y_bkg_points = self.main_widget.spectrum_widget.get_background_points_data()
+        self.array_almost_equal(x_bkg_points, [1])
 
 
 

@@ -57,6 +57,21 @@ class DataModel(QtCore.QObject):
     def get_spectrum_data(self):
         return self.get_spectrum().data
 
+    def add_background_model_point(self, x, y):
+        if self._background_subtracted_flag:
+            y_bkg = self.background_model.data(x)
+            self.background_model.add_point(x, y+y_bkg)
+        else:
+            self.background_model.add_point(x, y)
+        self.background_points_changed.emit(self.get_background_points_spectrum())
+
+    def remove_background_model_point_close_to(self, x, y):
+        if self._background_subtracted_flag:
+            y += self.background_model.data(x)
+        print x, y
+        self.background_model.delete_point_close_to(x, y)
+        self.background_points_changed.emit(self.get_background_points_spectrum())
+
     def background_model_changed(self):
         # emit background model
         x, y = self.spectrum.data
@@ -66,9 +81,6 @@ class DataModel(QtCore.QObject):
         else:
             self.background_spectrum = Spectrum(np.array([]), np.array([]))
         self.background_changed.emit(self.get_background_spectrum())
-        # emit the points:
-        x, y = self.background_model.get_points()
-        self.background_points_changed.emit(Spectrum(x, y))
 
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
         for ind in range(len(self.models)):
@@ -149,17 +161,15 @@ class DataModel(QtCore.QObject):
         return Spectrum(x, sum)
 
     def update_current_model_parameter(self, ind, x, y):
-        y_bkg = self.background_model.data(x)
-        if y_bkg is not None:
-            y -= y_bkg
+        y -= self.background_model.data(x)
+
         self.models[ind].update_current_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
     def pick_current_model_parameters(self, ind, x, y):
-        y_bkg = self.background_model.data(x)
-        if y_bkg is not None:
-            y -= y_bkg
+        y -= self.background_model.data(x)
+
         more_parameters_available = self.models[ind].pick_parameter(x, y)
         self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
         self.model_sum_changed.emit(self.get_model_sum_spectrum())

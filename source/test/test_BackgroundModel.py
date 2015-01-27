@@ -71,5 +71,5 @@ class BackgroundModelTest(unittest.TestCase):
         self.bkg_model.delete_point_close_to(0, 0)
         self.bkg_model.delete_point_close_to(0, 0)
         self.bkg_model.delete_point_close_to(0, 0)
-        self.assertEqual(self.bkg_model.data(2), None)
+        self.assertEqual(self.bkg_model.data(2), 0)
 
