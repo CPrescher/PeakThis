@@ -87,11 +87,13 @@ class ControlWidget(QtGui.QWidget):
 
         self.setLayout(self.main_vertical_layout)
 
-    def disable(self, except_widget=None):
+    def disable(self, except_widgets=None):
         for child1 in self.children():
             for child2 in child1.children():
                 child2.setEnabled(False)
-        except_widget.setEnabled(True)
+
+        for widget in except_widgets:
+            widget.setEnabled(True)
 
     def enable(self):
         for child1 in self.children():
@@ -140,6 +142,7 @@ class BackgroundWidget(QtGui.QGroupBox):
         self.type_cb.addItem("pchip")
         self.type_cb.addItem("spline")
         self.define_btn = FlatButton('Define')
+        self.define_btn.setCheckable(True)
         self.subtract_btn = FlatButton('Subtract')
         self.subtract_btn.setCheckable(True)
 

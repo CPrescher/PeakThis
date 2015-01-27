@@ -21,6 +21,7 @@ class ModelWidget(QtGui.QGroupBox):
         self.delete_btn = FlatButton("Delete")
         self.copy_btn = FlatButton("Copy")
         self.define_btn = FlatButton("Define")
+        self.define_btn.setCheckable(True)
 
         self.model_list = QtGui.QListWidget()
         self.model_list.setFocusPolicy(QtCore.Qt.NoFocus)

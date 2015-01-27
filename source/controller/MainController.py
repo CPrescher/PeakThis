@@ -97,7 +97,9 @@ class MainController(object):
         self.connect_click_function(self.main_widget.background_define_btn, self.end_background_picking)
 
         self.main_widget.background_define_btn.setText('Finish')
-        self.main_widget.control_widget.disable(self.main_widget.background_define_btn)
+        self.main_widget.control_widget.disable(except_widgets=[self.main_widget.background_define_btn,
+                                                                self.main_widget.background_subtract_btn,
+                                                                self.main_widget.background_method_cb])
 
         self.main_widget.spectrum_widget.set_spectrum_plot_keypress_callback(
             self.spectrum_key_press_event_background_picking)
@@ -170,7 +172,7 @@ class MainController(object):
         self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
         self.connect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
         self.main_widget.model_define_btn.setText("Finish")
-        self.main_widget.control_widget.disable(self.main_widget.model_define_btn)
+        self.main_widget.control_widget.disable(except_widgets=[self.main_widget.model_define_btn])
 
         self.main_widget.spectrum_widget.mouse_moved.connect(self.update_model_parameters)
         self.main_widget.spectrum_widget.mouse_left_clicked.connect(self.pick_model_parameter)
@@ -180,6 +182,7 @@ class MainController(object):
         self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
         self.disconnect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
         self.main_widget.model_define_btn.setText("Define")
+        self.main_widget.model_define_btn.setChecked(False)
         self.main_widget.control_widget.enable()
         self.main_widget.spectrum_widget.mouse_moved.disconnect(self.update_model_parameters)
         self.main_widget.spectrum_widget.mouse_left_clicked.disconnect(self.pick_model_parameter)
