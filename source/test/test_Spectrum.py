@@ -153,3 +153,9 @@ class SpectrumTest(unittest.TestCase):
         self.array_almost_equal(new_x, x)
         self.array_almost_equal(new_y, y)
 
+    def test_using_len(self):
+        x = np.linspace(0,10,234)
+        y = x**2
+        spec = Spectrum(x, y)
+
+        self.assertEqual(len(spec), 234)

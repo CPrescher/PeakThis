@@ -113,7 +113,7 @@ class MainControllerTest(unittest.TestCase):
         slope = 2.
         y = intercept + x * slope
 
-        self.data.set_data(x, y)
+        self.data.set_spectrum_data(x, y)
         self.add_model(2)
 
         before_x, before_y = self.spectrum_widget.get_model_plot_data(0)
@@ -127,6 +127,33 @@ class MainControllerTest(unittest.TestCase):
         residual_x, residual_y = self.spectrum_widget.get_residual_plot_data()
         self.array_almost_equal(after_x, residual_y)
         self.assertAlmostEqual(np.sum(residual_y), 0)
+
+    def test_background_subtraction(self):
+        # add some spectrum and a model
+        x = np.linspace(-3, 3)
+        intercept =  0.1
+        slope = 2.
+        y = intercept + x * slope
+        self.data.set_spectrum_data(x, y)
+        self.add_model(1)
+
+        # define a simple background
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(2,3)
+        self.main_widget.spectrum_widget._spectrum_plot_emit_mouse_click_event(4,4)
+        QTest.mouseClick(self.main_widget.background_define_btn, QtCore.Qt.LeftButton)
+
+        # set the background subtraction flag
+        QTest.mouseClick(self.main_widget.background_subtract_btn, QtCore.Qt.LeftButton)
+
+        # test if background spectrum and points are subtracted well
+        x_bkg_spec, y_bkg_spec = self.main_widget.spectrum_widget.get_background_plot_data()
+        x_bkg_points, y_bkg_points = self.main_widget.spectrum_widget.get_background_points_data()
+        self.array_almost_equal(x_bkg_spec, x)
+        self.array_almost_equal(y_bkg_spec, np.zeros(y_bkg_spec.shape))
+
+        self.array_almost_equal(y_bkg_points, np.zeros(x_bkg_points.shape))
+
 
 
 

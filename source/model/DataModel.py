@@ -2,7 +2,6 @@
 __author__ = 'Clemens Prescher'
 
 import numpy as np
-import copy
 from PyQt4 import QtCore
 from lmfit import Parameters
 
@@ -31,9 +30,10 @@ class DataModel(QtCore.QObject):
 
         self.background_model = BackgroundModel()
         self.background_model.background_model_changed.connect(self.background_model_changed)
+        self._background_subtracted_flag = False
 
         self.spectrum = Spectrum()
-        self.background_spectrum = Spectrum()
+        self.background_spectrum = Spectrum([], [])
         self.residual = Spectrum()
 
         self.background_model_changed()
@@ -41,15 +41,21 @@ class DataModel(QtCore.QObject):
     def load_data(self, filename):
         self.spectrum.load(filename)
         self.background_model_changed()
-        self.spectrum_changed.emit(self.spectrum)
+        self.spectrum_changed.emit(self.get_spectrum())
 
-    def set_data(self, x, y):
+    def set_spectrum_data(self, x, y):
         self.spectrum.data = x, y
         self.background_model_changed()
-        self.spectrum_changed.emit(self.spectrum)
+        self.spectrum_changed.emit(self.get_spectrum())
 
-    def save_data(self, filename):
-        pass
+    def get_spectrum(self):
+        if self._background_subtracted_flag and len(self.background_spectrum):
+            return self.spectrum - self.background_spectrum
+        else:
+            return self.spectrum
+
+    def get_spectrum_data(self):
+        return self.get_spectrum().data
 
     def background_model_changed(self):
         # emit background model
@@ -59,7 +65,7 @@ class DataModel(QtCore.QObject):
             self.background_spectrum = Spectrum(x, bkg_y)
         else:
             self.background_spectrum = Spectrum(np.array([]), np.array([]))
-        self.background_changed.emit(self.background_spectrum)
+        self.background_changed.emit(self.get_background_spectrum())
         # emit the points:
         x, y = self.background_model.get_points()
         self.background_points_changed.emit(Spectrum(x, y))
@@ -67,6 +73,38 @@ class DataModel(QtCore.QObject):
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
         for ind in range(len(self.models)):
             self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+
+        if self._background_subtracted_flag:
+            self.spectrum_changed.emit(self.get_spectrum())
+
+    def set_background_subtracted(self, bool):
+        self._background_subtracted_flag = bool
+
+        self.spectrum_changed.emit(self.get_spectrum())
+        self.model_sum_changed.emit(self.get_model_sum_spectrum())
+
+        self.background_changed.emit(self.get_background_spectrum())
+        self.background_points_changed.emit(self.get_background_points_spectrum())
+
+        for ind in range(len(self.models)):
+            self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
+
+    def get_background_spectrum(self):
+        if self._background_subtracted_flag:
+            x, y = self.spectrum.data
+            return Spectrum(x, np.zeros(y.shape))
+        else:
+            return self.background_spectrum
+
+    def get_background_points_spectrum(self):
+        if self._background_subtracted_flag:
+            x, y = self.background_model.get_points()
+            y -= self.background_model.data(x)
+            return Spectrum(x, y)
+        else:
+            x, y = self.background_model.get_points()
+            return Spectrum(x, y)
+
 
     def add_model(self, model):
         self.models.append(model)
@@ -91,11 +129,24 @@ class DataModel(QtCore.QObject):
 
         y = self.models[ind].quick_eval(x)
 
-        _, y_bkg = self.background_spectrum.data
-        if x.shape == y_bkg.shape:
-            y += y_bkg
+        if not self._background_subtracted_flag:
+            _, y_bkg = self.background_spectrum.data
+            if x.shape == y_bkg.shape:
+                y += y_bkg
 
         return Spectrum(x, y)
+
+    def get_model_sum_spectrum(self):
+        x, _ = self.spectrum.data
+        sum = np.zeros(x.shape)
+
+        if not self._background_subtracted_flag:
+            _, y_bkg = self.background_spectrum.data
+            if x.shape == y_bkg.shape:
+                sum += y_bkg
+
+        sum = reduce(lambda a, y: a+y.quick_eval(x), self.models, sum)
+        return Spectrum(x, sum)
 
     def update_current_model_parameter(self, ind, x, y):
         y_bkg = self.background_model.data(x)
@@ -119,17 +170,6 @@ class DataModel(QtCore.QObject):
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
         self.model_deleted.emit(index)
 
-    def get_model_sum_spectrum(self):
-        x, _ = self.spectrum.data
-        sum = np.zeros(x.shape)
-        _, y_bkg = self.background_spectrum.data
-        if x.shape == y_bkg.shape:
-            sum += y_bkg
-
-        for model in self.models:
-            sum += model.quick_eval(x)
-        return Spectrum(x, sum)
-
     def save_models(self, filename):
         pass
 
@@ -140,22 +180,16 @@ class DataModel(QtCore.QObject):
         if len(self.models) == 0:
             return
 
-        # these elifs exist because we cannot create an empty combined model and then copy the models into it
-        combined_parameters = Parameters()
-        if len(self.models) == 1:
-            combined_model = self.models[0]
-            combined_parameters += self.models[0].parameters
-        elif len(self.models) > 1:
-            combined_model = self.models[0]+self.models[1]
-            combined_parameters = copy.deepcopy(self.models[0].parameters) + copy.deepcopy(self.models[1].parameters)
-            for ind in xrange(2, len(self.models)):
-                combined_model += self.models[ind]
-                combined_parameters += self.models[ind].parameters
+        # adding models and parameters by using reduce is the shortest and simplest way
+        # otherwise there are strange if conditions and for loops due to each case with 1 or 2
+        # or more models...
+        combined_model = reduce(lambda a, x: a + x, self.models)
+        combined_parameters = reduce(lambda a, x: a + x.parameters, self.models, Parameters())
 
         x, y = self.spectrum.data
         x_bkg, y_bkg = self.background_spectrum.data
         if x.shape == y_bkg.shape:
-            y-=y_bkg
+            y -= y_bkg
 
         out = combined_model.fit(y, params=combined_parameters, x=x)
 

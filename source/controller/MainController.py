@@ -82,6 +82,7 @@ class MainController(object):
         # Background controls
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
+        self.main_widget.background_subtract_btn.toggled.connect(self.data.set_background_subtracted)
 
         self.main_widget.closeEvent = self.close_event
 

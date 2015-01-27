@@ -37,6 +37,7 @@ class MainWidget(QtGui.QWidget):
 
         self.background_define_btn = self.control_widget.background_widget.define_btn
         self.background_method_cb = self.control_widget.background_widget.type_cb
+        self.background_subtract_btn = self.control_widget.background_widget.subtract_btn
 
         self.model_add_btn = self.control_widget.model_widget.add_btn
         self.model_delete_btn = self.control_widget.model_widget.delete_btn
@@ -137,6 +138,7 @@ class BackgroundWidget(QtGui.QGroupBox):
         self.type_cb.addItem("spline")
         self.define_btn = FlatButton('Define')
         self.subtract_btn = FlatButton('Subtract')
+        self.subtract_btn.setCheckable(True)
 
         type_layout = QtGui.QHBoxLayout()
         type_layout.addWidget(self.type_lbl)

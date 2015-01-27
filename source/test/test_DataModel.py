@@ -166,11 +166,37 @@ class DataModelTest(unittest.TestCase):
 
         self.data.fit_data()
 
-        self.assertEqual(len(self.data.models[0].parameters),3)
+        self.assertEqual(len(self.data.models[0].parameters), 3)
 
+    def test_using_background_model(self):
+        # creating a dummy spectrum
+        x = np.linspace(0, 10, 100)
+        y = x**2
+        self.data.set_spectrum_data(x, y)
 
+        # creating the dummy background
+        self.data.background_model.add_point(0,0)
+        self.data.background_model.add_point(10,1)
 
+        # spectrum should be unchanged
+        x1, y1 = self.data.get_spectrum_data()
+        self.array_almost_equal(x1, x)
+        self.array_almost_equal(y1, y)
 
+        # setting the set_background_subtracted_flag which should actually change all the
+        self.data.set_background_subtracted(True)
+
+        # data spectrum
+        x2, y2 = self.data.get_spectrum_data()
+        self.array_not_almost_equal(y2, y1)
+
+        # background
+        bkg_x, bkg_y = self.data.get_background_spectrum().data
+        self.array_almost_equal(bkg_y, np.zeros(x.shape))
+
+        # background_points
+        bkg_x_points, bkg_y_points = self.data.get_background_points_spectrum().data
+        self.array_almost_equal(bkg_y_points, np.zeros(bkg_x_points.shape))
 
 
 

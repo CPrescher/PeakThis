@@ -149,6 +149,9 @@ class Spectrum(object):
         orig_x, orig_y = self.data
         return Spectrum(orig_x, orig_y * other)
 
+    def __len__(self):
+        return len(self._x)
+
 
 class BkgNotInRangeError(Exception):
     def __init__(self, spectrum_name):
