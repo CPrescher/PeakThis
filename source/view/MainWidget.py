@@ -12,22 +12,25 @@ from view.ModelWidget import ModelWidget
 from .GuiElements import FlatButton
 
 
-class MainWidget(QtGui.QWidget):
+class MainWidget(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWidget, self).__init__(parent)
-        self.horizontal_layout = QtGui.QHBoxLayout(self)
-        self.horizontal_layout.setContentsMargins(0, 0, 10, 0)
-        self.horizontal_layout.setSpacing(5)
+
+        self.main_splitter = QtGui.QSplitter()
 
         self.spectrum_widget = SpectrumWidget(self)
         self.control_widget = ControlWidget(self)
 
-        self.horizontal_layout.addWidget(self.spectrum_widget)
-        self.horizontal_layout.addWidget(self.control_widget)
-
-        self.setLayout(self.horizontal_layout)
+        self.main_splitter.addWidget(self.spectrum_widget)
+        self.main_splitter.addWidget(self.control_widget)
 
         self.load_stylesheet()
+
+        self.setCentralWidget(self.main_splitter)
+        self.main_splitter.setStretchFactor(0,1)
+        self.main_splitter.setStretchFactor(1,0)
+        self.main_splitter.setCollapsible(0, False)
+        self.main_splitter.setCollapsible(1, False)
 
         self.setWindowTitle("PeakThis v{}".format(__version__))
         self.set_shortcuts()
@@ -66,7 +69,7 @@ class ControlWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ControlWidget, self).__init__(parent)
         self.main_vertical_layout = QtGui.QVBoxLayout()
-        self.main_vertical_layout.setContentsMargins(5,5,5,5)
+        self.main_vertical_layout.setContentsMargins(0,5,5,5)
         self.main_vertical_layout.setSpacing(5)
 
         self.file_widget = FileWidget(self)
