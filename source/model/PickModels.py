@@ -93,7 +93,10 @@ class PickGaussianModel(GaussianModel, PickModel):
             # fwhm = self.parameters['sigma'].value*2.354820
             self.set_parameter_value('amplitude', y * self.get_parameter_value('sigma') * 2.506470408)
         elif self.current_pick == 1:
-            self.set_parameter_value('sigma', abs(x - self.get_parameter_value('center')) * 0.8493218001909796)
+            new_sigma = abs(x - self.get_parameter_value('center')) * 0.8493218001909796
+            if new_sigma==0:
+                new_sigma = 0.5
+            self.set_parameter_value('sigma', new_sigma)
             self.set_parameter_value('amplitude', self.pick_points[0].y * self.get_parameter_value('sigma') * 2.506470408)
 
 

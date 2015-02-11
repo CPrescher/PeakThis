@@ -70,8 +70,8 @@ class SpectrumWidget(QtGui.QWidget):
         self._residual_plot.setXLink(self._spectrum_plot)
         self._residual_plot.hideAxis('bottom')
 
-        self._pg_layout.layout.setRowStretchFactor(0, 100)
-        self._pg_layout.layout.setRowStretchFactor(1, 0)
+        self._pg_layout.layout.setRowStretchFactor(0, 10)
+        self._pg_layout.layout.setRowStretchFactor(1, 2)
 
         self._pg_layout_widget.addItem(self._pg_layout)
         self._layout.addWidget(self._pg_layout_widget)
@@ -108,11 +108,11 @@ class SpectrumWidget(QtGui.QWidget):
     def _create_plot_items(self):
         self.current_selected_model = 0
         self._data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
-                                                 brush=pg.mkBrush(plot_colors['data_brush']),
-                                                 size=5,
-                                                 symbol ='x',
-                                                 downsample=5,
-                                                 clipToView=True)
+                                                  brush=pg.mkBrush(plot_colors['data_brush']),
+                                                  size=5,
+                                                  symbol ='x',
+                                                  downsample=5,
+                                                  clipToView=True)
 
 
         self._background_plot_item = pg.PlotDataItem(pen=pg.mkPen(plot_colors['background_plot'],
