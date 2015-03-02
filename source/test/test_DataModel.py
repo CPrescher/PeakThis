@@ -6,8 +6,8 @@ from copy import copy
 
 import numpy as np
 
-from model.DataModel import DataModel
-from model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
+from ..model.DataModel import DataModel
+from ..model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
 
 
 class DataModelTest(unittest.TestCase):

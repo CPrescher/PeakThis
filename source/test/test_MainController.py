@@ -9,11 +9,8 @@ import numpy as np
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
 
-from controller.MainController import MainController
-
-
-test_directory = os.path.dirname(os.path.realpath(__file__))
-
+from . import get_data_path
+from ..controller.MainController import MainController
 
 class MainControllerTest(unittest.TestCase):
     def setUp(self):
@@ -40,7 +37,7 @@ class MainControllerTest(unittest.TestCase):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
     def test_loading_data(self):
-        spectrum_filename = os.path.join(test_directory, 'TestData', 'spectrum1.txt')
+        spectrum_filename = get_data_path('spectrum1.txt')
         self.controller.load_data(spectrum_filename)
         self.assertEqual(self.data.spectrum.name, 'spectrum1')
         spec_x, spec_y = self.data.spectrum.data

@@ -6,8 +6,8 @@ import unittest
 import numpy as np
 from PyQt4 import QtGui
 
-from view.SpectrumWidget import SpectrumWidget
-from model.Spectrum import Spectrum
+from ..view.SpectrumWidget import SpectrumWidget
+from ..model.Spectrum import Spectrum
 
 
 class SpectrumWidgetTest(unittest.TestCase):

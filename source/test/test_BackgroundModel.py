@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-from model.BackgroundModel import BackgroundModel
+from ..model.BackgroundModel import BackgroundModel
 
 
 class BackgroundModelTest(unittest.TestCase):
