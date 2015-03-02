@@ -7,8 +7,8 @@ import sys
 import os
 from PyQt4 import QtCore, QtGui
 
-from view.SpectrumWidget import SpectrumWidget
-from view.ModelWidget import ModelWidget
+from .SpectrumWidget import SpectrumWidget
+from .ModelWidget import ModelWidget
 from .GuiElements import FlatButton
 
 

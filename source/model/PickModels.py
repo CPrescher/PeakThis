@@ -3,7 +3,8 @@ __author__ = 'Clemens Prescher'
 
 from lmfit.models import Model, ConstantModel, LinearModel, QuadraticModel
 import numpy as np
-from model.PickModel import PickModel
+
+from .PickModel import PickModel
 
 
 class PickConstantModel(ConstantModel, PickModel):

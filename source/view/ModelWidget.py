@@ -2,7 +2,8 @@
 __author__ = 'Clemens Prescher'
 
 from PyQt4 import QtGui, QtCore
-from lmfit import Parameters, Parameter
+from lmfit import Parameters
+
 from .GuiElements import FlatButton
 
 

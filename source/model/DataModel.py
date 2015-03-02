@@ -5,8 +5,8 @@ import numpy as np
 from PyQt4 import QtCore
 from lmfit import Parameters
 
-from model.Spectrum import Spectrum
-from model.BackgroundModel import BackgroundModel
+from .Spectrum import Spectrum
+from .BackgroundModel import BackgroundModel
 
 
 class DataModel(QtCore.QObject):
