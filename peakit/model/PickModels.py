@@ -101,8 +101,39 @@ class PickGaussianModel(GaussianModel, PickModel):
             self.set_parameter_value('amplitude', self.pick_points[0].y * self.get_parameter_value('sigma') * 2.506470408)
 
 
+def lorentzian( x, center=0, fwhm=0.3, intensity=1):
+    hwhm=fwhm*0.5
+    return intensity/(np.pi*hwhm*(1+((x-center)/hwhm)**2))
+
+class LorentzianModel(Model):
+    __doc__ = lorentzian.__doc__
+    def __init__(self, *args, **kwargs):
+        super(LorentzianModel, self).__init__(lorentzian, *args, **kwargs)
+
+class LorentzianPickModel(LorentzianModel, PickModel):
+    def __init__(self, *args, **kwargs):
+        super(LorentzianPickModel, self).__init__(*args, **kwargs)
+        PickModel.__init__(self, 2)
+
+        self.set_parameter_value('intensity', 0)
+        self.set_parameter_value('center', 0)
+        self.set_parameter_value('fwhm', 0.5)
+
+    def update_current_parameter(self, x, y):
+        if self.current_pick == 0:
+            self.set_parameter_value('center', x)
+            self.set_parameter_value('intensity', y * np.pi*self.get_parameter_value('fwhm')/2.)
+        elif self.current_pick == 1:
+            new_fwhm = abs(x - self.get_parameter_value('center'))*2
+            if new_fwhm==0:
+                new_fwhm = 0.5
+            self.set_parameter_value('fwhm', new_fwhm)
+            self.set_parameter_value('intensity', self.pick_points[0].y * np.pi*self.get_parameter_value('fwhm')/2.)
+
+
 models_dict = {
     "Gaussian Model": PickGaussianModel,
+    "Lorentzian Model": LorentzianPickModel,
     "Quadratic Model": PickQuadraticModel,
     "Linear Model": PickLinearModel,
     # "Constant Model": PickConstantModel,
