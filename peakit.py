@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-from source import run
+from peakit import run
 
 __author__ = 'Clemens Prescher'
 
