@@ -16,6 +16,8 @@ before_install:
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
 
+    #update PythonPath
+    - export PYTHONPATH=$PWD/peakit:$PYTHONPATH
 install:
     - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose pyqt
     - pip install lmfit pyqtgraph coverage

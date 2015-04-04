@@ -23,11 +23,11 @@ class DataModelTest(unittest.TestCase):
     def array_not_almost_equal(self, array1, array2):
         self.assertNotAlmostEqual(np.sum(array1 - array2), 0)
 
-    def create_peak(self, x, center, amplitude, sigma=0.2):
+    def create_peak(self, x, center, intensity, fwhm=0.2):
         gauss_curve = PickGaussianModel()
         gauss_curve.set_parameter_value('center', center)
-        gauss_curve.set_parameter_value('amplitude', amplitude)
-        gauss_curve.set_parameter_value('sigma', sigma)
+        gauss_curve.set_parameter_value('intensity', intensity)
+        gauss_curve.set_parameter_value('fwhm', fwhm)
         return gauss_curve.quick_eval(x)
 
     def test_add_models(self):
@@ -70,7 +70,7 @@ class DataModelTest(unittest.TestCase):
         self.array_almost_equal(spec_y, bkg_y)
 
         new_parameters = copy(self.data.models[0].parameters)
-        new_parameters[self.data.models[0].prefix + 'amplitude'].value = 10
+        new_parameters[self.data.models[0].prefix + 'intensity'].value = 10
 
         self.data.update_model(0, new_parameters)
         new_spec = self.data.get_model_spectrum(0)
@@ -121,9 +121,9 @@ class DataModelTest(unittest.TestCase):
         y = intercept + slope * x
 
         center = 0
-        amplitude = 10
-        sigma = 0.1
-        y += self.create_peak(x, center, amplitude, sigma)
+        intensity = 10
+        fwhm = 0.1
+        y += self.create_peak(x, center, intensity, fwhm)
 
         self.data.pick_current_model_parameters(1, 0, 10)
         self.data.pick_current_model_parameters(1, 0.25, 0.02)
@@ -135,8 +135,8 @@ class DataModelTest(unittest.TestCase):
         self.assertAlmostEqual(self.data.models[0].get_parameter_value('slope'), slope, places=7)
 
         self.assertAlmostEqual(self.data.models[1].get_parameter_value('center'), center, places=7)
-        self.assertAlmostEqual(self.data.models[1].get_parameter_value('amplitude'), amplitude, places=7)
-        self.assertAlmostEqual(self.data.models[1].get_parameter_value('sigma'), sigma, places=7)
+        self.assertAlmostEqual(self.data.models[1].get_parameter_value('intensity'), intensity, places=7)
+        self.assertAlmostEqual(self.data.models[1].get_parameter_value('fwhm'), fwhm, places=7)
 
     def test_fitting_multiple_models_of_the_same_type(self):
         # create test data:

@@ -56,11 +56,11 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.y += pchip_interpolator(self.x)
 
         # creating the models
-        def create_peak(x, center, amplitude, sigma=0.2):
+        def create_peak(x, center, intensity, fwhm=0.2):
             gauss_curve = PickGaussianModel()
             gauss_curve.set_parameter_value('center', center)
-            gauss_curve.set_parameter_value('amplitude', amplitude)
-            gauss_curve.set_parameter_value('sigma', sigma)
+            gauss_curve.set_parameter_value('intensity', intensity)
+            gauss_curve.set_parameter_value('fwhm', fwhm)
             return gauss_curve.quick_eval(x)
 
         self.y += create_peak(self.x, 1, 10)

@@ -112,7 +112,7 @@ class MainControllerTest(unittest.TestCase):
         y = intercept + x * slope
 
         self.data.set_spectrum_data(x, y)
-        self.add_model(2)
+        self.add_model(3)
 
         before_x, before_y = self.spectrum_widget.get_model_plot_data(0)
         QTest.mouseClick(self.main_widget.fit_btn, QtCore.Qt.LeftButton)
