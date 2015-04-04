@@ -28,10 +28,13 @@ class PickLinearModel(LinearModel, PickModel):
         if self.current_pick == 0:
             self.set_parameter_value('intercept', y)
         elif self.current_pick == 1:
-            slope = (y - self.pick_points[0].y) / \
-                    (x - self.pick_points[0].x)
-            self.set_parameter_value('slope', slope)
-            self.set_parameter_value('intercept',  y - slope * x)
+            try:
+                slope = (y - self.pick_points[0].y) / \
+                        (x - self.pick_points[0].x)
+                self.set_parameter_value('slope', slope)
+                self.set_parameter_value('intercept',  y - slope * x)
+            except ZeroDivisionError:
+                pass
 
 
 class PickQuadraticModel(QuadraticModel, PickModel):
@@ -59,10 +62,13 @@ class PickQuadraticModel(QuadraticModel, PickModel):
             self.set_parameter_value('b', slope)
             self.set_parameter_value('c', self.y[0] - slope * self.x[0])
         elif self.current_pick == 2:
-            a, b, c = np.polyfit(self.x, self.y, 2)
-            self.set_parameter_value('a', a)
-            self.set_parameter_value('b', b)
-            self.set_parameter_value('c', c)
+            try:
+                a, b, c = np.polyfit(self.x, self.y, 2)
+                self.set_parameter_value('a', a)
+                self.set_parameter_value('b', b)
+                self.set_parameter_value('c', c)
+            except np.linalg.LinAlgError:
+                self.set_parameter_value('a', 0)
 
 
 s2pi = np.sqrt(2*np.pi)
