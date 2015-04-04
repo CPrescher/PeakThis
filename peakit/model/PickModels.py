@@ -67,7 +67,7 @@ class PickQuadraticModel(QuadraticModel, PickModel):
                 self.set_parameter_value('a', a)
                 self.set_parameter_value('b', b)
                 self.set_parameter_value('c', c)
-            except np.linalg.LinAlgError:
+            except (np.linalg.LinAlgError, ValueError):
                 self.set_parameter_value('a', 0)
 
 
