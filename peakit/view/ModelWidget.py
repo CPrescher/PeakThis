@@ -59,10 +59,17 @@ class ModelWidget(QtGui.QGroupBox):
         self.parameter_table.clearContents()
         self.parameter_table.setRowCount(len(parameters))
 
+
+
         for ind, name in enumerate(parameters):
             self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(str(name.split('_')[1])))
             self.parameter_table.setItem(ind, 1, QtGui.QTableWidgetItem('{:.5g}'.format(parameters[name].value)))
-            self.parameter_table.setItem(ind, 2, QtGui.QTableWidgetItem(str(parameters[name].vary)))
+
+            vary_cb = QtGui.QCheckBox()
+            vary_cb.setChecked(parameters[name].vary)
+            vary_cb.setStyleSheet("background-color: transparent")
+            vary_cb.clicked.connect(self.item_changed)
+            self.parameter_table.setCellWidget(ind, 2, vary_cb)
             self.parameter_table.setItem(ind, 3, QtGui.QTableWidgetItem(str(parameters[name].min)))
             self.parameter_table.setItem(ind, 4, QtGui.QTableWidgetItem(str(parameters[name].max)))
 
@@ -74,7 +81,7 @@ class ModelWidget(QtGui.QGroupBox):
         for row_ind in range(self.parameter_table.rowCount()):
             name = str(self.parameter_table.item(row_ind, 0).text())
             value = convert_qstring_to_float(self.parameter_table.item(row_ind, 1).text())
-            vary = convert_qstring_to_float(self.parameter_table.item(row_ind, 2).text())
+            vary = self.parameter_table.cellWidget(row_ind, 2).isChecked()
             min = convert_qstring_to_float(self.parameter_table.item(row_ind, 3).text())
             max = convert_qstring_to_float(self.parameter_table.item(row_ind, 4).text())
             parameters.add(name, value, vary=vary, min=min, max=max)
