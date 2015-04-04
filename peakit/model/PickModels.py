@@ -158,6 +158,8 @@ class PseudoVoigtPickModel(PseudoVoigtModel, PickModel):
         self.set_parameter_value('center', 0)
         self.set_parameter_value('fwhm', 0.5)
         self.set_parameter_value('n', 0.5)
+        self.set_parameter_min_value('n', 0)
+        self.set_parameter_max_value('n', 1)
 
     def update_current_parameter(self, x, y):
         if self.current_pick == 0:
