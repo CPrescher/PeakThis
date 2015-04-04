@@ -43,6 +43,18 @@ class PickModel(object):
     def get_parameter_value(self, param_name):
         return self.parameters[self.prefix + param_name].value
 
+    def set_parameter_max_value(self, param_name, max_value):
+        self.parameters[self.prefix + param_name].max = max_value
+
+    def get_parameter_max_value(self, param_name):
+        return self.parameters[self.prefix + param_name].max
+
+    def set_parameter_min_value(self, param_name, min_value):
+        self.parameters[self.prefix + param_name].min = min_value
+
+    def get_parameter_min_value(self, param_name):
+        return self.parameters[self.prefix + param_name].min
+
     def quick_eval(self, x):
         return self.eval(self.parameters, x=x)
 
