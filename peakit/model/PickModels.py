@@ -67,12 +67,12 @@ class PickQuadraticModel(QuadraticModel, PickModel):
 
 s2pi = np.sqrt(2*np.pi)
 
-def gaussian(x, amplitude=1.0, center=0.0, sigma=1.0):
+def gaussian(x, center=0.0, fwhm=1.0, intensity=1):
     """1 dimensional gaussian:
     gaussian(x, amplitude, center, sigma)
     """
-    return (amplitude/(s2pi*sigma)) * np.exp(-(1.0*x-center)**2 /(2*sigma**2))
-
+    hwhm=fwhm/2.0
+    return intensity*0.8326/(hwhm*1.7725)*np.exp(-(x-center)**2/(hwhm/0.8326)**2)
 
 class GaussianModel(Model):
     __doc__ = gaussian.__doc__
@@ -84,21 +84,22 @@ class PickGaussianModel(GaussianModel, PickModel):
         super(PickGaussianModel, self).__init__(*args, **kwargs)
         PickModel.__init__(self, 2)
 
-        self.set_parameter_value('amplitude', 0)
+        self.set_parameter_value('intensity', 0)
         self.set_parameter_value('center', 0)
-        self.set_parameter_value('sigma', 0.5)
+        self.set_parameter_value('fwhm', 0.5)
 
     def update_current_parameter(self, x, y):
         if self.current_pick == 0:
             self.set_parameter_value('center', x)
             # fwhm = self.parameters['sigma'].value*2.354820
-            self.set_parameter_value('amplitude', y * self.get_parameter_value('sigma') * 2.506470408)
+            self.set_parameter_value('intensity', y * 1.7724538509055159*self.get_parameter_value('fwhm')/1.6652)
         elif self.current_pick == 1:
-            new_sigma = abs(x - self.get_parameter_value('center')) * 0.8493218001909796
-            if new_sigma==0:
-                new_sigma = 0.5
-            self.set_parameter_value('sigma', new_sigma)
-            self.set_parameter_value('amplitude', self.pick_points[0].y * self.get_parameter_value('sigma') * 2.506470408)
+            new_fwhm = abs(x - self.get_parameter_value('center')) * 2
+            if new_fwhm==0:
+                new_fwhm = 0.5
+            self.set_parameter_value('fwhm', new_fwhm)
+            self.set_parameter_value('intensity', self.pick_points[0].y * \
+                                     1.7724538509055159*self.get_parameter_value('fwhm')/1.6652)
 
 
 def lorentzian( x, center=0, fwhm=0.3, intensity=1):
@@ -131,9 +132,46 @@ class LorentzianPickModel(LorentzianModel, PickModel):
             self.set_parameter_value('intensity', self.pick_points[0].y * np.pi*self.get_parameter_value('fwhm')/2.)
 
 
+
+def pseudo_voigt(x, center=0, fwhm=0.3, intensity=1, n=0.5):
+    return n*lorentzian(x, center, fwhm, intensity)+(1-n)*gaussian(x, center, fwhm, intensity)
+
+
+
+class PseudoVoigtModel(Model):
+    __doc__ = lorentzian.__doc__
+    def __init__(self, *args, **kwargs):
+        super(PseudoVoigtModel, self).__init__(pseudo_voigt, *args, **kwargs)
+
+class PseudoVoigtPickModel(PseudoVoigtModel, PickModel):
+    def __init__(self, *args, **kwargs):
+        super(PseudoVoigtPickModel, self).__init__(*args, **kwargs)
+        PickModel.__init__(self, 2)
+
+        self.set_parameter_value('intensity', 0)
+        self.set_parameter_value('center', 0)
+        self.set_parameter_value('fwhm', 0.5)
+        self.set_parameter_value('n', 0.5)
+
+    def update_current_parameter(self, x, y):
+        if self.current_pick == 0:
+            self.set_parameter_value('center', x)
+            self.set_parameter_value('intensity', y * np.pi*self.get_parameter_value('fwhm') *0.25  + \
+                                                  y * 1.7724538509055159*self.get_parameter_value('fwhm')/1.6652 * 0.5)
+        elif self.current_pick == 1:
+            new_fwhm = abs(x - self.get_parameter_value('center'))*2
+            if new_fwhm==0:
+                new_fwhm = 0.5
+            self.set_parameter_value('fwhm', new_fwhm)
+            self.set_parameter_value('intensity',
+                                     self.pick_points[0].y * np.pi*self.get_parameter_value('fwhm') *0.25  + \
+                                     self.pick_points[0].y * 1.7724538509055159*self.get_parameter_value('fwhm')/1.6652 * 0.5)
+
+
 models_dict = {
     "Gaussian Model": PickGaussianModel,
     "Lorentzian Model": LorentzianPickModel,
+    "PseudoVoigt Model": PseudoVoigtPickModel,
     "Quadratic Model": PickQuadraticModel,
     "Linear Model": PickLinearModel,
     # "Constant Model": PickConstantModel,
