@@ -3,11 +3,14 @@ __author__ = 'Clemens Prescher'
 
 import unittest
 from copy import copy
+import os
 
 import numpy as np
 
 from model.DataModel import DataModel
 from model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
+
+from test import data_path
 
 
 class DataModelTest(unittest.TestCase):
@@ -15,7 +18,10 @@ class DataModelTest(unittest.TestCase):
         self.data = DataModel()
 
     def tearDown(self):
-        pass
+        # cleaning up saved files:
+        file_path = os.path.join(data_path, "data.txt")
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
     def array_almost_equal(self, array1, array2):
         self.assertAlmostEqual(np.sum(array1 - array2), 0)
@@ -212,3 +218,46 @@ class DataModelTest(unittest.TestCase):
 
         self.assertGreater(np.min(x_new), 2)
         self.assertLess(np.max(x_new), 7)
+
+    def test_saving_data(self):
+        #create data and fit some function
+        # create test data:
+        x = np.linspace(0, 10, 100)
+
+        center_1 = 3
+        amplitude_1 = 10
+        sigma_1 = 0.3
+
+        center_2 = 7
+        amplitude_2 = 6
+        sigma_2 = 0.5
+
+        y = self.create_peak(x, center_1, amplitude_1, sigma_1)
+        y += self.create_peak(x, center_2, amplitude_2, sigma_2)
+
+        # creating the models in the data
+        self.data.add_model(PickGaussianModel())
+        self.data.add_model(PickGaussianModel())
+
+        # define some initial values for the peaks
+        self.data.pick_current_model_parameters(0, 3, 10)
+        self.data.pick_current_model_parameters(0, 3.25, 0.02)
+
+        self.data.pick_current_model_parameters(1, 7, 6)
+        self.data.pick_current_model_parameters(1, 7.25, 0.02)
+        self.data.fit_data()
+
+        file_path = os.path.join(data_path, "data.txt")
+
+
+        ############
+        # Saving the data
+        self.data.save_data(file_path)
+        self.assertTrue(os.path.exists(file_path))
+
+        saved_data = np.loadtxt(file_path, skiprows=1, delimiter=',')
+
+        # checking for validity
+        self.assertEqual(saved_data.shape[1], 7)
+        _, model_sum = self.data.get_model_sum_spectrum().data
+        self.assertTrue(np.allclose(saved_data[:, 2], model_sum))

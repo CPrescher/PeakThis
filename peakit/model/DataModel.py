@@ -231,3 +231,17 @@ class DataModel(QtCore.QObject):
 
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
         self.residual_changed.emit(Spectrum(x, out.residual))
+
+    def save_data(self, filename):
+        data_x, data_y = self.get_spectrum_data()
+        _, model_sum = self.get_model_sum_spectrum().data
+        residual = data_y-model_sum
+        _, bkg = self.get_background_spectrum().data
+        out_data = np.vstack((data_x,data_y, model_sum, residual, bkg))
+
+        header = 'x, y, model_sum, res, bkg'
+        for ind in range(len(self.models)):
+            _, model = self.get_model_spectrum(ind).data
+            out_data = np.vstack((out_data, model))
+            header += ', model {}'.format(ind)
+        np.savetxt(filename, out_data.T, delimiter=',', header=header)
