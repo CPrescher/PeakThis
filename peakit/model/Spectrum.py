@@ -104,6 +104,11 @@ class Spectrum(object):
         else:
             self._scaling = value
 
+    def limit(self, x_min, x_max):
+        x, y = self.data
+        return Spectrum(x[np.where((x_min < x) & (x < x_max))],
+                        y[np.where((x_min < x) & (x < x_max))])
+
     # Operators:
     def __sub__(self, other):
         orig_x, orig_y = self.data

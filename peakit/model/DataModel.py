@@ -29,30 +29,36 @@ class DataModel(QtCore.QObject):
         self.models_sum = Spectrum()
 
         self.background_model = BackgroundModel()
-        self.background_model.background_model_changed.connect(self.background_model_changed)
+        self.background_model.background_model_changed.connect(self.update_background)
         self._background_subtracted_flag = False
 
         self.spectrum = Spectrum()
         self.background_spectrum = Spectrum([], [])
         self.residual = Spectrum()
+        self.roi = None
 
-        self.background_model_changed()
+        self.update_background()
+
 
     def load_data(self, filename):
         self.spectrum.load(filename)
-        self.background_model_changed()
+        self.update_background()
         self.spectrum_changed.emit(self.get_spectrum())
 
     def set_spectrum_data(self, x, y):
         self.spectrum.data = x, y
-        self.background_model_changed()
+        self.update_background()
         self.spectrum_changed.emit(self.get_spectrum())
 
     def get_spectrum(self):
         if self._background_subtracted_flag and len(self.background_spectrum):
-            return self.spectrum - self.background_spectrum
+            res = self.spectrum - self.background_spectrum
         else:
-            return self.spectrum
+            res = self.spectrum
+
+        if self.roi is not None:
+            return res.limit(*self.roi)
+        return res
 
     def get_spectrum_data(self):
         return self.get_spectrum().data
@@ -71,7 +77,7 @@ class DataModel(QtCore.QObject):
         self.background_model.delete_point_close_to(x, y)
         self.background_points_changed.emit(self.get_background_points_spectrum())
 
-    def background_model_changed(self):
+    def update_background(self):
         # emit background model
         x, y = self.spectrum.data
         bkg_y = self.background_model.data(x)

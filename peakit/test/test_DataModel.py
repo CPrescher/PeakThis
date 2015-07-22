@@ -6,8 +6,8 @@ from copy import copy
 
 import numpy as np
 
-from ..model.DataModel import DataModel
-from ..model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
+from model.DataModel import DataModel
+from model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
 
 
 class DataModelTest(unittest.TestCase):
@@ -198,6 +198,17 @@ class DataModelTest(unittest.TestCase):
         bkg_x_points, bkg_y_points = self.data.get_background_points_spectrum().data
         self.array_almost_equal(bkg_y_points, np.zeros(bkg_x_points.shape))
 
+    def test_using_roi(self):
+        x = np.linspace(0, 10, 100)
+        y = np.sin(x)
+        self.data.set_spectrum_data(x, y)
+
+        self.data.roi = (2, 7)
+
+        print self.data.roi
 
 
+        x_new, y_new = self.data.get_spectrum_data()
 
+        self.assertGreater(np.min(x_new), 2)
+        self.assertLess(np.max(x_new), 7)
