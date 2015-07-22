@@ -5,14 +5,15 @@ from PyQt4 import QtGui, QtCore
 from lmfit import Parameters
 
 from .GuiElements import FlatButton
+from .CustomWidgets.ExpandableBox import ExpandableBox
 
 
-class ModelWidget(QtGui.QGroupBox):
+class ModelWidget(QtGui.QWidget):
     model_parameters_changed = QtCore.pyqtSignal(int, Parameters)
     model_selected_changed = QtCore.pyqtSignal(int)
 
     def __init__(self, parent=None):
-        super(ModelWidget, self).__init__("Models", parent)
+        super(ModelWidget, self).__init__( parent)
 
         self.grid_layout = QtGui.QGridLayout()
         self.grid_layout.setContentsMargins(5,10,5,5)

@@ -11,6 +11,7 @@ from .SpectrumWidget import SpectrumWidget
 from .ModelWidget import ModelWidget
 from .GuiElements import FlatButton
 
+from .CustomWidgets.ExpandableBox import ExpandableBox
 
 class MainWidget(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -20,6 +21,7 @@ class MainWidget(QtGui.QMainWindow):
 
         self.spectrum_widget = SpectrumWidget(self)
         self.control_widget = ControlWidget(self)
+        self.control_widget.setMinimumWidth(250)
 
         self.main_splitter.addWidget(self.spectrum_widget)
         self.main_splitter.addWidget(self.control_widget)
@@ -27,7 +29,7 @@ class MainWidget(QtGui.QMainWindow):
         self.load_stylesheet()
 
         self.setCentralWidget(self.main_splitter)
-        self.main_splitter.setStretchFactor(0,1)
+        self.main_splitter.setStretchFactor(0,100)
         self.main_splitter.setStretchFactor(1,0)
         self.main_splitter.setCollapsible(0, False)
         self.main_splitter.setCollapsible(1, False)
@@ -77,10 +79,10 @@ class ControlWidget(QtGui.QWidget):
         self.model_widget = ModelWidget(self)
         self.fit_widget = FitWidget(self)
 
-        self.main_vertical_layout.addWidget(self.file_widget)
-        self.main_vertical_layout.addWidget(self.background_widget)
-        self.main_vertical_layout.addWidget(self.model_widget)
-        self.main_vertical_layout.addWidget(self.fit_widget)
+        self.main_vertical_layout.addWidget(ExpandableBox(self.file_widget, "Data"))
+        self.main_vertical_layout.addWidget(ExpandableBox(self.background_widget, "Background"))
+        self.main_vertical_layout.addWidget(ExpandableBox(self.model_widget, "Model"))
+        self.main_vertical_layout.addWidget(ExpandableBox(self.fit_widget, "Fit"))
 
         self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed,
                                                                   QtGui.QSizePolicy.Expanding))
@@ -101,7 +103,7 @@ class ControlWidget(QtGui.QWidget):
                 child2.setEnabled(True)
 
 
-class FileWidget(QtGui.QGroupBox):
+class FileWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(FileWidget, self).__init__(parent)
 
@@ -123,10 +125,9 @@ class FileWidget(QtGui.QGroupBox):
         self.setLayout(self.grid_layout)
 
 
-class BackgroundWidget(QtGui.QGroupBox):
+class BackgroundWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(BackgroundWidget, self).__init__(parent)
-        self.setTitle('Background')
 
         self.grid_layout = QtGui.QGridLayout()
         self.grid_layout.setContentsMargins(5,10,5,5)

@@ -9,8 +9,8 @@ from scipy.interpolate import PchipInterpolator
 from PyQt4.QtTest import QTest
 from PyQt4 import QtCore, QtGui
 
-from ..controller.MainController import MainController
-from ..model.PickModels import PickGaussianModel
+from controller.MainController import MainController
+from model.PickModels import PickGaussianModel
 
 
 class PeakThisFunctionalTest(unittest.TestCase):
