@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 import copy
+import os
 
 import numpy as np
 from PyQt4 import QtCore, QtGui
@@ -19,6 +20,8 @@ class MainController(object):
         self.plot_some_data()
         self.create_subscriptions()
 
+        self.save_data_path = ''
+
     def show_view(self):
         self.main_widget.show()
 
@@ -30,7 +33,10 @@ class MainController(object):
         self.main_widget.spectrum_widget.plot_data(x, y)
 
     def create_subscriptions(self):
+        ######################################
+        # File Signals
         self.connect_click_function(self.main_widget.load_file_btn, self.load_data)
+        self.connect_click_function(self.main_widget.save_data_btn, self.save_data)
 
         ######################################
         # Data signals
@@ -210,6 +216,25 @@ class MainController(object):
                                                              ''))
         if filename is not '':
             self.data.load_data(filename)
+
+    def save_data(self, filename=None):
+        if filename is None:
+            save_file_dialog = QtGui.QFileDialog()
+            save_file_dialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+            save_file_dialog.setNameFilters(['Data (*.txt)'])
+            save_file_dialog.selectFile(os.path.join(self.save_data_path,
+                                                     self.data.spectrum.name+".txt"))
+
+            if save_file_dialog.exec_():
+                filename = str(save_file_dialog.selectedFiles()[0])
+            else:
+                filename = ''
+
+        if filename is not '':
+            self.data.save_data(filename)
+            self.save_data_path = os.path.dirname(filename)
+
+
 
     def roi_item_changed(self):
         x_min, x_max = self.main_widget.spectrum_widget.linear_region_item.getRegion()

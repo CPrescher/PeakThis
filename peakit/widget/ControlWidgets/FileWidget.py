@@ -14,13 +14,13 @@ class FileWidget(QtGui.QWidget):
         self.grid_layout.setSpacing(5)
 
         self.load_file_btn = FlatButton("Load Data")
-        self.save_file_btn = FlatButton("Save Data")
+        self.save_data_btn = FlatButton("Save Data")
 
         self.load_models_btn = FlatButton("Load Models")
         self.save_models_btn = FlatButton("Save Models")
 
         self.grid_layout.addWidget(self.load_file_btn, 0, 0)
-        self.grid_layout.addWidget(self.save_file_btn, 0, 1)
+        self.grid_layout.addWidget(self.save_data_btn, 0, 1)
         self.grid_layout.addWidget(self.load_models_btn, 2, 0)
         self.grid_layout.addWidget(self.save_models_btn, 2, 1)
 

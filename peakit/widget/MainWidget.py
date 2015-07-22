@@ -38,6 +38,7 @@ class MainWidget(QtGui.QMainWindow):
 
     def set_shortcuts(self):
         self.load_file_btn = self.control_widget.file_widget.load_file_btn
+        self.save_data_btn = self.control_widget.file_widget.save_data_btn
 
         self.background_define_btn = self.control_widget.background_widget.define_btn
         self.background_method_cb = self.control_widget.background_widget.type_cb
@@ -89,18 +90,21 @@ class ControlWidget(QtGui.QWidget):
         self.setLayout(self.main_vertical_layout)
 
     def disable(self, except_widgets=None):
-        for child1 in self.children():
-            for child2 in child1.children():
-                child2.setEnabled(False)
+        for control_box in self.children():
+            try:
+                control_box.enable_widgets(False)
+            except AttributeError:
+                pass
 
         for widget in except_widgets:
             widget.setEnabled(True)
 
     def enable(self):
-        for child1 in self.children():
-            for child2 in child1.children():
-                child2.setEnabled(True)
-
+        for control_box in self.children():
+            try:
+                control_box.enable_widgets(True)
+            except AttributeError:
+                pass
 
 
 

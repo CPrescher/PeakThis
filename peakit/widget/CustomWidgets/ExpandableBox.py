@@ -110,3 +110,8 @@ class ExpandableBox(QtGui.QWidget):
             self.content_widget.hide()
             self.minimized = True
             self.minimize_btn.setText("+")
+
+    def enable_widgets(self, bool):
+        for child in self.content_widget.children():
+            for child2 in child.children():
+                child2.setEnabled(bool)

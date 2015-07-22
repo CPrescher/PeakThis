@@ -209,10 +209,3 @@ class MainControllerTest(unittest.TestCase):
         self.data.remove_background_model_point_close_to(1.6, 0)
         x_bkg_points, y_bkg_points = self.main_widget.spectrum_widget.get_background_points_data()
         self.array_almost_equal(x_bkg_points, [1])
-
-
-
-
-
-
-
