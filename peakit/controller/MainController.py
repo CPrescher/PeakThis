@@ -77,6 +77,9 @@ class MainController(object):
         self.main_widget.fit_btn.clicked.connect(self.data.fit_data)
         self.data.residual_changed.connect(self.main_widget.spectrum_widget.plot_residual_spectrum)
 
+        # ROI Signals
+        self.main_widget.spectrum_widget.linear_region_item.sigRegionChanged.connect(self.roi_item_changed)
+
         ##############################################
         # Background widget controls
         self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
@@ -204,6 +207,9 @@ class MainController(object):
         if filename is not '':
             self.data.load_data(filename)
 
+    def roi_item_changed(self):
+        x_min, x_max = self.main_widget.spectrum_widget.linear_region_item.getRegion()
+        self.data.roi = (x_min, x_max)
 
     def close_event(self, _):
         QtGui.QApplication.closeAllWindows()

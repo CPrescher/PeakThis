@@ -140,6 +140,9 @@ class SpectrumWidget(QtGui.QWidget):
         self._spectrum_plot.addItem(self._background_scatter_item)
         self._residual_plot.addItem(self._residual_plot_item)
 
+        self.linear_region_item = ModifiedLinearRegionItem([5, 20], pg.LinearRegionItem.Vertical, movable=False)
+        self._spectrum_plot.addItem(self.linear_region_item)
+
     def plot_data(self, x, y):
         self._data_plot_item.setData(x, y)
         self.set_limits(x, y)
@@ -364,3 +367,14 @@ class ModifiedPlotItem(pg.PlotItem):
     def wheel_event(self, ev, axis=None, *args):
         pg.ViewBox.wheelEvent(self.vb, ev, axis)
         self.vb.sigRangeChangedManually.emit(self.vb.state['mouseEnabled'])
+
+
+class ModifiedLinearRegionItem(pg.LinearRegionItem):
+    def __init__(self, *args, **kwargs):
+        super(ModifiedLinearRegionItem, self).__init__()
+
+    def mouseDragEvent(self, ev):
+        return
+
+    def hoverEvent(self, ev):
+        return
