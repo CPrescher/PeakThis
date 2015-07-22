@@ -35,7 +35,7 @@ class DataModel(QtCore.QObject):
         self.spectrum = Spectrum()
         self.background_spectrum = Spectrum([], [])
         self.residual = Spectrum()
-        self.roi = None
+        self._roi = None
 
         self.update_background()
 
@@ -50,18 +50,32 @@ class DataModel(QtCore.QObject):
         self.update_background()
         self.spectrum_changed.emit(self.get_spectrum())
 
-    def get_spectrum(self):
+    def get_whole_spectrum(self):
         if self._background_subtracted_flag and len(self.background_spectrum):
-            res = self.spectrum - self.background_spectrum
+            return self.spectrum - self.background_spectrum
         else:
-            res = self.spectrum
+            return self.spectrum
 
+    def get_whole_spectrum_data(self):
+        return self.get_whole_spectrum().data
+
+    def get_spectrum(self):
         if self.roi is not None:
-            return res.limit(*self.roi)
-        return res
+            return self.get_whole_spectrum().limit(*self.roi)
+        return self.get_whole_spectrum()
 
     def get_spectrum_data(self):
         return self.get_spectrum().data
+
+    @property
+    def roi(self):
+        return self._roi
+
+    @roi.setter
+    def roi(self, values):
+        self._roi = values
+        self.spectrum_changed.emit(self.get_spectrum())
+        self.update_background()
 
     def add_background_model_point(self, x, y):
         if self._background_subtracted_flag:
@@ -79,7 +93,7 @@ class DataModel(QtCore.QObject):
 
     def update_background(self):
         # emit background model
-        x, y = self.spectrum.data
+        x, y = self.get_spectrum_data()
         bkg_y = self.background_model.data(x)
         if bkg_y is not None:
             self.background_spectrum = Spectrum(x, bkg_y)
@@ -142,7 +156,7 @@ class DataModel(QtCore.QObject):
         self.model_sum_changed.emit(self.get_model_sum_spectrum())
 
     def get_model_spectrum(self, ind):
-        x, _ = self.spectrum.data
+        x, _ = self.get_spectrum_data()
 
         y = self.models[ind].quick_eval(x)
 
@@ -154,7 +168,7 @@ class DataModel(QtCore.QObject):
         return Spectrum(x, y)
 
     def get_model_sum_spectrum(self):
-        x, _ = self.spectrum.data
+        x, _ = self.get_spectrum_data()
         sum = np.zeros(x.shape)
 
         if not self._background_subtracted_flag:
@@ -201,7 +215,7 @@ class DataModel(QtCore.QObject):
         combined_model = reduce(lambda a, x: a + x, self.models)
         combined_parameters = reduce(lambda a, x: a + x.parameters, self.models, Parameters())
 
-        x, y = self.spectrum.data
+        x, y = self.get_spectrum_data()
         x_bkg, y_bkg = self.background_spectrum.data
         if x.shape == y_bkg.shape:
             y -= y_bkg

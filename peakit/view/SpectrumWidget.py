@@ -13,16 +13,18 @@ pg.setConfigOption('foreground', 'w')
 pg.setConfigOption('antialias', True)
 
 plot_colors = {
-    'data_pen': '#ffffff',
-    'data_brush': '#FFF',
+    'data_pen': '#444',
+    'data_brush': '#444',
+    'data_roi_pen': '#FFF',
+    'data_roi_brush': '#FFF',
     'background_plot': 'r',
     'background_scatter_pen': 'r',
     'background_scatter_brush': 'w',
     'residual_pen': 'r',
     'residual_brush': '#DDD',
     'model': '#AA6633',
-    'model-active':'#FFAA77',
-    'model-sum':'#22FF77',
+    'model-active': '#FFAA77',
+    'model-sum': '#22FF77',
 }
 
 
@@ -85,12 +87,11 @@ class SpectrumWidget(QtGui.QWidget):
         self.y_lbl.setMinimumWidth(60)
 
         self._pos_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
-                                                        QtGui.QSizePolicy.Fixed))
+                                                         QtGui.QSizePolicy.Fixed))
         self._pos_layout.addWidget(self.x_lbl)
         self._pos_layout.addWidget(self.y_lbl)
 
         self._layout.addLayout(self._pos_layout)
-
 
     def data_plot_item_clicked(self):
         """
@@ -99,7 +100,7 @@ class SpectrumWidget(QtGui.QWidget):
         mouse_left_clicked. Otherwise the Data plot item blocks the signal...
         """
         x, y = self._spectrum_plot.get_mouse_position()
-        self.mouse_left_clicked.emit(x,y)
+        self.mouse_left_clicked.emit(x, y)
 
     def update_mouse_position_widget(self, x, y):
         self.x_lbl.setText('x: {:02.4f}'.format(x))
@@ -107,27 +108,33 @@ class SpectrumWidget(QtGui.QWidget):
 
     def _create_plot_items(self):
         self.current_selected_model = 0
-        self._data_plot_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
+        self._data_plot_item = ModifiedScatterPlotItem(pen=pg.mkPen(plot_colors['data_pen'], width=1),
                                                   brush=pg.mkBrush(plot_colors['data_brush']),
                                                   size=5,
-                                                  symbol ='x',
+                                                  symbol='x',
                                                   downsample=5,
                                                   clipToView=True)
 
+        self._data_roi_plot_item = ModifiedScatterPlotItem(pen=pg.mkPen(plot_colors['data_roi_pen'], width=1),
+                                                      brush=pg.mkBrush(plot_colors['data_roi_brush']),
+                                                      size=5,
+                                                      symbol='x',
+                                                      downsample=5,
+                                                      clipToView=True)
 
         self._background_plot_item = pg.PlotDataItem(pen=pg.mkPen(plot_colors['background_plot'],
                                                                   width=1.5))
 
         self._background_scatter_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['background_scatter_pen'], width=1),
-                                                          brush=pg.mkBrush(plot_colors['background_scatter_brush']),
-                                                          size=8,
-                                                          symbol='d')
+                                                           brush=pg.mkBrush(plot_colors['background_scatter_brush']),
+                                                           size=8,
+                                                           symbol='d')
 
         self._residual_plot_item = pg.ScatterPlotItem(pen=pg.mkPen(plot_colors['residual_pen'],
-                                                                width=1),
-                                                   brush=pg.mkBrush(plot_colors['residual_brush']),
-                                                   size = 2,
-                                                   symbol='o')
+                                                                   width=1),
+                                                      brush=pg.mkBrush(plot_colors['residual_brush']),
+                                                      size=2,
+                                                      symbol='o')
 
         self._model_sum_plot_item = pg.PlotDataItem(pen=pg.mkPen(plot_colors['model-sum'],
                                                                  width=2.5))
@@ -135,6 +142,7 @@ class SpectrumWidget(QtGui.QWidget):
         self._model_plot_items = []
 
         self._spectrum_plot.addItem(self._data_plot_item)
+        self._spectrum_plot.addItem(self._data_roi_plot_item)
         self._spectrum_plot.addItem(self._background_plot_item)
         self._spectrum_plot.addItem(self._model_sum_plot_item)
         self._spectrum_plot.addItem(self._background_scatter_item)
@@ -157,14 +165,18 @@ class SpectrumWidget(QtGui.QWidget):
         y_range = y_max - y_min
         y_space = spacing * y_range
         self._spectrum_plot.setLimits(xMin=x_min - x_space,
-                                     xMax=x_max + x_space,
-                                     yMin=y_min - y_space,
-                                     yMax=y_max + y_space)
-
+                                      xMax=x_max + x_space,
+                                      yMin=y_min - y_space,
+                                      yMax=y_max + y_space)
 
     def plot_data_spectrum(self, spectrum):
-        x, y = spectrum.data
-        self.plot_data(x, y)
+        self.plot_data(*spectrum.data)
+
+    def plot_roi_data(self, x, y):
+        self._data_roi_plot_item.setData(x, y)
+
+    def plot_roi_spectrum(self, spectrum):
+        self.plot_roi_data(*spectrum.data)
 
     def get_plot_data(self):
         return self._data_plot_item.getData()
@@ -200,7 +212,7 @@ class SpectrumWidget(QtGui.QWidget):
         return self._residual_plot_item.getData()
 
     def plot_model_sum(self, x, y):
-        self._model_sum_plot_item.setData(x,y)
+        self._model_sum_plot_item.setData(x, y)
 
     def plot_model_sum_spectrum(self, spectrum):
         x, y = spectrum.data
@@ -227,7 +239,7 @@ class SpectrumWidget(QtGui.QWidget):
         if len(self._model_plot_items):
             self._model_plot_items[self.current_selected_model].setPen(pg.mkPen(plot_colors['model'], width=1.5))
             self._model_plot_items[ind].setPen(pg.mkPen(plot_colors['model-active'], width=2))
-            self.current_selected_model=ind
+            self.current_selected_model = ind
 
     def del_model(self, index=-1):
         self._spectrum_plot.removeItem(self._model_plot_items[index])
@@ -242,13 +254,11 @@ class SpectrumWidget(QtGui.QWidget):
     def get_mouse_position(self):
         return self._spectrum_plot.get_mouse_position()
 
-
     def set_spectrum_plot_keypress_callback(self, fcn_callback):
         self._spectrum_plot.keyPressEvent = fcn_callback
 
     def set_spectrum_plot_focus(self):
         self._spectrum_plot.setFocus()
-
 
     ### Function for testing the GUI:
     def _spectrum_plot_emit_mouse_click_event(self, x, y):
@@ -377,4 +387,12 @@ class ModifiedLinearRegionItem(pg.LinearRegionItem):
         return
 
     def hoverEvent(self, ev):
+        return
+
+
+class ModifiedScatterPlotItem(pg.ScatterPlotItem):
+    def __init__(self, *args, **kwargs):
+        super(ModifiedScatterPlotItem, self).__init__(*args, **kwargs)
+
+    def mouseClickEvent(self, ev):
         return

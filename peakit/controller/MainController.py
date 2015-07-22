@@ -34,7 +34,7 @@ class MainController(object):
 
         ######################################
         # Data signals
-        self.data.spectrum_changed.connect(self.main_widget.spectrum_widget.plot_data_spectrum)
+        self.data.spectrum_changed.connect(self.plot_data_spectrum)
         self.data.background_changed.connect(self.main_widget.spectrum_widget.plot_background_spectrum)
         self.data.background_points_changed.connect(self.main_widget.spectrum_widget.plot_background_points_spectrum)
 
@@ -93,6 +93,10 @@ class MainController(object):
 
     def disconnect_click_function(self, emitter, function):
         self.main_widget.disconnect(emitter, QtCore.SIGNAL('clicked()'), function)
+
+    def plot_data_spectrum(self):
+        self.main_widget.spectrum_widget.plot_data(*self.data.get_whole_spectrum().data)
+        self.main_widget.spectrum_widget.plot_roi_data(*self.data.get_spectrum().data)
 
     def start_background_picking(self):
         self.disconnect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
