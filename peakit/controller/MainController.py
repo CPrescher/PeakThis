@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from PyQt4 import QtCore, QtGui
 
-from view.MainWidget import MainWidget
+from widget.MainWidget import MainWidget
 from model.DataModel import DataModel
 from model.PickModels import models_dict
 

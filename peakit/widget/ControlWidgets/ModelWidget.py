@@ -4,8 +4,7 @@ __author__ = 'Clemens Prescher'
 from PyQt4 import QtGui, QtCore
 from lmfit import Parameters
 
-from .GuiElements import FlatButton
-from .CustomWidgets.ExpandableBox import ExpandableBox
+from ..CustomWidgets import FlatButton
 
 
 class ModelWidget(QtGui.QWidget):
@@ -16,7 +15,7 @@ class ModelWidget(QtGui.QWidget):
         super(ModelWidget, self).__init__( parent)
 
         self.grid_layout = QtGui.QGridLayout()
-        self.grid_layout.setContentsMargins(5,10,5,5)
+        self.grid_layout.setContentsMargins(0,0,0,0)
         self.grid_layout.setSpacing(5)
 
         self.add_btn = FlatButton("Add")

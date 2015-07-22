@@ -7,11 +7,10 @@ import sys
 import os
 from PyQt4 import QtCore, QtGui
 
-from .SpectrumWidget import SpectrumWidget
-from .ModelWidget import ModelWidget
-from .GuiElements import FlatButton
+from .CustomWidgets import SpectrumWidget
+from .ControlWidgets import FileWidget, FitWidget, BackgroundWidget, ModelWidget
 
-from .CustomWidgets.ExpandableBox import ExpandableBox
+from .CustomWidgets import ExpandableBox
 
 class MainWidget(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -103,78 +102,6 @@ class ControlWidget(QtGui.QWidget):
                 child2.setEnabled(True)
 
 
-class FileWidget(QtGui.QWidget):
-    def __init__(self, parent=None):
-        super(FileWidget, self).__init__(parent)
-
-        self.grid_layout = QtGui.QGridLayout()
-        self.grid_layout.setContentsMargins(5,5,5,5)
-        self.grid_layout.setSpacing(5)
-
-        self.load_file_btn = FlatButton("Load Data")
-        self.save_file_btn = FlatButton("Save Data")
-
-        self.load_models_btn = FlatButton("Load Models")
-        self.save_models_btn = FlatButton("Save Models")
-
-        self.grid_layout.addWidget(self.load_file_btn, 0, 0)
-        self.grid_layout.addWidget(self.save_file_btn, 0, 1)
-        self.grid_layout.addWidget(self.load_models_btn, 2, 0)
-        self.grid_layout.addWidget(self.save_models_btn, 2, 1)
-
-        self.setLayout(self.grid_layout)
-
-
-class BackgroundWidget(QtGui.QWidget):
-    def __init__(self, parent=None):
-        super(BackgroundWidget, self).__init__(parent)
-
-        self.grid_layout = QtGui.QGridLayout()
-        self.grid_layout.setContentsMargins(5,10,5,5)
-        self.grid_layout.setSpacing(5)
-
-        self.type_lbl = QtGui.QLabel("Type:")
-        self.type_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        self.type_cb = QtGui.QComboBox()
-        self.type_cb.view().setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.type_cb.view().setMinimumHeight(30)
-
-
-        self.type_cb.addItem("pchip")
-        self.type_cb.addItem("spline")
-        self.define_btn = FlatButton('Define')
-        self.define_btn.setCheckable(True)
-        self.subtract_btn = FlatButton('Subtract')
-        self.subtract_btn.setCheckable(True)
-
-        type_layout = QtGui.QHBoxLayout()
-        type_layout.addWidget(self.type_lbl)
-        type_layout.addWidget(self.type_cb)
-        self.grid_layout.addLayout(type_layout, 0, 0, 1, 2)
-
-        self.grid_layout.addWidget(self.define_btn, 1, 0)
-        self.grid_layout.addWidget(self.subtract_btn, 1, 1)
-
-        self.set_cb_style()
-        self.setLayout(self.grid_layout)
-
-    def set_cb_style(self):
-        cleanlooks = QtGui.QStyleFactory.create('plastique')
-        self.type_cb.setStyle(cleanlooks)
-
-
-class FitWidget(QtGui.QGroupBox):
-    def __init__(self, parent=None):
-        super(FitWidget, self).__init__(parent)
-        self.setTitle('Fit')
-        self.main_layout = QtGui.QHBoxLayout()
-        self.main_layout.setContentsMargins(5,5,5,5)
-        self.main_layout.setSpacing(5)
-
-        self.fit_btn = FlatButton('Fit')
-        self.main_layout.addWidget(self.fit_btn)
-
-        self.setLayout(self.main_layout)
 
 
 
