@@ -117,8 +117,8 @@ def we_are_frozen():
 def module_path():
     encoding = sys.getfilesystemencoding()
     if we_are_frozen():
-        return os.path.dirname(unicode(sys.executable, encoding))
-    return os.path.dirname(unicode(__file__, encoding))
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(__file__)
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

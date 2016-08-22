@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
+from functools import reduce
+
 import numpy as np
 from PyQt4 import QtCore
 from lmfit import Parameters
@@ -142,7 +144,7 @@ class DataModel(QtCore.QObject):
         self.model_added.emit()
 
     def update_model(self, ind, parameters):
-        for key, val in parameters.iteritems():
+        for key, val in parameters.items():
             if not key.startswith(self.models[ind].prefix):
                 model_key = self.models[ind].prefix + key
             else:
@@ -224,7 +226,7 @@ class DataModel(QtCore.QObject):
 
         # save the data into the model
         for ind, model in enumerate(self.models):
-            for key, val in out.best_values.iteritems():
+            for key, val in out.best_values.items():
                 if key in model.parameters.keys():
                     model.parameters[key].value = val
             self.model_parameters_changed.emit(ind, self.get_model_spectrum(ind))
