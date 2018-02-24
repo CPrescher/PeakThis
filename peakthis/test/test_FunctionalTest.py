@@ -11,6 +11,8 @@ from ..widget.qt import QTest, QtCore, QtGui, QtWidgets
 from ..controller.MainController import MainController
 from ..model.PickModels import PickGaussianModel
 
+from .utility import enter_value_into_text_field
+
 
 class PeakThisFunctionalTest(unittest.TestCase):
     def setUp(self):
@@ -79,7 +81,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
     def test_use_case_for_raman_fitting(self):
         # Edith opens PeakThis sees the open file button and loads her spectrum into the program
         # she clicks the button and loads a spectrum
-        self.controller.load_data(self.temp_file.name)
+        self.controller.data.load_data(self.temp_file.name)
 
         # Edith notices that the spectrum is immediately shown in the graph window
         QtWidgets.QApplication.processEvents()
@@ -189,9 +191,9 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # she wonders if it is possible to change the parameters in the text boxes of the parameter table, and sees
         # that the spectrum is changing
         start_x, start_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
-        self.model_widget.parameter_table.item(0, 1).setText('20')
-        self.model_widget.parameter_table.item(1, 1).setText('350')
-        self.model_widget.parameter_table.item(2, 1).setText('19')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(0, 1), '20')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(1, 1), '350')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(2, 1), '19')
         after_x, after_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_almost_equal(start_x, after_x)
         self.array_not_almost_equal(start_y, after_y)
