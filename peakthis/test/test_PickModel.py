@@ -5,7 +5,7 @@ import unittest
 import copy
 import numpy as np
 
-from model.PickModels import models_dict, PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
+from ..model.PickModels import models_dict, PickConstantModel, PickLinearModel, PickQuadraticModel, PickGaussianModel
 
 
 class PickModelTest(unittest.TestCase):
@@ -23,9 +23,7 @@ class PickModelTest(unittest.TestCase):
         model.pick_parameter(2, 3)
 
         model_y = model.quick_eval(np.linspace(0, 10, 100))
-
-        self.assertEqual(model_y[3], 3)
-        self.assertTrue(np.array_equal(model_y, np.ones(100) * 3))
+        self.assertEqual(model_y, 3)
 
     def test_linear_model(self):
         model = PickLinearModel()
@@ -64,17 +62,17 @@ class PickModelTest(unittest.TestCase):
         self.assertAlmostEqual(self.get_model_value(model, 3), 5, places=2)
 
     def test_all_models_different_pick_points(self):
-        for model_class in models_dict.itervalues():
+        for model_class in models_dict.values():
             model=model_class()
             pick_n = model.number_picks
-            for n in xrange(pick_n):
+            for _ in range(pick_n):
                 model.pick_parameter(n,0)
 
     def test_all_models_same_pick_points(self):
-        for model_class in models_dict.itervalues():
+        for model_class in models_dict.values():
             model=model_class()
             pick_n = model.number_picks
-            for n in xrange(pick_n):
+            for _ in range(pick_n):
                 model.pick_parameter(0,0)
 
 
