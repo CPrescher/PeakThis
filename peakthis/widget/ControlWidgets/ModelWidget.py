@@ -1,10 +1,10 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from ..qt import QtGui, QtCore, QtWidgets
+from ..qt import QtCore, QtWidgets
 from lmfit import Parameters
 
-from ..CustomWidgets import FlatButton
+from ..CustomWidgets import FlatButton, NumberTextField
 
 
 class ModelWidget(QtWidgets.QWidget):
@@ -24,10 +24,10 @@ class ModelWidget(QtWidgets.QWidget):
         self.define_btn = FlatButton("Define")
         self.define_btn.setCheckable(True)
 
-        self.model_list = QtGui.QListWidget()
+        self.model_list = QtWidgets.QListWidget()
         self.model_list.setFocusPolicy(QtCore.Qt.NoFocus)
 
-        self.parameter_table = QtGui.QTableWidget()
+        self.parameter_table = QtWidgets.QTableWidget()
         self.parameter_table.verticalHeader().setVisible(False)
         self.parameter_table.setColumnCount(5)
 
@@ -45,11 +45,11 @@ class ModelWidget(QtWidgets.QWidget):
         self.create_signals()
 
     def create_parameter_table_header(self):
-        self.parameter_table.setHorizontalHeaderItem(0, QtGui.QTableWidgetItem("Param"))
-        self.parameter_table.setHorizontalHeaderItem(1, QtGui.QTableWidgetItem("Value"))
-        self.parameter_table.setHorizontalHeaderItem(2, QtGui.QTableWidgetItem("Fit"))
-        self.parameter_table.setHorizontalHeaderItem(3, QtGui.QTableWidgetItem("Min"))
-        self.parameter_table.setHorizontalHeaderItem(4, QtGui.QTableWidgetItem("Max"))
+        self.parameter_table.setHorizontalHeaderItem(0, QtWidgets.QTableWidgetItem("Param"))
+        self.parameter_table.setHorizontalHeaderItem(1, QtWidgets.QTableWidgetItem("Value"))
+        self.parameter_table.setHorizontalHeaderItem(2, QtWidgets.QTableWidgetItem("Fit"))
+        self.parameter_table.setHorizontalHeaderItem(3, QtWidgets.QTableWidgetItem("Min"))
+        self.parameter_table.setHorizontalHeaderItem(4, QtWidgets.QTableWidgetItem("Max"))
 
     def show_model_selector_dialog(self):
         self.model_selector_dialog.show()
@@ -59,19 +59,23 @@ class ModelWidget(QtWidgets.QWidget):
         self.parameter_table.clearContents()
         self.parameter_table.setRowCount(len(parameters))
 
-
-
         for ind, name in enumerate(parameters):
-            self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(name))
-            self.parameter_table.setItem(ind, 1, QtGui.QTableWidgetItem('{:.5g}'.format(parameters[name].value)))
+            name_table_widget_item = QtWidgets.QTableWidgetItem(name.split('_')[1])
+            name_table_widget_item.setFlags(name_table_widget_item.flags() & ~QtCore.Qt.ItemIsEditable)
+            self.parameter_table.setItem(ind, 0, name_table_widget_item)
+            self.parameter_table.setCellWidget(ind, 1, NumberTextField('{:.5g}'.format(parameters[name].value)))
 
-            vary_cb = QtGui.QCheckBox()
+            vary_cb = QtWidgets.QCheckBox()
             vary_cb.setChecked(parameters[name].vary)
             vary_cb.setStyleSheet("background-color: transparent")
             vary_cb.clicked.connect(self.item_changed)
             self.parameter_table.setCellWidget(ind, 2, vary_cb)
-            self.parameter_table.setItem(ind, 3, QtGui.QTableWidgetItem(str(parameters[name].min)))
-            self.parameter_table.setItem(ind, 4, QtGui.QTableWidgetItem(str(parameters[name].max)))
+            self.parameter_table.setCellWidget(ind, 3, NumberTextField(str(parameters[name].min)))
+            self.parameter_table.setCellWidget(ind, 4, NumberTextField(str(parameters[name].max)))
+
+            self.parameter_table.cellWidget(ind, 1).editingFinished.connect(self.item_changed)
+            self.parameter_table.cellWidget(ind, 3).editingFinished.connect(self.item_changed)
+            self.parameter_table.cellWidget(ind, 4).editingFinished.connect(self.item_changed)
 
         self.parameter_table.resizeColumnsToContents()
         self.parameter_table.blockSignals(False)
@@ -80,10 +84,10 @@ class ModelWidget(QtWidgets.QWidget):
         parameters = Parameters()
         for row_ind in range(self.parameter_table.rowCount()):
             name = str(self.parameter_table.item(row_ind, 0).text())
-            value = convert_qstring_to_float(self.parameter_table.item(row_ind, 1).text())
+            value = self.parameter_table.cellWidget(row_ind, 1).value()
             vary = self.parameter_table.cellWidget(row_ind, 2).isChecked()
-            min = convert_qstring_to_float(self.parameter_table.item(row_ind, 3).text())
-            max = convert_qstring_to_float(self.parameter_table.item(row_ind, 4).text())
+            min = self.parameter_table.cellWidget(row_ind, 3).value()
+            max = self.parameter_table.cellWidget(row_ind, 4).value()
             parameters.add(name, value, vary=vary, min=min, max=max)
         return self.model_list.currentRow(), parameters
 
@@ -107,7 +111,7 @@ def convert_qstring_to_float(text):
         return float(text)
 
 
-class ModelSelectorDialog(QtGui.QDialog):
+class ModelSelectorDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ModelSelectorDialog, self).__init__(parent)
 
@@ -116,17 +120,17 @@ class ModelSelectorDialog(QtGui.QDialog):
 
         self.setWindowTitle("Model Selector")
 
-        self._vertical_layout = QtGui.QVBoxLayout()
-        self.model_list = QtGui.QListWidget()
+        self._vertical_layout = QtWidgets.QVBoxLayout()
+        self.model_list = QtWidgets.QListWidget()
         self.model_list.setMaximumHeight(120)
         self.model_list.setMaximumWidth(180)
 
-        self._ok_cancel_layout = QtGui.QHBoxLayout()
-        self.ok_btn = QtGui.QPushButton("OK")
-        self.cancel_btn = QtGui.QPushButton("Cancel")
+        self._ok_cancel_layout = QtWidgets.QHBoxLayout()
+        self.ok_btn = QtWidgets.QPushButton("OK")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
 
-        self._ok_cancel_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
-                                                               QtGui.QSizePolicy.Fixed))
+        self._ok_cancel_layout.addSpacerItem(QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding,
+                                                               QtWidgets.QSizePolicy.Fixed))
         self._ok_cancel_layout.addWidget(self.ok_btn)
         self._ok_cancel_layout.addWidget(self.cancel_btn)
 
@@ -154,7 +158,7 @@ class ModelSelectorDialog(QtGui.QDialog):
     def show(self):
         QtWidgets.QWidget.show(self)
         self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
-        self.layout().setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        self.layout().setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
 
         self.activateWindow()
         self.raise_()

@@ -103,17 +103,18 @@ QGraphicsView {
  }
 
  QLineEdit  {
-     border-radius: 2px;
-     background: #F1F1F1;
-     color: black;
+    border-radius: 2px;
+    background-color: #3C3C3C;
+    color: #F1F1F1;
 	height: 18 px;
+	width: 45 px;
  }
 
 QLineEdit::focus{
 	border-style: none;
-     border-radius: 2px;
-     background: #F1F1F1;
-     color: black;
+    border-radius: 2px;
+    background: #3C3C3C;
+    color: #F1F1F1;
 }
 
 QLineEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled{
