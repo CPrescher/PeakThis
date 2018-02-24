@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui, QtCore
+from ..qt import QtGui, QtCore, QtWidgets
 
 import pyqtgraph as pg
 import numpy as np
@@ -28,7 +28,7 @@ plot_colors = {
 }
 
 
-class SpectrumWidget(QtGui.QWidget):
+class SpectrumWidget(QtWidgets.QWidget):
     mouse_moved = QtCore.pyqtSignal(float, float)
     mouse_left_clicked = QtCore.pyqtSignal(float, float)
     range_changed = QtCore.pyqtSignal(list)
@@ -36,7 +36,7 @@ class SpectrumWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(SpectrumWidget, self).__init__(parent)
 
-        self._layout = QtGui.QVBoxLayout()
+        self._layout = QtWidgets.QVBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
 
         self._create_spectrum()
@@ -79,14 +79,14 @@ class SpectrumWidget(QtGui.QWidget):
         self._layout.addWidget(self._pg_layout_widget)
 
     def _create_mouse_position_widget(self):
-        self._pos_layout = QtGui.QHBoxLayout()
-        self.x_lbl = QtGui.QLabel('x:')
-        self.y_lbl = QtGui.QLabel('y:')
+        self._pos_layout = QtWidgets.QHBoxLayout()
+        self.x_lbl = QtWidgets.QLabel('x:')
+        self.y_lbl = QtWidgets.QLabel('y:')
 
         self.x_lbl.setMinimumWidth(60)
         self.y_lbl.setMinimumWidth(60)
 
-        self._pos_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
+        self._pos_layout.addSpacerItem(QtWidgets.QSpacerItem(20, 20, QtGui.QSizePolicy.Expanding,
                                                          QtGui.QSizePolicy.Fixed))
         self._pos_layout.addWidget(self.x_lbl)
         self._pos_layout.addWidget(self.y_lbl)

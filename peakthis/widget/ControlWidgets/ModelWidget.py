@@ -1,20 +1,20 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui, QtCore
+from ..qt import QtGui, QtCore, QtWidgets
 from lmfit import Parameters
 
 from ..CustomWidgets import FlatButton
 
 
-class ModelWidget(QtGui.QWidget):
+class ModelWidget(QtWidgets.QWidget):
     model_parameters_changed = QtCore.pyqtSignal(int, Parameters)
     model_selected_changed = QtCore.pyqtSignal(int)
 
     def __init__(self, parent=None):
         super(ModelWidget, self).__init__( parent)
 
-        self.grid_layout = QtGui.QGridLayout()
+        self.grid_layout = QtWidgets.QGridLayout()
         self.grid_layout.setContentsMargins(0,0,0,0)
         self.grid_layout.setSpacing(5)
 
@@ -152,7 +152,7 @@ class ModelSelectorDialog(QtGui.QDialog):
         return str(self.model_list.currentItem().text())
 
     def show(self):
-        QtGui.QWidget.show(self)
+        QtWidgets.QWidget.show(self)
         self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
         self.layout().setSizeConstraint(QtGui.QLayout.SetFixedSize)
 

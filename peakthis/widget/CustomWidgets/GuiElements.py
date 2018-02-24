@@ -1,23 +1,23 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui
+from ..qt import QtWidgets
 
 
-class FlatButton(QtGui.QPushButton):
+class FlatButton(QtWidgets.QPushButton):
     def __init__(self, *args, **kwargs):
         super(FlatButton, self).__init__(*args, **kwargs)
         self.setFlat(True)
 
-class HorizontalLine(QtGui.QFrame):
+class HorizontalLine(QtWidgets.QFrame):
     def __init__(self, parent=None):
         super(HorizontalLine, self).__init__(parent)
-        self.setFrameShape(QtGui.QFrame.HLine)
-        self.setFrameShadow(QtGui.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)
 
 
-class VerticalLine(QtGui.QFrame):
+class VerticalLine(QtWidgets.QFrame):
     def __init__(self, parent=None):
         super(VerticalLine, self).__init__(parent)
-        self.setFrameShape(QtGui.QFrame.VLine)
-        self.setFrameShadow(QtGui.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.VLine)
+        self.setFrameShadow(QtWidgets.QFrame.Sunken)

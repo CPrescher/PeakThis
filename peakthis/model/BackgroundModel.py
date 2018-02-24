@@ -3,7 +3,7 @@ __author__ = 'Clemens Prescher'
 
 import numpy as np
 from scipy.interpolate import UnivariateSpline, PchipInterpolator
-from PyQt4 import QtCore
+from ..widget.qt import QtCore
 
 
 class BackgroundModel(QtCore.QObject):

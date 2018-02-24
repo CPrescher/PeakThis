@@ -1,22 +1,22 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui, QtCore
+from ..qt import QtGui, QtCore, QtWidgets
 
 from ..CustomWidgets import FlatButton
 
 
-class BackgroundWidget(QtGui.QWidget):
+class BackgroundWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(BackgroundWidget, self).__init__(parent)
 
-        self.grid_layout = QtGui.QGridLayout()
+        self.grid_layout = QtWidgets.QGridLayout()
         self.grid_layout.setContentsMargins(0,0,0,0)
         self.grid_layout.setSpacing(5)
 
-        self.type_lbl = QtGui.QLabel("Type:")
+        self.type_lbl = QtWidgets.QLabel("Type:")
         self.type_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        self.type_cb = QtGui.QComboBox()
+        self.type_cb = QtWidgets.QComboBox()
         self.type_cb.view().setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.type_cb.view().setMinimumHeight(30)
 
@@ -28,7 +28,7 @@ class BackgroundWidget(QtGui.QWidget):
         self.subtract_btn = FlatButton('Subtract')
         self.subtract_btn.setCheckable(True)
 
-        type_layout = QtGui.QHBoxLayout()
+        type_layout = QtWidgets.QHBoxLayout()
         type_layout.addWidget(self.type_lbl)
         type_layout.addWidget(self.type_cb)
         self.grid_layout.addLayout(type_layout, 0, 0, 1, 2)
@@ -40,5 +40,5 @@ class BackgroundWidget(QtGui.QWidget):
         self.setLayout(self.grid_layout)
 
     def set_cb_style(self):
-        cleanlooks = QtGui.QStyleFactory.create('plastique')
+        cleanlooks = QtWidgets.QStyleFactory.create('plastique')
         self.type_cb.setStyle(cleanlooks)

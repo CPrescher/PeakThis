@@ -5,14 +5,14 @@ __version__ = 0.1
 
 import sys
 import os
-from PyQt4 import QtCore, QtGui
+from .qt import QtCore, QtGui, QtWidgets
 
 from .CustomWidgets import SpectrumWidget
 from .ControlWidgets import FileWidget, FitWidget, BackgroundWidget, ModelWidget
 
 from .CustomWidgets import ExpandableBox
 
-class MainWidget(QtGui.QMainWindow):
+class MainWidget(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(MainWidget, self).__init__(parent)
 
@@ -61,13 +61,13 @@ class MainWidget(QtGui.QMainWindow):
 
 
     def show(self):
-        QtGui.QWidget.show(self)
+        QtWidgets.QWidget.show(self)
         self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
         self.activateWindow()
         self.raise_()
 
 
-class ControlWidget(QtGui.QWidget):
+class ControlWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(ControlWidget, self).__init__(parent)
         self.main_vertical_layout = QtGui.QVBoxLayout()

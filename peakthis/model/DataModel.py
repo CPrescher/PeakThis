@@ -4,9 +4,9 @@ __author__ = 'Clemens Prescher'
 from functools import reduce
 
 import numpy as np
-from PyQt4 import QtCore
 from lmfit import Parameters
 
+from ..widget.qt import QtCore
 from .Spectrum import Spectrum
 from .BackgroundModel import BackgroundModel
 

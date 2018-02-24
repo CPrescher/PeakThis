@@ -1,15 +1,14 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui
-
+from ..qt import QtWidgets
 from ..CustomWidgets.GuiElements import FlatButton
 
-class FileWidget(QtGui.QWidget):
+class FileWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(FileWidget, self).__init__(parent)
 
-        self.grid_layout = QtGui.QGridLayout()
+        self.grid_layout = QtWidgets.QGridLayout()
         self.grid_layout.setContentsMargins(0,0,0,0)
         self.grid_layout.setSpacing(5)
 

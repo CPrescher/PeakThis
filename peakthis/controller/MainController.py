@@ -4,11 +4,11 @@ import copy
 import os
 
 import numpy as np
-from PyQt4 import QtCore, QtGui
+from ..widget.qt import QtGui, QtWidgets
 
-from widget.MainWidget import MainWidget
-from model.DataModel import DataModel
-from model.PickModels import models_dict
+from ..widget.MainWidget import MainWidget
+from ..model.DataModel import DataModel
+from ..model.PickModels import models_dict
 
 __author__ = 'Clemens Prescher'
 
@@ -35,8 +35,8 @@ class MainController(object):
     def create_subscriptions(self):
         ######################################
         # File Signals
-        self.connect_click_function(self.main_widget.load_file_btn, self.load_data)
-        self.connect_click_function(self.main_widget.save_data_btn, self.save_data)
+        self.main_widget.load_file_btn.clicked.connect(self.load_data)
+        self.main_widget.save_data_btn.clicked.connect(self.save_data)
 
         ######################################
         # Data signals
@@ -73,7 +73,7 @@ class MainController(object):
             self.update_displayed_model_parameters
         )
         self.data.model_sum_changed.connect(self.main_widget.spectrum_widget.plot_model_sum_spectrum)
-        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
+        self.main_widget.model_define_btn.clicked.connect(self.start_model_picking)
 
         # deleting models
         self.main_widget.model_delete_btn.clicked.connect(self.del_model_btn_clicked)
@@ -88,25 +88,19 @@ class MainController(object):
 
         ##############################################
         # Background widget controls
-        self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
+        self.main_widget.background_define_btn.clicked.connect(self.start_background_picking)
         self.main_widget.background_method_cb.currentIndexChanged.connect(self.background_model_changed)
         self.main_widget.background_subtract_btn.toggled.connect(self.data.set_background_subtracted)
 
         self.main_widget.closeEvent = self.close_event
-
-    def connect_click_function(self, emitter, function):
-        self.main_widget.connect(emitter, QtCore.SIGNAL('clicked()'), function)
-
-    def disconnect_click_function(self, emitter, function):
-        self.main_widget.disconnect(emitter, QtCore.SIGNAL('clicked()'), function)
 
     def plot_data_spectrum(self):
         self.main_widget.spectrum_widget.plot_data(*self.data.get_whole_spectrum().data)
         self.main_widget.spectrum_widget.plot_roi_data(*self.data.get_spectrum().data)
 
     def start_background_picking(self):
-        self.disconnect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
-        self.connect_click_function(self.main_widget.background_define_btn, self.end_background_picking)
+        self.main_widget.background_define_btn.disconnect(self.start_background_picking)
+        self.main_widget.background_define_btn.connect(self.end_background_picking)
 
         self.main_widget.background_define_btn.setText('Finish')
         self.main_widget.control_widget.disable(except_widgets=[self.main_widget.background_define_btn,
@@ -120,8 +114,8 @@ class MainController(object):
         self.main_widget.spectrum_widget.mouse_left_clicked.connect(self.data.add_background_model_point)
 
     def end_background_picking(self):
-        self.connect_click_function(self.main_widget.background_define_btn, self.start_background_picking)
-        self.disconnect_click_function(self.main_widget.background_define_btn, self.end_background_picking)
+        self.main_widget.background_define_btn.clicked.connect(self.start_background_picking)
+        self.main_widget.background_define_btn.clicked.disconnect(self.end_background_picking)
 
         self.main_widget.background_define_btn.setText('Define')
         self.main_widget.control_widget.enable()
@@ -191,8 +185,8 @@ class MainController(object):
 
 
     def end_model_picking(self):
-        self.connect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
-        self.disconnect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
+        self.main_widget.model_define_btn.connect(self.start_model_picking)
+        self.main_widget.model_define_btn.disconnect(self.end_model_picking)
         self.main_widget.model_define_btn.setText("Define")
         self.main_widget.model_define_btn.setChecked(False)
         self.main_widget.control_widget.enable()
@@ -219,8 +213,8 @@ class MainController(object):
 
     def save_data(self, filename=None):
         if filename is None:
-            save_file_dialog = QtGui.QFileDialog()
-            save_file_dialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+            save_file_dialog = QtWidgets.QFileDialog()
+            save_file_dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
             save_file_dialog.setNameFilters(['Data (*.txt)'])
             save_file_dialog.selectFile(os.path.join(self.save_data_path,
                                                      self.data.spectrum.name+".txt"))
@@ -241,5 +235,5 @@ class MainController(object):
         self.data.roi = (x_min, x_max)
 
     def close_event(self, _):
-        QtGui.QApplication.closeAllWindows()
-        QtGui.QApplication.quit()
+        QtWidgets.QApplication.closeAllWindows()
+        QtWidgets.QApplication.quit()

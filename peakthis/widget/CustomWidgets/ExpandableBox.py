@@ -1,13 +1,13 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from PyQt4 import QtGui
+from ..qt import QtGui, QtWidgets
 
-class ExpandableBox(QtGui.QWidget):
+class ExpandableBox(QtWidgets.QWidget):
     def __init__(self, content_widget, title='', hide=False):
         super(ExpandableBox, self).__init__()
 
-        self._vertical_layout = QtGui.QVBoxLayout()
+        self._vertical_layout = QtWidgets.QVBoxLayout()
         self._vertical_layout.setContentsMargins(0, 0, 0, 0)
         self._vertical_layout.setSpacing(0)
 
@@ -27,23 +27,23 @@ class ExpandableBox(QtGui.QWidget):
             self.change_visible_state()
 
     def create_head_widget(self, title):
-        self._head_layout = QtGui.QHBoxLayout()
+        self._head_layout = QtWidgets.QHBoxLayout()
         self._head_layout.setContentsMargins(10, 8, 15, 3)
         self._head_layout.setSpacing(0)
 
-        self.minimize_btn = QtGui.QPushButton("-")
+        self.minimize_btn = QtWidgets.QPushButton("-")
         self.minimize_btn.setFixedHeight(20)
         self.minimize_btn.setFixedWidth(20)
         self.minimize_btn.setObjectName("minimize_btn")
 
-        self.title_lbl = QtGui.QLabel(title)
+        self.title_lbl = QtWidgets.QLabel(title)
         self.title_lbl.setStyleSheet("font: italic 15px;")
 
         self._head_layout.addWidget(self.minimize_btn)
         self._head_layout.addSpacing(10)
         self._head_layout.addWidget(self.title_lbl)
 
-        self.head_widget = QtGui.QWidget()
+        self.head_widget = QtWidgets.QWidget()
         self.head_widget.setLayout(self._head_layout)
         self.head_widget.setObjectName("head_widget")
 
@@ -52,8 +52,8 @@ class ExpandableBox(QtGui.QWidget):
 
         self._content_widget = content_widget
 
-        self.content_widget = QtGui.QWidget()
-        self.content_layout = QtGui.QVBoxLayout()
+        self.content_widget = QtWidgets.QWidget()
+        self.content_layout = QtWidgets.QVBoxLayout()
         self.content_layout.setContentsMargins(8,8,8,8)
         self.content_layout.setSpacing(0)
         self.content_layout.addWidget(self._content_widget)
