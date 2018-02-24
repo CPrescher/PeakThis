@@ -99,8 +99,8 @@ class MainController(object):
         self.main_widget.spectrum_widget.plot_roi_data(*self.data.get_spectrum().data)
 
     def start_background_picking(self):
-        self.main_widget.background_define_btn.disconnect(self.start_background_picking)
-        self.main_widget.background_define_btn.connect(self.end_background_picking)
+        self.main_widget.background_define_btn.clicked.disconnect(self.start_background_picking)
+        self.main_widget.background_define_btn.clicked.connect(self.end_background_picking)
 
         self.main_widget.background_define_btn.setText('Finish')
         self.main_widget.control_widget.disable(except_widgets=[self.main_widget.background_define_btn,

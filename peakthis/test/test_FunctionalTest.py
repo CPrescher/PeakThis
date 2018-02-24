@@ -190,7 +190,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         # that the spectrum is changing
         start_x, start_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.model_widget.parameter_table.item(0, 1).setText('20')
-        self.model_widget.parameter_table.item(1, 1).setText('3')
+        self.model_widget.parameter_table.item(1, 1).setText('350')
         self.model_widget.parameter_table.item(2, 1).setText('19')
         after_x, after_y = self.main_widget.spectrum_widget.get_model_plot_data(0)
         self.array_almost_equal(start_x, after_x)

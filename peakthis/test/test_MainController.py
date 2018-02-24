@@ -3,18 +3,16 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-import os
 
 import numpy as np
-from PyQt4.QtTest import QTest
-from PyQt4 import QtCore, QtGui
 
+from ..widget.qt import QTest, QtCore, QtWidgets
 from . import get_data_path
 from ..controller.MainController import MainController
 
 class MainControllerTest(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
         self.controller = MainController()
         self.data = self.controller.data
         self.main_widget = self.controller.main_widget

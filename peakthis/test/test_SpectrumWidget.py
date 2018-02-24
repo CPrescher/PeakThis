@@ -4,15 +4,15 @@ __author__ = 'Clemens Prescher'
 import unittest
 
 import numpy as np
-from PyQt4 import QtGui
+from ..widget.qt import QtWidgets
 
-from ..view.SpectrumWidget import SpectrumWidget
+from ..widget.CustomWidgets.SpectrumWidget import SpectrumWidget
 from ..model.Spectrum import Spectrum
 
 
 class SpectrumWidgetTest(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
         self.spectrum_widget = SpectrumWidget()
 
         self.dummy_x = np.linspace(0, 5, 100)
