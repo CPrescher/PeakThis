@@ -7,7 +7,16 @@ python:
     - 3.6
 
 before_install:
-    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    - if [$TRAVIS_PYTHON_VERSION -eq "2.7"]
+      then
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+        echo "Using python 2.7"
+      fi
+    - if [$TRAVIS_PYTHON_VERSION -eq "3.6"]
+      then
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+        echo "Using python 3.6"
+      fi
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
     - export PATH=/home/travis/miniconda3/bin:$PATH
@@ -24,4 +33,4 @@ install:
     - pip install coverage
 
 script:
-    - nosetests --with-coverage --cover-package=controller,model,widget
+    - nosetests --with-coverage --cover-package=peakthis.controller,peakthis.model,peakthis.widget
