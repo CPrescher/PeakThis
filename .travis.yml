@@ -20,7 +20,8 @@ before_install:
     #update PythonPath
     - export PYTHONPATH=$PWD/peakit:$PYTHONPATH
 install:
-    - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy pyqt pyqtgraph lmfit pytest coverage -c cprescher
+    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION pyqt pyqtgraph lmfit nose -c cprescher
+    - pip install coverage
 
 script:
-    - nosetests --with-coverage --cover-package=controller,model,view
+    - nosetests --with-coverage --cover-package=controller,model,widget
