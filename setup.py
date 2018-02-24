@@ -11,7 +11,7 @@ setup(
     url='https://github.com/CPrescher/PeakThis',
     install_requires=['numpy', 'scipy', 'lmfit', 'pyqtgraph'],
     test_requires=['numpy', 'scipy', 'lmfit', 'pyqtgraph', 'pytest'],
-    description='Simple Peak Fitting software where peaks and background can be defined visually',
+    description='Simple Interactive GUI peak fitting software, where peaks and background can be defined visually',
     classifiers=['Intended Audience :: Science/Research',
                  'Operating System :: OS Independent',
                  'Programming Language :: Python',
