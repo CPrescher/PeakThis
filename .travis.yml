@@ -4,9 +4,10 @@ language: python
 
 python:
     - 2.7
+    - 3.6
 
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda3-3.5.5-Linux-x86_64.sh -O miniconda.sh
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
     - export PATH=/home/travis/miniconda3/bin:$PATH
@@ -19,8 +20,7 @@ before_install:
     #update PythonPath
     - export PYTHONPATH=$PWD/peakit:$PYTHONPATH
 install:
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION numpy scipy pandas matplotlib dateutil nose pyqt
-    - pip install lmfit pyqtgraph coverage
+    - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy pyqt pyqtgraph lmfit pytest coverage -c cprescher
 
 script:
     - nosetests --with-coverage --cover-package=controller,model,view
