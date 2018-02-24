@@ -15,6 +15,7 @@ class FitWidget(QtWidgets.QWidget):
         self.main_layout.setSpacing(5)
 
         self.fit_btn = FlatButton('Fit')
+        self.fit_btn.setFixedHeight(50)
         self.main_layout.addWidget(self.fit_btn)
 
         self.setLayout(self.main_layout)
