@@ -204,25 +204,23 @@ class MainController(object):
             self.end_model_picking()
 
 
-    def load_data(self, filename=None):
-        if filename is None:
-            filename = str(QtWidgets.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
-                                                             ''))
+    def load_data(self):
+        filename = str(QtWidgets.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
+                                                             '')[0])
         if filename is not '':
             self.data.load_data(filename)
 
-    def save_data(self, filename=None):
-        if filename is None:
-            save_file_dialog = QtWidgets.QFileDialog()
-            save_file_dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
-            save_file_dialog.setNameFilters(['Data (*.txt)'])
-            save_file_dialog.selectFile(os.path.join(self.save_data_path,
-                                                     self.data.spectrum.name+".txt"))
+    def save_data(self):
+        save_file_dialog = QtWidgets.QFileDialog()
+        save_file_dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptSave)
+        save_file_dialog.setNameFilters(['Data (*.txt)'])
+        save_file_dialog.selectFile(os.path.join(self.save_data_path,
+                                                 self.data.spectrum.name+".txt"))
 
-            if save_file_dialog.exec_():
-                filename = str(save_file_dialog.selectedFiles()[0])
-            else:
-                filename = ''
+        if save_file_dialog.exec_():
+            filename = str(save_file_dialog.selectedFiles()[0])
+        else:
+            filename = ''
 
         if filename is not '':
             self.data.save_data(filename)
