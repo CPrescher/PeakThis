@@ -2,15 +2,15 @@
 __author__ = 'Clemens Prescher'
 
 import unittest
-from copy import copy
+from copy import deepcopy
 import os
 
 import numpy as np
 
-from model.DataModel import DataModel
-from model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
+from ..model.DataModel import DataModel
+from ..model.PickModels import PickGaussianModel, PickQuadraticModel, PickLinearModel
 
-from test import data_path
+from . import data_path
 
 
 class DataModelTest(unittest.TestCase):
@@ -75,7 +75,7 @@ class DataModelTest(unittest.TestCase):
         bkg_x, bkg_y = self.data.get_model_spectrum(0).data
         self.array_almost_equal(spec_y, bkg_y)
 
-        new_parameters = copy(self.data.models[0].parameters)
+        new_parameters = deepcopy(self.data.models[0].parameters)
         new_parameters[self.data.models[0].prefix + 'intensity'].value = 10
 
         self.data.update_model(0, new_parameters)
@@ -210,10 +210,6 @@ class DataModelTest(unittest.TestCase):
         self.data.set_spectrum_data(x, y)
 
         self.data.roi = (2, 7)
-
-        print self.data.roi
-
-
         x_new, y_new = self.data.get_spectrum_data()
 
         self.assertGreater(np.min(x_new), 2)

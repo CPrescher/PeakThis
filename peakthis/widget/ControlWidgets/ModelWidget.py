@@ -62,7 +62,7 @@ class ModelWidget(QtWidgets.QWidget):
 
 
         for ind, name in enumerate(parameters):
-            self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(str(name.split('_')[1])))
+            self.parameter_table.setItem(ind, 0, QtGui.QTableWidgetItem(name))
             self.parameter_table.setItem(ind, 1, QtGui.QTableWidgetItem('{:.5g}'.format(parameters[name].value)))
 
             vary_cb = QtGui.QCheckBox()

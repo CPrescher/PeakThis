@@ -65,7 +65,7 @@ class PickModelTest(unittest.TestCase):
         for model_class in models_dict.values():
             model=model_class()
             pick_n = model.number_picks
-            for _ in range(pick_n):
+            for n in range(pick_n):
                 model.pick_parameter(n,0)
 
     def test_all_models_same_pick_points(self):

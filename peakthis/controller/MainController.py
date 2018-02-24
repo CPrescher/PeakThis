@@ -175,8 +175,8 @@ class MainController(object):
     def start_model_picking(self):
         if self.main_widget.model_list.currentRow()==-1:
             return
-        self.disconnect_click_function(self.main_widget.model_define_btn, self.start_model_picking)
-        self.connect_click_function(self.main_widget.model_define_btn, self.end_model_picking)
+        self.main_widget.model_define_btn.clicked.disconnect(self.start_model_picking)
+        self.main_widget.model_define_btn.clicked.connect(self.end_model_picking)
         self.main_widget.model_define_btn.setText("Finish")
         self.main_widget.control_widget.disable(except_widgets=[self.main_widget.model_define_btn])
 
@@ -185,8 +185,8 @@ class MainController(object):
 
 
     def end_model_picking(self):
-        self.main_widget.model_define_btn.connect(self.start_model_picking)
-        self.main_widget.model_define_btn.disconnect(self.end_model_picking)
+        self.main_widget.model_define_btn.clicked.connect(self.start_model_picking)
+        self.main_widget.model_define_btn.clicked.disconnect(self.end_model_picking)
         self.main_widget.model_define_btn.setText("Define")
         self.main_widget.model_define_btn.setChecked(False)
         self.main_widget.control_widget.enable()
@@ -206,7 +206,7 @@ class MainController(object):
 
     def load_data(self, filename=None):
         if filename is None:
-            filename = str(QtGui.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
+            filename = str(QtWidgets.QFileDialog.getOpenFileName(self.main_widget, "Load Data File",
                                                              ''))
         if filename is not '':
             self.data.load_data(filename)

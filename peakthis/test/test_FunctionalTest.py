@@ -6,16 +6,15 @@ import tempfile
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from PyQt4.QtTest import QTest
-from PyQt4 import QtCore, QtGui
+from ..widget.qt import QTest, QtCore, QtGui, QtWidgets
 
-from controller.MainController import MainController
-from model.PickModels import PickGaussianModel
+from ..controller.MainController import MainController
+from ..model.PickModels import PickGaussianModel
 
 
 class PeakThisFunctionalTest(unittest.TestCase):
     def setUp(self):
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
         self.controller = MainController()
         self.main_widget = self.controller.main_widget
         self.model_widget = self.controller.main_widget.control_widget.model_widget
@@ -83,7 +82,7 @@ class PeakThisFunctionalTest(unittest.TestCase):
         self.controller.load_data(self.temp_file.name)
 
         # Edith notices that the spectrum is immediately shown in the graph window
-        QtGui.QApplication.processEvents()
+        QtWidgets.QApplication.processEvents()
         x, y = self.main_widget.spectrum_widget.get_plot_data()
 
         self.array_almost_equal(x, self.x)

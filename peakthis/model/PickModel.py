@@ -1,8 +1,6 @@
 # -*- coding: utf8 -*-
 __author__ = 'Clemens Prescher'
 
-from copy import deepcopy
-
 
 class PickModel():
     num_pick_models = 0
@@ -16,10 +14,13 @@ class PickModel():
         self.current_pick = 0
         self.number_picks = number_picks
         self.pick_points = [Point()] * number_picks
-
+        self._parse_params()
         self.parameters = self.make_params()
 
     def update_current_parameter(self, x, y):
+        raise NotImplementedError
+
+    def _parse_params(self):
         raise NotImplementedError
 
     def pick_parameter(self, x, y):
@@ -35,25 +36,25 @@ class PickModel():
             return False
 
     def get_param(self, param_name):
-        return self.parameters[ param_name]
+        return self.parameters[param_name]
 
     def set_parameter_value(self, param_name, value):
-        self.parameters[param_name].value = value
+        self.parameters["{}{}".format(self._prefix, param_name)].value = value
 
     def get_parameter_value(self, param_name):
-        return self.parameters[param_name].value
+        return self.parameters["{}{}".format(self._prefix, param_name)].value
 
     def set_parameter_max_value(self, param_name, max_value):
-        self.parameters[param_name].max = max_value
+        self.parameters["{}{}".format(self._prefix, param_name)].max = max_value
 
     def get_parameter_max_value(self, param_name):
-        return self.parameters[param_name].max
+        return self.parameters["{}{}".format(self._prefix, param_name)].max
 
     def set_parameter_min_value(self, param_name, min_value):
-        self.parameters[param_name].min = min_value
+        self.parameters["{}{}".format(self._prefix, param_name)].min = min_value
 
     def get_parameter_min_value(self, param_name):
-        return self.parameters[param_name].min
+        return self.parameters["{}{}".format(self._prefix, param_name)].min
 
     def quick_eval(self, x):
         return self.eval(self.parameters, x=x)
@@ -68,13 +69,11 @@ class PickModel():
         cls = self.__class__
         result = cls()
 
-        result._prefix = result._prefix
-        result.make_params()
         for parameter_name in self._param_root_names:
             # print result.parameters
             # print self.parameters
-            result_param = result.get_param(parameter_name)
-            current_param = self.get_param(parameter_name)
+            result_param = result.get_param("{}{}".format(result._prefix, parameter_name))
+            current_param = self.get_param("{}{}".format(self._prefix, parameter_name))
 
             result_param.value = current_param.value
             result_param.vary   = current_param.vary
