@@ -8,7 +8,7 @@ import os
 from .qt import QtCore, QtGui, QtWidgets
 
 from .CustomWidgets import SpectrumWidget
-from .ControlWidgets import FileWidget, FitWidget, BackgroundWidget, ModelWidget
+from .ControlWidgets import FileWidget, FitWidget, BackgroundWidget, ModelWidget, PeakRemovalWidget
 
 from .CustomWidgets import ExpandableBox
 
@@ -16,7 +16,7 @@ class MainWidget(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(MainWidget, self).__init__(parent)
 
-        self.main_splitter = QtGui.QSplitter()
+        self.main_splitter = QtWidgets.QSplitter()
 
         self.spectrum_widget = SpectrumWidget(self)
         self.control_widget = ControlWidget(self)
@@ -70,7 +70,7 @@ class MainWidget(QtWidgets.QMainWindow):
 class ControlWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(ControlWidget, self).__init__(parent)
-        self.main_vertical_layout = QtGui.QVBoxLayout()
+        self.main_vertical_layout = QtWidgets.QVBoxLayout()
         self.main_vertical_layout.setContentsMargins(0,5,5,5)
         self.main_vertical_layout.setSpacing(5)
 
@@ -78,14 +78,16 @@ class ControlWidget(QtWidgets.QWidget):
         self.background_widget = BackgroundWidget(self)
         self.model_widget = ModelWidget(self)
         self.fit_widget = FitWidget(self)
+        self.peak_extraction_widget = PeakRemovalWidget(self)
 
         self.main_vertical_layout.addWidget(ExpandableBox(self.file_widget, "Data"))
         self.main_vertical_layout.addWidget(ExpandableBox(self.background_widget, "Background"))
         self.main_vertical_layout.addWidget(ExpandableBox(self.model_widget, "Model"))
         self.main_vertical_layout.addWidget(ExpandableBox(self.fit_widget, "Fit"))
+        self.main_vertical_layout.addWidget(ExpandableBox(self.peak_extraction_widget, 'Peak Extraction'))
 
-        self.main_vertical_layout.addSpacerItem(QtGui.QSpacerItem(20, 20, QtGui.QSizePolicy.Fixed,
-                                                                  QtGui.QSizePolicy.Expanding))
+        self.main_vertical_layout.addSpacerItem(QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed,
+                                                                  QtWidgets.QSizePolicy.Expanding))
 
         self.setLayout(self.main_vertical_layout)
 

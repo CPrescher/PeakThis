@@ -61,3 +61,4 @@ target/
 # User folder
 
 playground
+.pytest_cache/

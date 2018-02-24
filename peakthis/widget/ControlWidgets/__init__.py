@@ -5,3 +5,4 @@ from .BackgroundWidget import BackgroundWidget
 from .FileWidget import FileWidget
 from .FitWidget import FitWidget
 from .ModelWidget import ModelWidget
+from .PeakRemovalWidget import PeakRemovalWidget
