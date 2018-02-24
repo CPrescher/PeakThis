@@ -10,6 +10,8 @@ from ..widget.qt import QTest, QtCore, QtWidgets
 from . import get_data_path
 from ..controller.MainController import MainController
 
+from .utility import enter_value_into_text_field
+
 class MainControllerTest(unittest.TestCase):
     def setUp(self):
         self.app = QtWidgets.QApplication([])
@@ -36,7 +38,7 @@ class MainControllerTest(unittest.TestCase):
 
     def test_loading_data(self):
         spectrum_filename = get_data_path('spectrum1.txt')
-        self.controller.load_data(spectrum_filename)
+        self.controller.data.load_data(spectrum_filename)
         self.assertEqual(self.data.spectrum.name, 'spectrum1')
         spec_x, spec_y = self.data.spectrum.data
 
@@ -68,9 +70,9 @@ class MainControllerTest(unittest.TestCase):
         self.add_model()
 
         start_x, start_y = self.spectrum_widget.get_model_plot_data(0)
-        self.model_widget.parameter_table.item(0, 1).setText('2.0')
-        self.model_widget.parameter_table.item(1, 1).setText('3.0')
-        self.model_widget.parameter_table.item(2, 1).setText('3.0')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(0, 1), '2.0')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(1, 1), '3.0')
+        enter_value_into_text_field(self.model_widget.parameter_table.cellWidget(2, 1), '3.0')
 
         after_x, after_y = self.spectrum_widget.get_model_plot_data(0)
         self.array_almost_equal(start_x, after_x)
