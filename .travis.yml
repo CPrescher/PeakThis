@@ -22,8 +22,7 @@ before_install:
     #update PythonPath
     - export PYTHONPATH=$PWD/peakit:$PYTHONPATH
 install:
-    - conda install --yes pip python=$TRAVIS_PYTHON_VERSION pyqt pyqtgraph lmfit nose -c cprescher
-    - pip install coverage
+    - conda install --yes python=$TRAVIS_PYTHON_VERSION pyqt pyqtgraph lmfit nose coverage -c cprescher
 
 script:
     - nosetests --with-coverage --cover-package=peakthis.controller,peakthis.model,peakthis.widget
